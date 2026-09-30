@@ -51,6 +51,44 @@ En regel kan ha olika värde under olika perioder. Då är `varde` en lista i st
 
 Regler kan också ha `villkor`, en text om vad värdet kräver. Villkoret visas inte i svaren om du inte själv tar med det i en mall.
 
+## Automatisk källkontroll
+
+Varje dag kontrollerar GitHub Actions (`.github/workflows/kallkontroll.yml`) att källorna fortfarande säger det reglerna säger. Du kan också köra den själv: `npm run kontrollera`. Körningen skriver en rapport på svenska i `rapporter/ÅÅÅÅ-MM-DD.md`.
+
+**Kontrollen bekräftar aldrig en regel första gången.** Den kan bara sätta `verifierad` till `false` och uppdatera `senastKontrollerad` för en regel som du redan har bekräftat.
+
+### Fälten som kontrollen använder
+
+| Fält | Betydelse |
+| --- | --- |
+| `citat` | Den exakta meningen på källsidan som innehåller värdet. Värdet måste stå i citatet. Blanksteg och radbrytningar spelar ingen roll, allt annat måste stämma ordagrant. |
+| `metod` | `html`, `pdf` eller `manuell`. Vid `manuell` kontrolleras inget automatiskt. |
+| `bekraftad` | `{ "av": "Raul", "datum": "ÅÅÅÅ-MM-DD" }`. Du bekräftar att du har läst källan. Utan den hoppar kontrollen över regeln, och produktionsbygget stoppas. |
+| `sidhash` | Fingeravtryck av källsidans text. |
+| `extraKallor` | Lista med fler källor (`kalla`, `citat`, `metod`, `sidhash`) som alla måste stämma. `sink-avdrag` använder det för Skatteverket och SFS 1991:586. |
+| `kontrolleraVarde` | Valfritt. Lista med de värden som ska stå i just den källans citat. Standard är alla värden regeln kan ha. |
+| `felIRad` | Räknas av kontrollen. Tre misslyckade hämtningar i rad sätter `verifierad` till `false`. |
+
+Bekräftar du en PDF på thailändska: välj den engelska meningen som citat. Thailändsk PDF-text extraheras ofullständigt (tonmarkörer tappas).
+
+### Status
+
+| Status | Betyder | Kontrollen gör |
+| --- | --- | --- |
+| OK | Citatet finns kvar, värdet står i det och fingeravtrycket stämmer. | Sätter `senastKontrollerad` till dagens datum. |
+| ÄNDRAD | Sidan har ändrats men citatet finns kvar. | Skapar ett ärende. Uppdatera `sidhash` när du har granskat sidan. |
+| SAKNAS | Citatet är borta eller värdet står inte i det. | Sätter `verifierad` till `false` och skapar ett ärende med gammalt citat, vad som står nu och länk. |
+| FEL | Sidan gick inte att hämta. | Skapar ett ärende. Efter tre i rad sätts `verifierad` till `false`. |
+| MANUELL | Citat, fingeravtryck, bekräftelse eller automatisk metod saknas. | Gör ingenting. |
+
+Alla ärenden får etiketten `källkontroll`. Ett redan öppet ärende med samma rubrik dubbleras inte.
+
+### Lägga in citat första gången
+
+Källorna måste hämtas från en plats med internetåtkomst. Gå till *Actions → Källkontroll → Run workflow* och välj läget `foresla`. Då sparas `rapporter/forslag-ÅÅÅÅ-MM-DD.md` med meningar som innehåller värdena och sidans fingeravtryck, utan att något i `data/regler.json` ändras. Välj en mening per källa, kontrollera den mot källan och skriv in `metod`, `citat`, `sidhash` och `bekraftad` i regeln. Lokalt: `npm run kontrollera -- --foresla`.
+
+Dagliga körningar sparas på standardgrenen. Skyddas grenen mot direkta pushar måste Actions få undantag.
+
 ## Skriva svarstexterna
 
 Texterna i `data/svar.json` är utkast. Skriv över dem med egna. Platshållare:

@@ -5,7 +5,14 @@
     "enhet": "THB/manad",
     "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "non-o-bankkrav",
@@ -14,7 +21,14 @@
     "villkor": "Ska ha legat på kontot minst 2 månader före ansökan och finnas kvar 3 månader efter beviljande.",
     "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "ltr-minalder",
@@ -22,7 +36,14 @@
     "enhet": "ar",
     "kalla": "https://ltr.boi.go.th/documents/BOI-brochure%202025-LTR.pdf",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "ltr-inkomstkrav",
@@ -31,7 +52,14 @@
     "villkor": "Passiv inkomst.",
     "kalla": "https://ltr.boi.go.th/documents/Required-docs-Wealthy-Pensioners-30-06-2025.pdf",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "ltr-inkomstkrav-alternativ",
@@ -40,7 +68,14 @@
     "villkor": "Plus 250 000 USD investerat i Thailand.",
     "kalla": "https://ltr.boi.go.th/documents/Required-docs-Wealthy-Pensioners-30-06-2025.pdf",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "skatt-hemvist-dagar",
@@ -49,7 +84,14 @@
     "villkor": "180 dagar eller fler per kalenderår.",
     "kalla": "https://www.rd.go.th/fileadmin/download/english_form/030265guide90.pdf",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "sink-avdrag",
@@ -68,7 +110,22 @@
     "enhet": "procent",
     "kalla": "https://www.skatteverket.se/privat/internationellt/bosattutomlands/sinksarskildinkomstskattforutomlandsbosatta/sinkpapension.4.6fdde64a12cc4eee23080002614.html",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null,
+    "extraKallor": [
+      {
+        "kalla": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/lag-1991586-om-sarskild-inkomstskatt-for_sfs-1991-586/",
+        "citat": null,
+        "metod": "manuell",
+        "sidhash": null
+      }
+    ]
   },
   {
     "id": "garantipension-bosattning-utomlands",
@@ -76,7 +133,14 @@
     "enhet": "text",
     "kalla": "https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-att-flytta-fran-sverige",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "garantipension-max-vistelse",
@@ -84,7 +148,14 @@
     "enhet": "ar",
     "kalla": "https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-att-flytta-fran-sverige",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "visumfri-vistelse-dagar",
@@ -98,7 +169,14 @@
     "enhet": "dagar",
     "kalla": "https://thaiembassy.se/en/visa/",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "non-o-bank-minsta-saldo",
@@ -107,7 +185,14 @@
     "villkor": "Ska finnas kvar efter de första 3 månaderna.",
     "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "non-o-kombination",
@@ -116,7 +201,14 @@
     "villkor": "Årsinkomst plus bankinsättning ska tillsammans vara minst detta belopp.",
     "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   },
   {
     "id": "o-a-forsakringskrav",
@@ -125,6 +217,13 @@
     "villkor": "Sjukförsäkring på minst 100 000 USD eller 3 000 000 THB. Gäller bara O-A.",
     "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
     "senastKontrollerad": "2026-09-30",
-    "verifierad": true
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
   }
 ]

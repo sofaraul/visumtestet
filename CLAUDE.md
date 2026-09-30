@@ -115,6 +115,7 @@ Svarstexterna skrivs av ägaren. Bygg dem som redigerbara mallar i `data/svar.js
 
 * Kod i `src/`: `flode.ts` (förgrening, bara frågeordning), `jamfor.ts` (jämförelser), `mall.ts` (platshållare), `svar.ts` (bygger svaret), `ui.ts`/`epost.ts`/`banderoll.ts` (vyer). Belopp och texter finns i `data/` och `config.json`.
 * Regler kan vara datumstyrda: `varde` är då en lista med perioder (`fran`, `till`, `varde`). `scripts/gallande.mjs` väljer värdet som gäller idag, både i webbläsaren och i skripten.
+* Källkontroll: `scripts/kalltext.mjs` (hämta och jämför text), `kontroll.mjs` (status och regler för vad som ändras), `arenden.mjs` (GitHub-ärenden), `kontrollera.mjs` (CLI). Den får aldrig sätta `verifierad` till true. Hitta aldrig på ett citat: citat och sidhash kommer från en hämtad sida och förs in av en människa efter `npm run kontrollera -- --foresla`.
 * `scripts/regler.mjs` delas av `npm run kallor` och bygget (`vite.config.ts`).
 * `npm test` innehåller ett test som stoppar siffror i `src/`. Lägg aldrig belopp eller gränser i koden.
 * Tomma värden är avsiktliga och flaggas: `visumfri-vistelse-dagar` och `null` i `config.json`. Fyll dem inte med gissningar. Hjälptexterna i `fragor.json` är ifyllda av ägaren.

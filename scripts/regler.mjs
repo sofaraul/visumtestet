@@ -23,6 +23,7 @@ export function problemMedRegler(regler, idag = idagIso()) {
       if (varde === null || varde === undefined || varde === '') orsaker.push(`värde saknas ${idag}`)
       if (!r.kalla) orsaker.push('källa saknas')
       if (!r.senastKontrollerad) orsaker.push('senastKontrollerad saknas')
+      if (!r.bekraftad) orsaker.push('bekraftad saknas (en människa ska ha bekräftat regeln)')
     }
     if (orsaker.length) problem.push({ id: r.id, orsaker })
   }

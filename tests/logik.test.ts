@@ -97,15 +97,16 @@ describe('data skild från logik', () => {
     for (const r of regler) for (const falt of ['id', 'varde', 'enhet', 'kalla', 'senastKontrollerad', 'verifierad']) expect(r, r.id).toHaveProperty(falt)
   })
   it('byggkontrollen stoppar overifierade regler och släpper fullständiga', () => {
-    const ok = { id: 'r', varde: 1, enhet: 'x', kalla: 'https://x', senastKontrollerad: '2026-01-01', verifierad: true }
+    const ok = { id: 'r', varde: 1, enhet: 'x', kalla: 'https://x', senastKontrollerad: '2026-01-01', verifierad: true, bekraftad: { av: 'A', datum: '2026-01-01' } }
     expect(problemMedRegler([ok])).toEqual([])
     expect(problemMedRegler([{ ...ok, verifierad: false }]).length).toBe(1)
     expect(problemMedRegler([{ ...ok, senastKontrollerad: null }]).length).toBe(1)
     expect(problemMedRegler([{ ...ok, kalla: null }]).length).toBe(1)
     expect(problemMedRegler([{ ...ok, varde: null }]).length).toBe(1)
+    expect(problemMedRegler([{ ...ok, bekraftad: null }]).length).toBe(1)
   })
   it('regler vars period inte har börjat gälla stoppar bygget', () => {
-    const regel = { id: 'r', varde: [{ fran: '2026-09-15', varde: 30 }], enhet: 'dagar', kalla: 'https://x', senastKontrollerad: '2026-09-30', verifierad: true }
+    const regel = { id: 'r', varde: [{ fran: '2026-09-15', varde: 30 }], enhet: 'dagar', kalla: 'https://x', senastKontrollerad: '2026-09-30', verifierad: true, bekraftad: { av: 'A', datum: '2026-09-30' } }
     expect(problemMedRegler([regel], '2026-09-14').length).toBe(1)
     expect(problemMedRegler([regel], '2026-09-15')).toEqual([])
   })
