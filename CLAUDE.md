@@ -1,0 +1,110 @@
+# Uppdrag: visumtestet
+
+## Uppdraget
+
+Bygg ett gratis visumtest på svenska för svenskar som planerar att bo i Thailand längre än en semester. Besökaren svarar på upp till sex frågor och får ett svar om sin troliga visumväg, vad hen behöver uppfylla, om thailändsk skatt berör hen, och en vanlig fallgrop. Därefter erbjuds den betalda guiden.
+
+## Målgrupp
+
+Svenskar mellan 50 och 75 år, de flesta på mobil, ofta via en länk från en Facebookgrupp. Det styr designen:
+
+* Mobil först.
+* Minst 18 px brödtext, hög kontrast och stora tryckytor.
+* En fråga per skärm, en tydlig förloppsindikator och en alltid synlig Tillbaka-knapp.
+* Inga popups, ingen chattbot, inget som ser ut som en annons.
+
+## Teknik
+
+* Statisk sajt utan backend i version 1. Vite och TypeScript, utan tungt ramverk.
+* Driftsätts på Vercel eller Netlify direkt från repot.
+* All konfiguration i en fil: länk till Shopify-produkten, e-postmottagare och växelkurs med datum.
+
+## Den viktigaste regeln: data skild från logik
+
+Alla belopp, gränser och regler ligger i `data/regler.json`, aldrig i koden. Varje regel har den här formen:
+
+```json
+{
+  "id": "non-o-inkomstkrav",
+  "varde": 65000,
+  "enhet": "THB/manad",
+  "kalla": "https://thaiembassy.se/en/visa/",
+  "senastKontrollerad": null,
+  "verifierad": false
+}
+```
+
+* Produktionsbygget ska misslyckas om någon regel har `"verifierad": false`. I utvecklingsläge visas i stället en röd banderoll: Innehåller overifierade uppgifter.
+* Datumet i `senastKontrollerad` visas under varje svar.
+* Skapa ett skript, `npm run kallor`, som listar alla regler med källa och status, så att ägaren kan bocka av dem en i taget.
+
+Fyll filen med följande startvärden, samtliga som overifierade:
+
+* Non-O, pension: 65 000 baht i månaden eller 800 000 baht på konto. Källa: https://thaiembassy.se/en/visa/
+* LTR, pensionärer: minst 50 år och 80 000 USD per år. Källa: https://ltr.boi.go.th/
+* Thailändsk skatterättslig hemvist: 180 dagar per kalenderår. Källa: rd.go.th
+* SINK-avdrag på svensk pension: 22,5 procent. Källa: https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-din-pension-du-som-bor-utanfor-sverige
+* Garantipension: upphör vid bosättning utanför Sverige, men kan behållas vid vistelse på högst ett år. Källa: https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-att-flytta-fran-sverige
+* Visumfri vistelse för svenska medborgare: antal dagar okänt. Lämna värdet tomt.
+
+## Frågorna
+
+1. Hur många dagar per år räknar du med att vara i Thailand? – Färre än 180 dagar / 180 dagar eller fler / Vet inte än
+2. Hur gammal är du? – Under 50 / 50 eller äldre
+3. Var kommer dina pengar ifrån? – Pension / Lön från svensk arbetsgivare / Eget företag eller frilans / Kapital och sparande / Kombination
+4. Ungefär vilken inkomst har du per månad före skatt? – Under 20 000 kr / 20 000–40 000 kr / Över 40 000 kr
+5. Kan du låsa ett större belopp på ett thailändskt bankkonto? – Ja / Nej / Kanske, beror på beloppet
+6. Har du familj i Thailand? – Nej / Ja, make eller maka / Ja, barn
+
+Visa hjälptexterna under frågorna 1, 2, 4 och 5. Texterna finns i fliken Visumguiden och läggs in i `data/fragor.json`.
+
+## Förgrening
+
+* Fråga 1, färre än 180 dagar: säsongsspåret. Fråga 2 och 6, sedan svar.
+* Fråga 1, 180 dagar eller fler eller vet inte än: vidare till fråga 2.
+* Fråga 2, under 50: spåret är under arbete.
+* Fråga 3, lön eller eget företag: spåret är under arbete.
+* Övriga: pensionärsspåret. Fråga 4, 5 och 6, sedan svar.
+* Spår under arbete: visa Ditt spår är under arbete och erbjud e-post för besked när det är klart.
+
+## Svaret
+
+Samma struktur i alla spår:
+
+1. Din troliga väg: visumvägens namn och en mening om vad den innebär.
+2. Det här behöver du uppfylla: tre punkter, jämförda med besökarens svar. Inkomstintervallet räknas om till baht med växelkursen i konfigurationen. Ligger kravet inom intervallet visas Du ligger nära gränsen – kontrollera ditt exakta belopp.
+3. Skatt: en mening om huruvida 180-dagarsgränsen berör besökaren.
+4. Det folk missar: en fallgrop kopplad till spåret.
+5. Erbjudandet: en knapp till Shopify-produkten.
+
+Under svaret visas Senast kontrollerad mot källa: [datum] och ansvarsfriskrivningen:
+
+> Det här är allmän information, inte personlig rådgivning. Regler och belopp ändras, och din situation kan innehålla detaljer som ett formulär inte fångar.
+
+Svarstexterna skrivs av ägaren. Bygg dem som redigerbara mallar i `data/svar.json` med platshållare.
+
+## E-post
+
+* Frågas först efter att svaret visats, aldrig före.
+* Text: Vill du ha ditt svar mejlat till dig, plus besked när reglerna ändras?
+* Samtyckesruta som inte är förkryssad, med länk till en kort integritetstext.
+* Skickas till mottagaren i konfigurationen. Saknas mottagare visas inte fältet alls.
+
+## Integritet
+
+* Inga spårningscookies i version 1.
+* Svaren på frågorna sparas inte. Bara e-postadressen sparas, och bara för den som samtyckt.
+
+## Klart när
+
+* Hela flödet fungerar på mobil, från första frågan till erbjudandet.
+* Säsongs- och pensionärsspåret ger svar, övriga visar under arbete.
+* Alla belopp hämtas från `regler.json` och inga siffror finns i koden.
+* Produktionsbygget stoppas om någon regel är overifierad.
+* README förklarar hur ägaren ändrar en regel och driftsätter.
+
+## Gör inte
+
+* Hitta inte på belopp, gränser eller regler. Saknas en uppgift lämnas den tom och flaggas.
+* Formulera aldrig svar som uppmaningar som du ska söka. Skriv alltid din troliga väg.
+* Lägg inte till funktioner utanför uppdraget.
