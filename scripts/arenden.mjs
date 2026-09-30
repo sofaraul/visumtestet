@@ -1,7 +1,11 @@
 // Skapar GitHub-ärenden med etiketten källkontroll. Hoppar över ärenden som redan är öppna.
 export const ETIKETT = 'källkontroll'
 
-export async function skapaArenden(arenden, { token, repo, fetchFn = fetch }) {
+/**
+ * `etikett` är normalt källkontroll. Påminnelser använder en annan etikett, så att de inte
+ * startar rutinen som behandlar källkontrollens ärenden.
+ */
+export async function skapaArenden(arenden, { token, repo, fetchFn = fetch, etikett = ETIKETT, farg = 'd93f0b', beskrivning = 'Automatisk källkontroll av regler' }) {
   const api = async (metod, sokvag, kropp) => {
     const svar = await fetchFn(`https://api.github.com/repos/${repo}${sokvag}`, {
       method: metod,
@@ -12,9 +16,9 @@ export async function skapaArenden(arenden, { token, repo, fetchFn = fetch }) {
   }
 
   // 422 betyder att etiketten redan finns.
-  await api('POST', '/labels', { name: ETIKETT, color: 'd93f0b', description: 'Automatisk källkontroll av regler' })
+  await api('POST', '/labels', { name: etikett, color: farg, description: beskrivning })
 
-  const oppna = await api('GET', `/issues?state=open&labels=${encodeURIComponent(ETIKETT)}&per_page=100`)
+  const oppna = await api('GET', `/issues?state=open&labels=${encodeURIComponent(etikett)}&per_page=100`)
   if (oppna.status !== 200) throw new Error(`kunde inte läsa öppna ärenden (${oppna.status})`)
   const befintliga = new Map(oppna.data.map((i) => [i.title, i.html_url]))
 
@@ -24,7 +28,7 @@ export async function skapaArenden(arenden, { token, repo, fetchFn = fetch }) {
       resultat[a.titel] = `${befintliga.get(a.titel)} (fanns redan)`
       continue
     }
-    const nytt = await api('POST', '/issues', { title: a.titel, body: a.text, labels: [ETIKETT] })
+    const nytt = await api('POST', '/issues', { title: a.titel, body: a.text, labels: [etikett] })
     if (nytt.status !== 201) throw new Error(`kunde inte skapa ärendet "${a.titel}" (${nytt.status})`)
     resultat[a.titel] = nytt.data.html_url
   }

@@ -53,10 +53,9 @@ export function byggKontext({ svar = {}, regler, fragor, config, innehall, idag 
   const { saknas } = innehall.gemensamt
   const { thbPerSek, datum } = config.vaxelkurs
   const varden: Record<string, string> = {}
-  for (const f of fragor) varden[`svar.${f.id}`] = alternativText(fragor, f.id, svar[f.id]) ?? saknas
   varden.vaxelkurs = thbPerSek ? `${formatTal(thbPerSek)} ${innehall.enheter.thbPerSek}` : saknas
   varden.vaxelkursDatum = datum ?? saknas
-  return {
+  const ctx: MallKontext = {
     regler: new Map(regler.map((r) => [r.id, r])),
     enheter: innehall.enheter,
     saknas,
@@ -66,12 +65,25 @@ export function byggKontext({ svar = {}, regler, fragor, config, innehall, idag 
     kurs: thbPerSek,
     avrundningKr: config.avrundningKr,
   }
+  // Svarsalternativen kan själva ha platshållare, t.ex. åldersgränsen ur en regel.
+  for (const f of fragor) {
+    const text = alternativText(fragor, f.id, svar[f.id])
+    varden[`svar.${f.id}`] = text ? fyllMall(text, ctx) : saknas
+  }
+  ctx.anvanda.clear()
+  return ctx
 }
 
 /** Frågan som besökaren ser, med framräknade belopp ifyllda. */
 export function renderaFraga(fraga: Fraga, underlag: Underlag): Fraga {
   const ctx = byggKontext(underlag)
-  return { ...fraga, text: fyllMall(fraga.text, ctx), hjalptext: fraga.hjalptext && fyllMall(fraga.hjalptext, ctx) }
+  const fyll = (text: string) => fyllMall(text, ctx)
+  return {
+    ...fraga,
+    text: fyll(fraga.text),
+    hjalptext: fraga.hjalptext && fyll(fraga.hjalptext),
+    alternativ: fraga.alternativ.map((a) => ({ ...a, text: fyll(a.text) })),
+  }
 }
 
 /** Vilken mall i svar.json som gäller för besökarens svar. */

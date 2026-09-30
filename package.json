@@ -12,7 +12,8 @@
     "test": "vitest run",
     "kontrollera": "node scripts/kontrollera.mjs",
     "vaxelkurs": "node scripts/vaxelkurs.mjs",
-    "logikmatris": "vite-node scripts/logikmatris.ts"
+    "logikmatris": "vite-node scripts/logikmatris.ts",
+    "paminnelse": "node scripts/paminnelse.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",

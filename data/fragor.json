@@ -37,15 +37,15 @@
     {
       "id": "alder",
       "text": "Hur gammal är du?",
-      "hjalptext": "Flera visum för längre vistelse har 50 år som nedre gräns.",
+      "hjalptext": "Flera visum för längre vistelse har {non-o-minalder.varde} år som nedre gräns.",
       "alternativ": [
         {
           "id": "under",
-          "text": "Under 50"
+          "text": "Under {non-o-minalder.varde}"
         },
         {
           "id": "minst",
-          "text": "50 eller äldre"
+          "text": "{non-o-minalder.varde} eller äldre"
         }
       ]
     },

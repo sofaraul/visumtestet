@@ -144,7 +144,7 @@
     "pension": {
       "vag": {
         "namn": "Non-O-visum för pensionärer",
-        "mening": "Du uppger pension, kapital eller en kombination och planerar längre vistelser, och då är din troliga väg Non-O-visum för pensionärer, där vistelsen förlängs i Thailand och varje beviljande gäller högst {non-o-forlangning-max}. LTR-visum för pensionärer kan vara ett alternativ om din passiva inkomst är minst {ltr-inkomstkrav}."
+        "mening": "Du uppger pension, kapital eller en kombination och planerar längre vistelser, och då är din troliga väg Non-O-visum för pensionärer, där vistelsen förlängs i Thailand och varje beviljande gäller högst {non-o-forlangning-max}. LTR-visum för pensionärer kan vara ett alternativ om du är {ltr-minalder} och din passiva inkomst är minst {ltr-inkomstkrav}."
       },
       "rubrikKrav": "För att få stanna ett år i taget krävs:",
       "krav": [

@@ -2,6 +2,14 @@
 
 Den här rapporten visar vad besökaren får se för varje möjlig väg genom frågorna. Tabellen längst ner skapas av `npm run logikmatris`. Texten här ovanför är skriven för hand och bevaras vid varje körning.
 
+## Ändringar, omgång 3 (godkända citat och åldersreglerna)
+
+- Ny regel `non-o-minalder` (50 år eller äldre, Immigration Bureau, bekräftad av Raul 2026-09-30). Åldern i fråga 2 och dess hjälptext hämtas från den: "Under {ålder}" och "{ålder} eller äldre". Ändras regeln ändras frågan (testat).
+- `ltr-minalder` följer källans formulering: "över 50 år". LTR-meningen i pensionärssvaret lyder nu "LTR-visum för pensionärer kan vara ett alternativ om du är över 50 år och din passiva inkomst är minst 80 000 USD per år." Den säger fortfarande aldrig att besökaren uppfyller något.
+- Godkända citat är införda i `data/regler.json`: åtta automatiska (kontrolleras dagligen) och åtta manuella. `kontrolleraVarde` styr vilket värde som ska stå i citatet: 50 för LTR-åldern, bara 20 procent mot SFS-källan, "som regel inte rätt" och "högst ett år" för garantipensionen.
+
+Matrisen nedan har samma antal vägar (174). Texten i LTR-meningen är det enda som ändrats i svaren.
+
 ## Ändringar, omgång 2 (granskningen av matrisen)
 
 Varje punkt har egna tester i `tests/logik-matris.test.ts` (grupperna "punkt 1" till "punkt 6"). Jag provade testerna med 20 medvetna fel, ett i taget, och alla fångades.

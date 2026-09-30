@@ -85,7 +85,11 @@ Alla ärenden får etiketten `källkontroll`. Ett redan öppet ärende med samma
 
 ### Lägga in citat första gången
 
-Källorna måste hämtas från en plats med internetåtkomst. Gå till *Actions → Källkontroll → Run workflow* och välj läget `foresla`. Då sparas `rapporter/forslag-ÅÅÅÅ-MM-DD.md` med meningar som innehåller värdena och sidans fingeravtryck, utan att något i `data/regler.json` ändras. Välj en mening per källa, kontrollera den mot källan och skriv in `metod`, `citat`, `sidhash` och `bekraftad` i regeln. Lokalt: `npm run kontrollera -- --foresla`.
+Källorna måste hämtas från en plats med internetåtkomst. Gå till *Actions → Källkontroll → Run workflow* och välj läget `foresla`, eller kör `npm run kontrollera -- --foresla`. Då sparas `rapporter/forslag-ÅÅÅÅ-MM-DD.md` med meningar som innehåller värdena och sidans fingeravtryck, utan att något i `data/regler.json` ändras. Välj en mening per källa, kontrollera den mot källan och skriv in `metod`, `citat` och `sidhash` i regeln. Sätt `kontrolleraVarde` när värdet i regeln skrivs på ett annat sätt än i källan, t.ex. `["högst ett år"]` när källan skriver ett år med bokstäver.
+
+### Regler som bara kan kontrolleras för hand
+
+Vissa sidor går inte att hämta automatiskt (Immigration Bureau ligger bakom Cloudflares botskydd, och Revenue Departments PDF omdirigeras). De har `"metod": "manuell"`, med citatet inskrivet av en människa. Då skapar GitHub Actions ett ärende **den första varje månad** (`.github/workflows/manuell-kontroll.yml`, `npm run paminnelse`) med etiketten `manuell-kontroll`. Ärendet listar reglerna med värde, citat och länk, och en avbockningslista. Stäng ärendet när du har kontrollerat dem. Etiketten är en annan än `källkontroll`, så ärendet startar inte rutinen som ändrar regler. Ett ärende för samma månad skapas bara en gång.
 
 Dagliga körningar sparas på standardgrenen. Skyddas grenen mot direkta pushar måste Actions få undantag.
 

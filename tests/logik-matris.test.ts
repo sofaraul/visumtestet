@@ -7,6 +7,7 @@ import {
   meningar, regel, regler, renderadeFragor, talITexten, tillatnaTal, vagNamn, vardeUtanEnhet, visa, type Post,
 } from './allaVagar'
 import { formatTal } from '../src/mall'
+import { renderaFraga } from '../src/svar'
 
 const vagar = allaVagar()
 const poster: Post[] = vagar.flatMap((v) => DATUM.map((d) => byggPost(v, d)))
@@ -215,12 +216,17 @@ describe('3d: LTR är bara ett villkorat alternativ', () => {
       const ltr = meningar(p.text).filter((m) => /LTR/.test(m))
       if (!ltr.length) return 'LTR nämns inte'
       const krav = visa('ltr-inkomstkrav', p.datum)
+      const alder = visa('ltr-minalder', p.datum)
       for (const m of ltr) {
-        if (!m.includes(`om din passiva inkomst är minst ${krav}`)) return `LTR utan villkoret "om din passiva inkomst är minst ${krav}": "${m}"`
+        if (!m.includes(`om du är ${alder} och din passiva inkomst är minst ${krav}`)) return `LTR utan villkoret "om du är ${alder} och din passiva inkomst är minst ${krav}": "${m}"`
         if (/uppfyller|kvalificerar|berättigad|klarar|stämmer/i.test(m)) return `LTR-mening med påstående: "${m}"`
       }
       return null
     }))
+  })
+  it('åldern för LTR följer källans formulering, "över 50 år", och står i texterna där LTR nämns', () => {
+    expect(regel('ltr-minalder').varde).toBe('över 50 år')
+    inga(brott(nonO, (p) => (meningar(p.text).filter((m) => /LTR/.test(m)).every((m) => m.includes('över 50 år')) ? null : 'LTR-mening utan "över 50 år"')))
   })
   it('ingen kravrad påstår något om LTR', () => {
     inga(brott(pension, (p) => (p.modell!.krav.some((k) => /LTR/.test(k.text)) ? 'LTR som kravrad' : null)))
@@ -537,6 +543,37 @@ describe('rapporten rapporter/logik-matris.md', () => {
       if (/SINK/.test(r)) expect(r, r.slice(0, 120)).toMatch(/pengar (pension|kombination)/)
       if (/pengar kapital/.test(r)) expect(r).not.toMatch(/SINK/)
     }
+  })
+})
+
+describe('ålder i fråga 2 hämtas från regeln non-o-minalder', () => {
+  const alder = () => fragor.find((f) => f.id === 'alder')!
+  it('regeln finns: 50 år eller äldre, samma källa som inkomstkravet, bekräftad av Raul 2026-09-30', () => {
+    const r = regel('non-o-minalder')
+    expect(r.varde).toBe(50)
+    expect(r.enhet).toBe('ar')
+    expect(r.villkor).toBe('50 år eller äldre.')
+    expect(r.kalla).toBe(regel('non-o-inkomstkrav').kalla)
+    expect(r.metod).toBe('manuell')
+    expect(r.citat).toBe('An alien must be 50 years of age or over.')
+    expect(r.verifierad).toBe(true)
+    expect(r.bekraftad).toEqual({ av: 'Raul', datum: '2026-09-30' })
+  })
+  it('frågan visar åldern ur regeln', () => {
+    const f = renderadeFragor().find((x) => x.id === 'alder')!
+    expect(f.alternativ.map((a) => a.text)).toEqual([`Under ${vardeUtanEnhet('non-o-minalder', FORE)}`, `${vardeUtanEnhet('non-o-minalder', FORE)} eller äldre`])
+    expect(f.hjalptext).toContain(`${vardeUtanEnhet('non-o-minalder', FORE)} år`)
+  })
+  it('siffran är inte inskriven i frågan: ändras regeln ändras frågan', () => {
+    const andrad = regler.map((r) => (r.id === 'non-o-minalder' ? { ...r, varde: 55 } : r))
+    const f = renderaFraga(alder(), { regler: andrad, fragor, config: TESTKONFIG, innehall, idag: FORE })
+    expect(f.alternativ.map((a) => a.text)).toEqual(['Under 55', '55 eller äldre'])
+    expect(f.hjalptext).toContain('55 år')
+  })
+  it('data/fragor.json har en platshållare och ingen inskriven ålder i åldersfrågan', () => {
+    const rå = JSON.stringify([alder().alternativ, alder().hjalptext])
+    expect(rå).toContain('{non-o-minalder.varde}')
+    expect(rå).not.toMatch(/\d/)
   })
 })
 

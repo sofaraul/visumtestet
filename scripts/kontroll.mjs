@@ -24,13 +24,28 @@ export function kallorFor(regel) {
   return [huvud, ...extra].map((k) => ({ ...k, kontrolleraVarde: k.kontrolleraVarde ?? allaVarden(regel) }))
 }
 
-async function kontrolleraKalla(regel, kalla, hamta) {
+/** Skäl till att en källa inte kan kontrolleras automatiskt. Tom lista = automatisk kontroll. */
+export function manuellOrsaker(regel, kalla) {
   const saknas = []
   if (!kalla.kalla) saknas.push('källa saknas')
   if (!AUTOMATISKA_METODER.includes(kalla.metod)) saknas.push('metod är manuell')
   if (!regel.bekraftad) saknas.push('regeln är inte bekräftad av en människa')
   if (!kalla.citat) saknas.push('citat saknas')
   if (!kalla.sidhash) saknas.push('fingeravtryck saknas')
+  return saknas
+}
+
+/** Alla källor som en människa måste kontrollera, med värde, citat och länk. Används av månadspåminnelsen. */
+export function manuellaKallor(regler) {
+  return regler.flatMap((regel) =>
+    kallorFor(regel)
+      .map((kalla) => ({ regel, kalla, orsaker: manuellOrsaker(regel, kalla) }))
+      .filter((x) => x.orsaker.length),
+  )
+}
+
+async function kontrolleraKalla(regel, kalla, hamta) {
+  const saknas = manuellOrsaker(regel, kalla)
   if (saknas.length) return { ...kalla, status: MANUELL, orsak: saknas.join(', ') }
 
   let text
