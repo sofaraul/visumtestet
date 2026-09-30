@@ -32,6 +32,12 @@ jobs:
 
       - run: npm ci
 
+      - name: Växelkurs
+        id: kurs
+        if: inputs.lage != 'foresla'
+        continue-on-error: true # källkontrollen ska köras även om kursen misslyckas
+        run: npm run vaxelkurs
+
       - name: Källkontroll
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,7 +48,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/regler.json rapporter
+          git add config.json data/regler.json rapporter
           if git diff --cached --quiet; then
             echo "Inga ändringar att spara."
           else
@@ -50,3 +56,9 @@ jobs:
             git pull --rebase
             git push
           fi
+
+      - name: Flagga misslyckad växelkurs
+        if: steps.kurs.outcome == 'failure'
+        run: |
+          echo "::error::Växelkursen kunde inte hämtas. config.json är orörd."
+          exit 1

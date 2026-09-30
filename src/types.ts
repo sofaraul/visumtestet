@@ -49,7 +49,7 @@ export interface Fraga {
 export interface Config {
   shopifyLank: string | null
   epost: { mottagare: string | null; tjanst: string }
-  vaxelkurs: { thbPerSek: number | null; datum: string | null }
+  vaxelkurs: { thbPerSek: number | null; datum: string | null; kalla?: string }
 }
 
 export type Status = 'ok' | 'nara' | 'under' | 'info' | 'okant'

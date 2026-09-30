@@ -89,6 +89,17 @@ Källorna måste hämtas från en plats med internetåtkomst. Gå till *Actions 
 
 Dagliga körningar sparas på standardgrenen. Skyddas grenen mot direkta pushar måste Actions få undantag.
 
+## Växelkurs
+
+Samma dagliga körning hämtar kursen baht per krona och skriver den till `config.json` med datum (`npm run vaxelkurs`). Källan är ECB:s officiella referenskurser: baht per krona räknas ur EUR/THB och EUR/SEK. Misslyckas hämtningen lämnas `config.json` orörd, och körningen markeras som misslyckad så att du ser det. Kursen och dess datum visas i svaret (`{vaxelkurs}` och `{vaxelkursDatum}`).
+
+## Rutiner
+
+I `rutiner/` finns instruktioner för agenter som arbetar med reglerna. De är bara textfiler, så något måste starta dem:
+
+- `rutiner/andring.md`: körs när ett ärende skapas. Gäller bara ärenden med etiketten `källkontroll`. Läser ärendet, hämtar källan, jämför med `regler.json`, skriver en kort sammanfattning i ärendet och öppnar en PR med föreslaget nytt värde och citat. Sätter alltid `verifierad` till `false`. Slår aldrig ihop något.
+- `rutiner/nyheter.md`: körs varje måndag. Söker officiella källor efter regler som saknas i `regler.json` och skapar ett ärende per fynd (etiketten `regelnyhet`). Ändrar ingen kod.
+
 ## Skriva svarstexterna
 
 Texterna i `data/svar.json` är utkast. Skriv över dem med egna. Platshållare:
