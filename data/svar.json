@@ -1,6 +1,5 @@
 {
-  "_om": "Utkast som ägaren skriver över. Platshållare: {regel-id} = värde med enhet, {regel-id.varde} = bara värdet, {svar.fraga-id} = besökarens svar, {inkomstSek}, {inkomstThb}, {vaxelkurs}, {vaxelkursDatum}. Skriv ren text, ingen HTML.",
-
+  "_om": "Utkast som ägaren skriver över. Platshållare: {regel-id} = värde med enhet, {regel-id.varde} = bara värdet, {regel-id.villkor} = regelns villkor, {svar.fraga-id} = besökarens svar, {vaxelkurs}, {vaxelkursDatum}. Skriv ren text, ingen HTML. Siffror ska komma från platshållare, så att de alltid stämmer med data/regler.json. Skriv bara påståenden som går att avgöra från besökarens svar.",
   "granssnitt": {
     "introRubrik": "Visumtestet för dig som vill bo i Thailand",
     "introText": "Svara på några korta frågor så får du din troliga visumväg, vad du behöver uppfylla, om thailändsk skatt berör dig och en vanlig fallgrop. Det är gratis och tar ungefär två minuter.",
@@ -15,7 +14,6 @@
     "banderollTexter": "Hjälptexter som saknas:",
     "borjaOm": "Börja om"
   },
-
   "gemensamt": {
     "rubrikVag": "Din troliga väg",
     "rubrikKrav": "Det här behöver du uppfylla",
@@ -25,15 +23,11 @@
     "kontrollerad": "Senast kontrollerad mot källa: {datum}",
     "ejKontrollerad": "Senast kontrollerad mot källa: ej kontrollerad",
     "friskrivning": "Det här är allmän information, inte personlig rådgivning. Regler och belopp ändras, och din situation kan innehålla detaljer som ett formulär inte fångar.",
-    "status": {
-      "ok": "Stämmer med ditt svar",
-      "nara": "Du ligger nära gränsen – kontrollera ditt exakta belopp",
-      "under": "Stämmer inte med ditt svar",
-      "info": "Bra att veta",
-      "okant": "Kan inte jämföras"
+    "familj": {
+      "make": "Du har make eller maka i Thailand. Det finns en separat familjeväg, som det här testet inte går in på.",
+      "barn": "Du har barn i Thailand. Det finns en separat familjeväg, som det här testet inte går in på."
     }
   },
-
   "epost": {
     "rubrik": "Vill du ha ditt svar mejlat till dig, plus besked när reglerna ändras?",
     "rubrikUnderArbete": "Vill du ha besked när ditt spår är klart?",
@@ -48,7 +42,6 @@
     "felSamtycke": "Kryssa i rutan om du vill att vi sparar din adress.",
     "felSkick": "Det gick inte att skicka just nu. Försök igen om en stund."
   },
-
   "enheter": {
     "THB/manad": "baht i månaden",
     "THB": "baht",
@@ -60,68 +53,132 @@
     "dagar": "dagar",
     "text": ""
   },
-
   "spar": {
-    "sasong": {
+    "sasongKort": {
       "vag": {
         "namn": "Visumfri vistelse",
-        "mening": "Du räknar med kortare vistelser, och då är din troliga väg visumfri vistelse för svenska medborgare: {visumfri-vistelse-dagar}."
+        "mening": "Du räknar med vistelser på högst {visumfri-vistelse-dagar} åt gången, och då är din troliga väg visumfri vistelse för svenska medborgare."
       },
       "krav": [
         {
           "regel": "visumfri-vistelse-dagar",
-          "jamfor": "info",
-          "text": "Svenska medborgare kan vistas visumfritt i {visumfri-vistelse-dagar}."
+          "jamfor": "vistelse",
+          "text": "Visumfri vistelse gäller högst {visumfri-vistelse-dagar} per besök. Längre vistelser kräver visum.",
+          "status": {
+            "ok": "Din planerade vistelse ryms inom den visumfria tiden",
+            "under": "Din planerade vistelse är längre än den visumfria tiden, så visum krävs",
+            "okant": "Går inte att avgöra från dina svar"
+          }
         },
         {
           "regel": "garantipension-max-vistelse",
-          "jamfor": "dagar",
-          "text": "Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}. Ditt svar: {svar.dagar}."
+          "jamfor": "info",
+          "text": "Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}.",
+          "status": {
+            "info": "Bra att veta"
+          }
         },
         {
           "regel": "skatt-hemvist-dagar",
           "jamfor": "dagar",
-          "text": "Gränsen för thailändsk skatterättslig hemvist är {skatt-hemvist-dagar}. Ditt svar: {svar.dagar}."
+          "text": "Gränsen för thailändsk skatterättslig hemvist är {skatt-hemvist-dagar}.",
+          "status": {
+            "ok": "Du räknar med färre dagar än gränsen",
+            "okant": "Går inte att avgöra från dina svar"
+          }
         }
       ],
       "skatt": {
-        "farre": "Du räknar med färre än {skatt-hemvist-dagar.varde} dagar per år, så gränsen för thailändsk skatterättslig hemvist berör dig troligen inte.",
-        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per år, så gränsen för thailändsk skatt kan beröra dig.",
-        "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per år kan thailändsk skatt beröra dig."
+        "farre": "Thailändsk skatt berör inte pengar som du för in så länge du stannar under {skatt-hemvist-dagar}."
       },
-      "fallgrop": "Räkna dina dagar. Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}, men {garantipension-bosattning-utomlands}.",
+      "fallgrop": "Räkna dina dagar, både per besök och per kalenderår. Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}, men {garantipension-bosattning-utomlands}.",
       "erbjudande": {
         "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",
         "knapp": "Läs guiden"
       }
     },
-
+    "sasongLang": {
+      "vag": {
+        "namn": "Visum för längre vistelse",
+        "mening": "Du räknar med vistelser som är längre än {visumfri-vistelse-dagar} åt gången, och då är din troliga väg ett visum, eftersom visumfri vistelse gäller högst {visumfri-vistelse-dagar} per besök."
+      },
+      "krav": [
+        {
+          "regel": "visumfri-vistelse-dagar",
+          "jamfor": "vistelse",
+          "text": "Visumfri vistelse gäller högst {visumfri-vistelse-dagar} per besök. Längre vistelser kräver visum.",
+          "status": {
+            "ok": "Din planerade vistelse ryms inom den visumfria tiden",
+            "under": "Din planerade vistelse är längre än den visumfria tiden, så visum krävs",
+            "okant": "Går inte att avgöra från dina svar"
+          }
+        },
+        {
+          "regel": "garantipension-max-vistelse",
+          "jamfor": "info",
+          "text": "Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}.",
+          "status": {
+            "info": "Bra att veta"
+          }
+        },
+        {
+          "regel": "skatt-hemvist-dagar",
+          "jamfor": "dagar",
+          "text": "Gränsen för thailändsk skatterättslig hemvist är {skatt-hemvist-dagar}.",
+          "status": {
+            "ok": "Du räknar med färre dagar än gränsen",
+            "okant": "Går inte att avgöra från dina svar"
+          }
+        }
+      ],
+      "skatt": {
+        "farre": "Thailändsk skatt berör inte pengar som du för in så länge du stannar under {skatt-hemvist-dagar}."
+      },
+      "fallgrop": "Visumfri tid räknas per besök, och längre vistelser kräver visum. Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}, men {garantipension-bosattning-utomlands}.",
+      "erbjudande": {
+        "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",
+        "knapp": "Läs guiden"
+      }
+    },
     "pension": {
       "vag": {
         "namn": "Non-O-visum för pensionärer",
-        "mening": "Du uppger pension, kapital eller en kombination och planerar längre vistelser, och då är din troliga väg Non-O-visum för pensionärer. LTR-visum för pensionärer är ett alternativ."
+        "mening": "Du uppger pension, kapital eller en kombination och planerar längre vistelser, och då är din troliga väg Non-O-visum för pensionärer. LTR-visum för pensionärer kan vara ett alternativ om din passiva inkomst är minst {ltr-inkomstkrav}."
       },
       "krav": [
         {
           "regel": "non-o-inkomstkrav",
           "jamfor": "inkomst",
-          "text": "Non-O, pension: inkomst på minst {non-o-inkomstkrav}. Din inkomst, {inkomstSek} per månad, motsvarar ungefär {inkomstThb} med kursen {vaxelkurs} ({vaxelkursDatum})."
+          "text": "Inkomst på minst {non-o-inkomstkrav}.",
+          "status": {
+            "ok": "Din inkomst ligger över kravet. Du uppfyller inkomstkravet",
+            "nara": "Du ligger nära gränsen – kontrollera ditt exakta belopp",
+            "under": "Din inkomst ligger under kravet",
+            "okant": "Går inte att avgöra från dina svar"
+          }
         },
         {
           "regel": "non-o-bankkrav",
           "jamfor": "bank",
-          "text": "Alternativt minst {non-o-bankkrav} på ett thailändskt bankkonto. Du svarade: {svar.bank}."
+          "text": "Alternativt minst {non-o-bankkrav} på ett thailändskt bankkonto. {non-o-bankkrav.villkor} Därefter ska minst {non-o-bank-minsta-saldo} finnas kvar.",
+          "status": {
+            "nara": "Det går inte att avgöra från ditt svar – kontrollera ditt exakta belopp",
+            "under": "Du kan inte låsa ett större belopp, så det här alternativet passar inte",
+            "okant": "Går inte att avgöra från dina svar"
+          }
         },
         {
-          "regel": "ltr-minalder",
-          "jamfor": "alder",
-          "text": "LTR för pensionärer: minst {ltr-minalder} och {ltr-inkomstkrav}. Du är {svar.alder}. Inkomstkravet behöver du kontrollera själv."
+          "regel": "non-o-kombination",
+          "jamfor": "okant",
+          "text": "Eller en kombination av årsinkomst och bankinsättning som tillsammans är minst {non-o-kombination}.",
+          "status": {
+            "okant": "Går inte att avgöra från dina svar"
+          }
         }
       ],
       "skatt": {
-        "farre": "Du räknar med färre än {skatt-hemvist-dagar.varde} dagar per år, så gränsen för thailändsk skatterättslig hemvist berör dig troligen inte.",
-        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per år, så gränsen för thailändsk skatt kan beröra dig (SINK-avdrag på svensk pension: {sink-avdrag}).",
-        "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per år kan thailändsk skatt beröra dig (SINK-avdrag på svensk pension: {sink-avdrag})."
+        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per kalenderår, så du blir skatterättsligt bosatt i Thailand, och pengar som förs in kan beskattas där. SINK-avdrag på svensk pension: {sink-avdrag}.",
+        "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per kalenderår blir du skatterättsligt bosatt i Thailand, och då kan pengar som förs in beskattas där. SINK-avdrag på svensk pension: {sink-avdrag}."
       },
       "fallgrop": "Garantipension {garantipension-bosattning-utomlands}, men kan behållas vid vistelse på högst {garantipension-max-vistelse}. Kontrollera det innan du flyttar.",
       "erbjudande": {
@@ -129,7 +186,6 @@
         "knapp": "Läs guiden"
       }
     },
-
     "underArbete": {
       "rubrik": "Ditt spår är under arbete",
       "text": "Vi har inget färdigt svar för din situation än. Lämna din e-postadress så får du besked när det är klart."

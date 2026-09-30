@@ -56,11 +56,13 @@ Fyll filen med följande startvärden, samtliga som overifierade:
 5. Kan du låsa ett större belopp på ett thailändskt bankkonto? – Ja / Nej / Kanske, beror på beloppet
 6. Har du familj i Thailand? – Nej / Ja, make eller maka / Ja, barn
 
+I säsongsspåret ställs dessutom en fråga direkt efter fråga 1: Hur länge varar varje vistelse? – Högst 30 dagar åt gången / Längre än 30 dagar åt gången.
+
 Visa hjälptexterna under frågorna 1, 2, 4 och 5. Texterna finns i fliken Visumguiden och läggs in i `data/fragor.json`.
 
 ## Förgrening
 
-* Fråga 1, färre än 180 dagar: säsongsspåret. Fråga 2 och 6, sedan svar.
+* Fråga 1, färre än 180 dagar: säsongsspåret. Fråga om vistelsens längd, sedan fråga 2 och 6, sedan svar.
 * Fråga 1, 180 dagar eller fler eller vet inte än: vidare till fråga 2.
 * Fråga 2, under 50: spåret är under arbete.
 * Fråga 3, lön eller eget företag: spåret är under arbete.
@@ -123,3 +125,4 @@ Svarstexterna skrivs av ägaren. Bygg dem som redigerbara mallar i `data/svar.js
 * `vite.config.ts` avgör förhandsvisning eller produktion (`__FORHANDSVISNING__`): `VERCEL_ENV=preview`, `CONTEXT=deploy-preview|branch-deploy` och `--mode development` är förhandsvisningar utan byggstopp men med röd banderoll. Bara produktionsbygget stoppas av overifierade regler.
 * Fråga 2 "under 50" ger spår under arbete även i säsongsspåret, enligt förgreningen ovan.
 * Testa flödet på mobilbredd (390 px) efter ändringar i UI.
+* `tests/logik-matris.test.ts` prövar alla vägar mot kraven: alla siffror i ett svar måste finnas i `regler.json` eller `config.json`, inget påstående utan att villkoret går att avgöra från svaren, LTR bara villkorat, familj bara som notis om en separat väg, SINK efter datum. Använd inte `{inkomstSek}`/`{inkomstThb}` i svaren. Svarsmallarna är `sasongKort`, `sasongLang` och `pension` i `data/svar.json`, och varje kravrad har egna etiketter per utfall. `npm run logikmatris` skriver `rapporter/logik-matris.md`.

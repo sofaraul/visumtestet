@@ -53,7 +53,7 @@ export interface Config {
 }
 
 export type Status = 'ok' | 'nara' | 'under' | 'info' | 'okant'
-export type Jamfor = 'info' | 'inkomst' | 'bank' | 'alder' | 'dagar'
+export type Jamfor = 'info' | 'okant' | 'inkomst' | 'bank' | 'dagar' | 'vistelse'
 export type SparNamn = 'sasong' | 'pension'
 export type Slut = SparNamn | 'underArbete'
 
@@ -61,6 +61,8 @@ export interface KravMall {
   regel: string
   jamfor: Jamfor
   text: string
+  /** Etikett per utfall. Skriv bara de utfall som går att avgöra från svaren. */
+  status: Partial<Record<Status, string>>
 }
 
 export interface SparMall {
@@ -82,12 +84,14 @@ export interface SvarInnehall {
     kontrollerad: string
     ejKontrollerad: string
     friskrivning: string
-    status: Record<Status, string>
+    /** Notis när besökaren har familj i Thailand, per svarsalternativ. Bara att en separat väg finns. */
+    familj: Record<string, string>
   }
   epost: Record<string, string>
   enheter: Record<string, string>
   spar: {
-    sasong: SparMall
+    sasongKort: SparMall
+    sasongLang: SparMall
     pension: SparMall
     underArbete: { rubrik: string; text: string }
   }

@@ -108,8 +108,9 @@ Texterna i `data/svar.json` är utkast. Skriv över dem med egna. Platshållare:
 | --- | --- |
 | `{non-o-inkomstkrav}` | Värdet med enhet, t.ex. "65 000 baht i månaden". Regelns id styr. |
 | `{non-o-inkomstkrav.varde}` | Bara värdet, t.ex. "65 000". |
-| `{svar.dagar}` | Besökarens svar på frågan med id `dagar` (`dagar`, `alder`, `pengar`, `inkomst`, `bank`, `familj`). |
-| `{inkomstSek}`, `{inkomstThb}` | Vald inkomst och omräkningen till baht. |
+| `{non-o-bankkrav.villkor}` | Regelns `villkor`, t.ex. bankkravets tidsvillkor. |
+| `{svar.dagar}` | Besökarens svar på frågan med id `dagar` (`dagar`, `vistelse`, `alder`, `pengar`, `inkomst`, `bank`, `familj`). |
+| `{inkomstSek}`, `{inkomstThb}` | Vald inkomst och omräkningen till baht. **Använd dem inte i svaren:** siffrorna finns inte i `regler.json` och logiktestet underkänner dem. |
 | `{vaxelkurs}`, `{vaxelkursDatum}` | Kursen och datumet från `config.json`. |
 
 Enhetsetiketterna ("baht i månaden" osv.) ligger under `enheter` i samma fil. Saknas ett värde visas `[uppgift saknas]`, så du ser det direkt. Texten är ren text, ingen HTML.
@@ -139,6 +140,17 @@ Lägg in texterna från fliken Visumguiden i `hjalptext` i `data/fragor.json` f�
 Sajten saknar backend, så formuläret skickas via tjänsten [FormSubmit](https://formsubmit.co) till mottagaren i `config.json`. Första gången någon skickar något får mottagaren ett mejl från FormSubmit som måste bekräftas. Skicka ett testmejl själv först. Vill du byta tjänst ändrar du `epost.tjanst`; den ska ta emot en JSON-post med `email`, `samtycke` och `spar`.
 
 Bara e-postadressen, samtycket och vilket spår svaret gäller skickas. Svaren på frågorna lämnar aldrig webbläsaren. Integritetstexten står i `data/svar.json` under `epost.integritet`. Den nämner FormSubmit, så ändra den om du byter tjänst.
+
+## Logiktest
+
+`npm test` bygger svaret för varje möjlig väg genom frågorna (176 vägar, före och efter 2027-01-01, med en fast växelkurs) och kontrollerar dem mot kraven i `tests/logik-matris.test.ts`:
+
+- varje siffra i ett svar finns i `regler.json` eller `config.json`,
+- varje svar har rubriken "Din troliga väg", ansvarsfriskrivningen och kontrolldatum,
+- inget svar påstår att något är uppfyllt om det inte går att avgöra från svaren,
+- kraven per spår (säsong, pension, LTR bara villkorat, under arbete, familj, SINK efter datum).
+
+Ändrar du en mall i `data/svar.json` och något krav bryts pekar testet ut vilken väg och vilken mening. `npm run logikmatris` skriver `rapporter/logik-matris.md` med en rad per väg.
 
 ## Utveckla
 

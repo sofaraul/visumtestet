@@ -9,6 +9,8 @@ export interface MallKontext {
   varden: Record<string, string>
   /** Fylls på med id för varje regel som mallen hämtat värde från. */
   anvanda: Set<string>
+  /** Datum (ÅÅÅÅ-MM-DD) som datumstyrda regler värderas mot. Standard är idag. */
+  idag?: string
 }
 
 const talFormat = new Intl.NumberFormat('sv-SE')
@@ -22,16 +24,16 @@ function visaVarde(v: number | string): string {
 function losUpp(nyckel: string, ctx: MallKontext): string {
   if (nyckel in ctx.varden) return ctx.varden[nyckel]
 
-  const barVarde = nyckel.endsWith('.varde')
-  const regelId = barVarde ? nyckel.slice(0, -'.varde'.length) : nyckel
+  const [regelId, del] = nyckel.split(/\.(?=varde$|villkor$)/)
   const regel = ctx.regler.get(regelId)
   if (!regel) return `[okänd platshållare: ${nyckel}]`
 
   ctx.anvanda.add(regel.id)
-  const gallande = gallandeVarde(regel)
+  if (del === 'villkor') return regel.villkor ?? ctx.saknas
+  const gallande = gallandeVarde(regel, ctx.idag)
   if (gallande === null || gallande === '') return ctx.saknas
   const varde = visaVarde(gallande)
-  if (barVarde) return varde
+  if (del === 'varde') return varde
   const enhet = ctx.enheter[regel.enhet] ?? regel.enhet
   return enhet ? `${varde} ${enhet}` : varde
 }

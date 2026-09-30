@@ -1,6 +1,6 @@
 import { h } from './dom'
 import { fragor, innehall } from './data'
-import type { Svar } from './svar'
+import { byggUnderArbete, type Svar } from './svar'
 import type { Fraga, Status } from './types'
 import { epostFormular } from './epost'
 
@@ -73,26 +73,30 @@ function sektion(rubrik: string, ...barn: (Node | string)[]): HTMLElement {
 }
 
 export function svarSkarm(s: Svar, a: Atgarder): HTMLElement {
-  const gm = innehall.gemensamt
   const epost = epostFormular(innehall.epost.rubrik, s.spar)
   return h(
     'article',
     {},
     topp(a),
-    h('h1', { tabindex: '-1' }, gm.rubrikVag),
-    h('section', { class: 'kort' }, h('p', { class: 'vagnamn' }, s.vag.namn), h('p', {}, s.vag.mening)),
+    h('h1', { tabindex: '-1' }, s.rubriker.vag),
+    h('section', { class: 'kort' }, h('p', { class: 'vagnamn' }, s.vag.namn), h('p', {}, s.vag.mening), s.notis && h('p', { class: 'notis' }, s.notis)),
     sektion(
-      gm.rubrikKrav,
+      s.rubriker.krav,
       h(
         'ul',
         { class: 'krav' },
         ...s.krav.map((k) =>
-          h('li', { class: `krav-${k.status}` }, h('span', { class: 'status' }, h('span', { 'aria-hidden': 'true', class: 'ikon' }, ikon[k.status]), k.etikett), h('span', {}, k.text)),
+          h(
+            'li',
+            { class: `krav-${k.status}` },
+            k.etikett && h('span', { class: 'status' }, h('span', { 'aria-hidden': 'true', class: 'ikon' }, ikon[k.status]), k.etikett),
+            h('span', {}, k.text),
+          ),
         ),
       ),
     ),
-    sektion(gm.rubrikSkatt, h('p', {}, s.skatt)),
-    sektion(gm.rubrikFallgrop, h('p', {}, s.fallgrop)),
+    sektion(s.rubriker.skatt, h('p', {}, s.skatt)),
+    sektion(s.rubriker.fallgrop, h('p', {}, s.fallgrop)),
     h(
       'section',
       { class: 'kort erbjudande' },
@@ -100,14 +104,14 @@ export function svarSkarm(s: Svar, a: Atgarder): HTMLElement {
       s.erbjudande.lank && h('a', { class: 'knapp', href: s.erbjudande.lank }, s.erbjudande.knapp),
     ),
     h('p', { class: 'kontroll' }, s.kontrollText),
-    h('p', { class: 'friskrivning' }, gm.friskrivning),
+    h('p', { class: 'friskrivning' }, s.friskrivning),
     epost,
     h('button', { class: 'knapp sekundar', type: 'button', onclick: a.omstart }, g.borjaOm),
   )
 }
 
 export function underArbeteSkarm(a: Atgarder): HTMLElement {
-  const u = innehall.spar.underArbete
+  const u = byggUnderArbete(innehall)
   return h(
     'article',
     {},
@@ -115,6 +119,7 @@ export function underArbeteSkarm(a: Atgarder): HTMLElement {
     h('h1', { tabindex: '-1' }, u.rubrik),
     h('p', {}, u.text),
     epostFormular(innehall.epost.rubrikUnderArbete, 'underArbete'),
+    h('p', { class: 'friskrivning' }, u.friskrivning),
     h('button', { class: 'knapp sekundar', type: 'button', onclick: a.omstart }, g.borjaOm),
   )
 }

@@ -12,10 +12,13 @@ export function jamforInkomst(alt: Alternativ | undefined, kravThb: number | nul
   return min > kravThb ? 'ok' : 'under'
 }
 
+/**
+ * Frågan gäller "ett större belopp" utan att ange hur stort. Ett Ja eller Kanske kan alltså
+ * aldrig avgöra om kravet nås. Bara ett Nej går att avgöra: då kan kontokravet inte nås.
+ */
 export const jamforBank = (svar: string | undefined): Status =>
-  svar === 'ja' ? 'ok' : svar === 'kanske' ? 'nara' : svar === 'nej' ? 'under' : 'okant'
+  svar === 'nej' ? 'under' : svar === 'ja' || svar === 'kanske' ? 'nara' : 'okant'
 
-export const jamforAlder = (svar: string | undefined): Status =>
-  svar === 'minst' ? 'ok' : svar === 'under' ? 'under' : 'okant'
+export const jamforVistelse = (svar: string | undefined): Status => (svar === 'hogst' ? 'ok' : svar === 'langre' ? 'under' : 'okant')
 
 export const jamforDagar = (svar: string | undefined): Status => (svar === 'farre' ? 'ok' : 'okant')

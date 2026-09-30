@@ -20,6 +20,21 @@
       ]
     },
     {
+      "id": "vistelse",
+      "text": "Hur länge varar varje vistelse?",
+      "hjalptext": null,
+      "alternativ": [
+        {
+          "id": "hogst",
+          "text": "Högst 30 dagar åt gången"
+        },
+        {
+          "id": "langre",
+          "text": "Längre än 30 dagar åt gången"
+        }
+      ]
+    },
+    {
       "id": "alder",
       "text": "Hur gammal är du?",
       "hjalptext": "Flera visum för längre vistelse har 50 år som nedre gräns.",

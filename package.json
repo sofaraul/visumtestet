@@ -11,7 +11,8 @@
     "kallor": "node scripts/kallor.mjs",
     "test": "vitest run",
     "kontrollera": "node scripts/kontrollera.mjs",
-    "vaxelkurs": "node scripts/vaxelkurs.mjs"
+    "vaxelkurs": "node scripts/vaxelkurs.mjs",
+    "logikmatris": "vite-node scripts/logikmatris.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.3",

@@ -10,9 +10,10 @@ import fragorJson from '../data/fragor.json'
 import svarJson from '../data/svar.json'
 
 describe('förgrening', () => {
-  it('färre än gränsen ger säsongsspåret: fråga 2 och 6, sedan svar', () => {
-    expect(beraknaVag({ dagar: 'farre' }).fragor).toEqual(['dagar', 'alder'])
-    expect(beraknaVag({ dagar: 'farre', alder: 'minst', familj: 'nej' })).toMatchObject({ slut: 'sasong', total: 3 })
+  it('färre än gränsen ger säsongsspåret: vistelsens längd, fråga 2 och 6, sedan svar', () => {
+    expect(beraknaVag({ dagar: 'farre' }).fragor).toEqual(['dagar', 'vistelse'])
+    expect(beraknaVag({ dagar: 'farre', vistelse: 'hogst' }).fragor).toEqual(['dagar', 'vistelse', 'alder'])
+    expect(beraknaVag({ dagar: 'farre', vistelse: 'langre', alder: 'minst', familj: 'nej' })).toMatchObject({ slut: 'sasong', total: 4 })
   })
   it('vet inte och gränsen eller fler går vidare till fråga 2', () => {
     for (const dagar of ['minst', 'vetInte']) expect(beraknaVag({ dagar }).fragor).toEqual(['dagar', 'alder'])
@@ -45,7 +46,11 @@ describe('jämförelse av inkomst', () => {
     expect(jamforInkomst(alt(10, 20), 30, null)).toBe('okant')
     expect(jamforInkomst(alt(10, 20), null, kurs)).toBe('okant')
   })
-  it('bank: kanske är nära gränsen', () => expect(jamforBank('kanske')).toBe('nara'))
+  it('bank: Ja och Kanske avgör inget eftersom beloppet inte anges, Nej avgör', () => {
+    expect(jamforBank('ja')).toBe('nara')
+    expect(jamforBank('kanske')).toBe('nara')
+    expect(jamforBank('nej')).toBe('under')
+  })
 })
 
 describe('mallar', () => {
@@ -113,12 +118,12 @@ describe('data skild från logik', () => {
   it('alla platshållare i svar.json pekar på en regel eller ett känt värde', () => {
     const ids = new Set(regler.map((r) => r.id))
     const svarId = new Set(fragorJson.fragor.map((f) => `svar.${f.id}`))
-    const extra = new Set(['inkomstSek', 'inkomstThb', 'vaxelkurs', 'vaxelkursDatum', 'datum', 'n', 'total', 'epost'])
+    const extra = new Set(['vaxelkurs', 'vaxelkursDatum', 'datum', 'n', 'total', 'epost'])
     const { _om, ...mallar } = svarJson
     void _om
     const text = JSON.stringify(mallar)
     for (const [, nyckel] of text.matchAll(/\{([A-Za-z0-9_.-]+)\}/g)) {
-      expect(ids.has(nyckel.replace(/\.varde$/, '')) || svarId.has(nyckel) || extra.has(nyckel), nyckel).toBe(true)
+      expect(ids.has(nyckel.replace(/\.(varde|villkor)$/, '')) || svarId.has(nyckel) || extra.has(nyckel), nyckel).toBe(true)
     }
   })
   it('koden innehåller inga belopp eller gränser', () => {
