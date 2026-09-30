@@ -5,8 +5,9 @@
     "tjanst": "https://formsubmit.co/ajax/{mottagare}"
   },
   "vaxelkurs": {
-    "thbPerSek": null,
-    "datum": null
+    "thbPerSek": 3.3636,
+    "datum": "2026-09-30",
+    "kalla": "ECB:s referenskurser (EUR/THB och EUR/SEK)"
   },
   "avrundningKr": 100
 }
