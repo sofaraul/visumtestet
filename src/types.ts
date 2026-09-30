@@ -4,6 +4,14 @@ export interface Period {
   varde: number | string | null
 }
 
+export interface Kalla {
+  kalla: string
+  citat: string | null
+  metod: string
+  sidhash: string | null
+  kontrolleraVarde?: (number | string)[]
+}
+
 export interface Regel {
   id: string
   /** Ett värde, eller en lista med perioder för datumstyrda regler. */
@@ -13,6 +21,14 @@ export interface Regel {
   kalla: string | null
   senastKontrollerad: string | null
   verifierad: boolean
+  // Källkontroll, se README. Används inte av sajten, bara av scripts/.
+  citat?: string | null
+  metod?: string
+  bekraftad?: { av: string; datum: string } | null
+  sidhash?: string | null
+  extraKallor?: Kalla[]
+  kontrolleraVarde?: (number | string)[]
+  felIRad?: number
 }
 
 export interface Alternativ {
