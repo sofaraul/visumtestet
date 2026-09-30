@@ -89,7 +89,7 @@
         "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per år, så gränsen för thailändsk skatt kan beröra dig.",
         "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per år kan thailändsk skatt beröra dig."
       },
-      "fallgrop": "Räkna dina dagar. Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}, och upphör vid bosättning utanför Sverige.",
+      "fallgrop": "Räkna dina dagar. Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}, men {garantipension-bosattning-utomlands}.",
       "erbjudande": {
         "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",
         "knapp": "Läs guiden"
@@ -123,7 +123,7 @@
         "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per år, så gränsen för thailändsk skatt kan beröra dig (SINK-avdrag på svensk pension: {sink-avdrag}).",
         "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per år kan thailändsk skatt beröra dig (SINK-avdrag på svensk pension: {sink-avdrag})."
       },
-      "fallgrop": "Garantipension {garantipension-bosattning-utomlands} vid bosättning utanför Sverige, men kan behållas vid vistelse på högst {garantipension-max-vistelse}. Kontrollera det innan du flyttar.",
+      "fallgrop": "Garantipension {garantipension-bosattning-utomlands}, men kan behållas vid vistelse på högst {garantipension-max-vistelse}. Kontrollera det innan du flyttar.",
       "erbjudande": {
         "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",
         "knapp": "Läs guiden"

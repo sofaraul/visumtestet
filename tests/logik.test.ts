@@ -4,6 +4,7 @@ import { beraknaVag, rensaSvar } from '../src/flode'
 import { jamforBank, jamforInkomst } from '../src/jamfor'
 import { fyllMall, type MallKontext } from '../src/mall'
 import { problemMedRegler } from '../scripts/regler.mjs'
+import { gallandeVarde } from '../scripts/gallande.mjs'
 import regler from '../data/regler.json'
 import fragorJson from '../data/fragor.json'
 import svarJson from '../data/svar.json'
@@ -69,15 +70,44 @@ describe('mallar', () => {
   })
 })
 
+describe('datumstyrda regler', () => {
+  const sink = regler.find((r) => r.id === 'sink-avdrag')!
+  it('rätt värde visas automatiskt efter datum', () => {
+    expect(gallandeVarde(sink, '2026-01-01')).toBe(22.5)
+    expect(gallandeVarde(sink, '2026-12-31')).toBe(22.5)
+    expect(gallandeVarde(sink, '2027-01-01')).toBe(20)
+    expect(gallandeVarde(sink, '2030-06-01')).toBe(20)
+  })
+  it('regel utan periodstart ger inget värde före start', () => {
+    const visumfri = regler.find((r) => r.id === 'visumfri-vistelse-dagar')!
+    expect(gallandeVarde(visumfri, '2026-09-14')).toBeNull()
+    expect(gallandeVarde(visumfri, '2026-09-15')).toBe(30)
+  })
+  it('vanlig regel ger sitt värde oavsett datum', () => {
+    expect(gallandeVarde({ varde: 65000 }, '2001-01-01')).toBe(65000)
+  })
+  it('mallen visar värdet som gäller idag', () => {
+    const c = (): MallKontext => ({ regler: new Map([[sink.id, sink]]), enheter: { procent: 'procent' }, saknas: '?', varden: {}, anvanda: new Set() })
+    expect(fyllMall('{sink-avdrag.varde}', c())).toMatch(/^(22,5|20)$/)
+  })
+})
+
 describe('data skild från logik', () => {
   it('varje regel har fälten från uppdraget', () => {
-    for (const r of regler) expect(Object.keys(r).sort()).toEqual(['enhet', 'id', 'kalla', 'senastKontrollerad', 'varde', 'verifierad'])
+    for (const r of regler) for (const falt of ['id', 'varde', 'enhet', 'kalla', 'senastKontrollerad', 'verifierad']) expect(r, r.id).toHaveProperty(falt)
   })
   it('byggkontrollen stoppar overifierade regler och släpper fullständiga', () => {
-    expect(problemMedRegler(regler).length).toBe(regler.length)
     const ok = { id: 'r', varde: 1, enhet: 'x', kalla: 'https://x', senastKontrollerad: '2026-01-01', verifierad: true }
     expect(problemMedRegler([ok])).toEqual([])
+    expect(problemMedRegler([{ ...ok, verifierad: false }]).length).toBe(1)
     expect(problemMedRegler([{ ...ok, senastKontrollerad: null }]).length).toBe(1)
+    expect(problemMedRegler([{ ...ok, kalla: null }]).length).toBe(1)
+    expect(problemMedRegler([{ ...ok, varde: null }]).length).toBe(1)
+  })
+  it('regler vars period inte har börjat gälla stoppar bygget', () => {
+    const regel = { id: 'r', varde: [{ fran: '2026-09-15', varde: 30 }], enhet: 'dagar', kalla: 'https://x', senastKontrollerad: '2026-09-30', verifierad: true }
+    expect(problemMedRegler([regel], '2026-09-14').length).toBe(1)
+    expect(problemMedRegler([regel], '2026-09-15')).toEqual([])
   })
   it('alla platshållare i svar.json pekar på en regel eller ett känt värde', () => {
     const ids = new Set(regler.map((r) => r.id))

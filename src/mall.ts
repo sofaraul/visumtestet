@@ -1,3 +1,4 @@
+import { gallandeVarde } from '../scripts/gallande.mjs'
 import type { Regel } from './types'
 
 export interface MallKontext {
@@ -27,8 +28,9 @@ function losUpp(nyckel: string, ctx: MallKontext): string {
   if (!regel) return `[okänd platshållare: ${nyckel}]`
 
   ctx.anvanda.add(regel.id)
-  if (regel.varde === null || regel.varde === '') return ctx.saknas
-  const varde = visaVarde(regel.varde)
+  const gallande = gallandeVarde(regel)
+  if (gallande === null || gallande === '') return ctx.saknas
+  const varde = visaVarde(gallande)
   if (barVarde) return varde
   const enhet = ctx.enheter[regel.enhet] ?? regel.enhet
   return enhet ? `${varde} ${enhet}` : varde

@@ -1,10 +1,14 @@
 // npm run kallor: lista alla regler med källa och status.
+import { arDatumstyrd } from './gallande.mjs'
 import { laRegler, laConfig, laFragor, problemMedRegler, saknadKonfiguration, saknadeHjalptexter } from './regler.mjs'
 
 const regler = laRegler()
 const problem = new Map(problemMedRegler(regler).map((p) => [p.id, p.orsaker]))
 
-const fmt = (r) => (r.varde === null ? '(tomt)' : `${r.varde} ${r.enhet}`)
+const fmt = (r) => {
+  if (arDatumstyrd(r)) return r.varde.map((p) => `${p.varde} ${r.enhet} (${p.fran ?? 'början'} till ${p.till ?? 'tills vidare'})`).join('; ')
+  return r.varde === null ? '(tomt)' : `${r.varde} ${r.enhet}`
+}
 
 console.log('\nREGLER – bocka av en i taget genom att öppna källan, jämföra och sedan\nsätta "verifierad": true och "senastKontrollerad": "ÅÅÅÅ-MM-DD" i data/regler.json.\n')
 
@@ -12,6 +16,7 @@ regler.forEach((r, i) => {
   const ok = !problem.has(r.id)
   console.log(`${String(i + 1).padStart(2)}. [${ok ? 'x' : ' '}] ${r.id}`)
   console.log(`      värde:        ${fmt(r)}`)
+  if (r.villkor) console.log(`      villkor:      ${r.villkor}`)
   console.log(`      källa:        ${r.kalla ?? 'SAKNAS – ange en källa'}`)
   console.log(`      kontrollerad: ${r.senastKontrollerad ?? 'aldrig'}`)
   if (!ok) console.log(`      status:       OVERIFIERAD (${problem.get(r.id).join(', ')})`)

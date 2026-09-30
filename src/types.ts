@@ -1,7 +1,15 @@
+export interface Period {
+  fran?: string | null
+  till?: string | null
+  varde: number | string | null
+}
+
 export interface Regel {
   id: string
-  varde: number | string | null
+  /** Ett värde, eller en lista med perioder för datumstyrda regler. */
+  varde: number | string | null | Period[]
   enhet: string
+  villkor?: string
   kalla: string | null
   senastKontrollerad: string | null
   verifierad: boolean

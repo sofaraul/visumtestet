@@ -32,10 +32,24 @@ Gratis visumtest på svenska för dig som vill bo i Thailand längre än en seme
 
 **Produktionsbygget stoppas** (`npm run build`) om någon regel har `"verifierad": false`, saknar värde, källa eller datum. I utvecklingsläge visas i stället en röd banderoll: *Innehåller overifierade uppgifter*.
 
-Reglerna som saknar uppgift just nu:
+### Regler som ändras över tid
 
-- `visumfri-vistelse-dagar` har inget värde och ingen källa. Fyll i båda.
-- Alla övriga är startvärden från uppdraget och overifierade.
+En regel kan ha olika värde under olika perioder. Då är `varde` en lista i stället för ett tal. Rätt värde väljs automatiskt efter dagens datum (svensk tid), både i svaren och i bygget:
+
+```json
+{
+  "id": "sink-avdrag",
+  "varde": [
+    { "fran": null, "till": "2026-12-31", "varde": 22.5 },
+    { "fran": "2027-01-01", "till": null, "varde": 20 }
+  ],
+  "enhet": "procent"
+}
+```
+
+`fran` och `till` är inklusive och kan vara `null`. Gäller ingen period idag saknas värdet och produktionsbygget stoppas. Webbplatsen byggs om vid publicering, så låt en ny driftsättning ske efter ett datumbyte (se även bygget på Vercel/Netlify). Sidans besökare får rätt värde direkt eftersom datumet avgörs i webbläsaren.
+
+Regler kan också ha `villkor`, en text om vad värdet kräver. Villkoret visas inte i svaren om du inte själv tar med det i en mall.
 
 ## Skriva svarstexterna
 

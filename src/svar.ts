@@ -1,3 +1,4 @@
+import { gallandeVarde } from '../scripts/gallande.mjs'
 import { formatTal, fyllMall, type MallKontext } from './mall'
 import { jamforAlder, jamforBank, jamforDagar, jamforInkomst } from './jamfor'
 import type { Config, Fraga, Regel, Status, SvarInnehall, SparNamn, Svaren } from './types'
@@ -55,7 +56,8 @@ export function byggSvar({ spar, svar, regler, fragor, config, innehall }: Indat
 
   const krav = mall.krav.map((k): KravRad => {
     const regel = reglerMap.get(k.regel)
-    const kravVarde = typeof regel?.varde === 'number' ? regel.varde : null
+    const gallande = regel ? gallandeVarde(regel) : null
+    const kravVarde = typeof gallande === 'number' ? gallande : null
     const status: Status =
       k.jamfor === 'inkomst' ? jamforInkomst(inkomstAlt, kravVarde, thbPerSek)
       : k.jamfor === 'bank' ? jamforBank(svar.bank)

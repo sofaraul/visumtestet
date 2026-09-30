@@ -3,72 +3,128 @@
     "id": "non-o-inkomstkrav",
     "varde": 65000,
     "enhet": "THB/manad",
-    "kalla": "https://thaiembassy.se/en/visa/",
-    "senastKontrollerad": null,
-    "verifierad": false
+    "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
   },
   {
     "id": "non-o-bankkrav",
     "varde": 800000,
     "enhet": "THB",
-    "kalla": "https://thaiembassy.se/en/visa/",
-    "senastKontrollerad": null,
-    "verifierad": false
+    "villkor": "Ska ha legat på kontot minst 2 månader före ansökan och finnas kvar 3 månader efter beviljande.",
+    "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
   },
   {
     "id": "ltr-minalder",
     "varde": 50,
     "enhet": "ar",
-    "kalla": "https://ltr.boi.go.th/",
-    "senastKontrollerad": null,
-    "verifierad": false
+    "kalla": "https://ltr.boi.go.th/documents/BOI-brochure%202025-LTR.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
   },
   {
     "id": "ltr-inkomstkrav",
     "varde": 80000,
     "enhet": "USD/ar",
-    "kalla": "https://ltr.boi.go.th/",
-    "senastKontrollerad": null,
-    "verifierad": false
+    "villkor": "Passiv inkomst.",
+    "kalla": "https://ltr.boi.go.th/documents/Required-docs-Wealthy-Pensioners-30-06-2025.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
+  },
+  {
+    "id": "ltr-inkomstkrav-alternativ",
+    "varde": 40000,
+    "enhet": "USD/ar",
+    "villkor": "Plus 250 000 USD investerat i Thailand.",
+    "kalla": "https://ltr.boi.go.th/documents/Required-docs-Wealthy-Pensioners-30-06-2025.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
   },
   {
     "id": "skatt-hemvist-dagar",
     "varde": 180,
     "enhet": "dagar/kalenderar",
-    "kalla": "https://www.rd.go.th/",
-    "senastKontrollerad": null,
-    "verifierad": false
+    "villkor": "180 dagar eller fler per kalenderår.",
+    "kalla": "https://www.rd.go.th/fileadmin/download/english_form/030265guide90.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
   },
   {
     "id": "sink-avdrag",
-    "varde": 22.5,
+    "varde": [
+      {
+        "fran": null,
+        "till": "2026-12-31",
+        "varde": 22.5
+      },
+      {
+        "fran": "2027-01-01",
+        "till": null,
+        "varde": 20
+      }
+    ],
     "enhet": "procent",
-    "kalla": "https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-din-pension-du-som-bor-utanfor-sverige",
-    "senastKontrollerad": null,
-    "verifierad": false
+    "kalla": "https://www.skatteverket.se/privat/internationellt/bosattutomlands/sinksarskildinkomstskattforutomlandsbosatta/sinkpapension.4.6fdde64a12cc4eee23080002614.html",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
   },
   {
     "id": "garantipension-bosattning-utomlands",
-    "varde": "upphör",
+    "varde": "betalas som regel inte ut efter flytt från Sverige",
     "enhet": "text",
     "kalla": "https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-att-flytta-fran-sverige",
-    "senastKontrollerad": null,
-    "verifierad": false
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
   },
   {
     "id": "garantipension-max-vistelse",
     "varde": 1,
     "enhet": "ar",
     "kalla": "https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-att-flytta-fran-sverige",
-    "senastKontrollerad": null,
-    "verifierad": false
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
   },
   {
     "id": "visumfri-vistelse-dagar",
-    "varde": null,
+    "varde": [
+      {
+        "fran": "2026-09-15",
+        "till": null,
+        "varde": 30
+      }
+    ],
     "enhet": "dagar",
-    "kalla": null,
-    "senastKontrollerad": null,
-    "verifierad": false
+    "kalla": "https://thaiembassy.se/en/visa/",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
+  },
+  {
+    "id": "non-o-bank-minsta-saldo",
+    "varde": 400000,
+    "enhet": "THB",
+    "villkor": "Ska finnas kvar efter de första 3 månaderna.",
+    "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
+  },
+  {
+    "id": "non-o-kombination",
+    "varde": 800000,
+    "enhet": "THB",
+    "villkor": "Årsinkomst plus bankinsättning ska tillsammans vara minst detta belopp.",
+    "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
+  },
+  {
+    "id": "o-a-forsakringskrav",
+    "varde": 100000,
+    "enhet": "USD",
+    "villkor": "Sjukförsäkring på minst 100 000 USD eller 3 000 000 THB. Gäller bara O-A.",
+    "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true
   }
 ]

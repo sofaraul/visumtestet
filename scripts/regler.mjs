@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { gallandeVarde, idagIso } from './gallande.mjs'
 
 const rot = join(dirname(fileURLToPath(import.meta.url)), '..')
 const las = (sokvag) => JSON.parse(readFileSync(join(rot, sokvag), 'utf-8'))
@@ -12,13 +13,14 @@ export const laConfig = () => las('config.json')
 export const laFragor = () => las('data/fragor.json')
 
 /** Regler som inte får följa med ett produktionsbygge, med orsak. */
-export function problemMedRegler(regler) {
+export function problemMedRegler(regler, idag = idagIso()) {
   const problem = []
   for (const r of regler) {
     const orsaker = []
     if (r.verifierad !== true) orsaker.push('verifierad är inte true')
     else {
-      if (r.varde === null || r.varde === undefined || r.varde === '') orsaker.push('värde saknas')
+      const varde = gallandeVarde(r, idag)
+      if (varde === null || varde === undefined || varde === '') orsaker.push(`värde saknas ${idag}`)
       if (!r.kalla) orsaker.push('källa saknas')
       if (!r.senastKontrollerad) orsaker.push('senastKontrollerad saknas')
     }
