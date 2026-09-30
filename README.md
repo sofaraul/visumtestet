@@ -85,17 +85,35 @@ npm run dev                     # lokal server med röd banderoll för overifier
 npm test                        # enhetstester
 npm run kallor                  # lista regler, källor och status
 npm run build                   # produktionsbygge, stoppas av overifierade regler
-npm run build:forhandsvisning   # bygge utan regelkontroll, med banderoll, för att visa andra
+npm run build:forhandsvisning   # bygge utan regelkontroll, med banderoll
 ```
 
 ## Driftsätta
 
-Sajten är statisk. Koppla repot till Vercel eller Netlify:
+Sajten är statisk. Koppla repot till Vercel eller Netlify med:
 
 - Build command: `npm run build`
 - Output directory: `dist`
 
-Varje push bygger om sajten. Byggen stoppas så länge någon regel är overifierad, så den första driftsättningen kräver att du har gått igenom reglerna med `npm run kallor`. Vill du visa en förhandsversion innan dess, sätt build command till `npm run build:forhandsvisning`, och byt tillbaka när reglerna är klara.
+Samma kommando gör rätt i båda fallen, eftersom bygget själv avgör om det är produktion eller förhandsvisning:
+
+| Bygge | Regelkontroll | Röd banderoll |
+| --- | --- | --- |
+| Produktion (Vercel `production`, Netlify `production`) | Stoppas av overifierade regler | Nej |
+| Förhandsvisning (Vercel `preview`, Netlify `deploy-preview` och `branch-deploy`, `npm run dev`, `npm run build:forhandsvisning`) | Nej | Ja, om något är overifierat eller saknas |
+
+Produktionsgrenen är normalt `main`. Allt annat blir en förhandsvisning.
+
+## Se och testa på mobilen innan reglerna är verifierade
+
+1. Koppla repot till Vercel eller Netlify enligt ovan. Produktionsbygget på `main` misslyckas så länge reglerna är overifierade. Det är avsiktligt, och `main` publiceras inte.
+2. Varje gren och pull request får en egen förhandsadress (Vercel: *Preview*, Netlify: *Deploy Preview* eller *Branch Deploy*). Adressen står i pull requesten och i Vercel/Netlify under *Deployments*.
+3. Öppna adressen på mobilen, eller skanna en QR-kod av den. Du ser hela flödet med den röda banderollen överst. Den listar vilka regler, konfigurationsvärden och hjälptexter som återstår.
+4. Ändra i datafilerna på en gren, pusha, och öppna den nya förhandsadressen.
+
+Förhandsadresserna är publika för den som har länken. Vill du begränsa dem, kontrollera inställningarna för förhandsvisningar (Vercel: *Deployment Protection*, Netlify: lösenordsskydd) innan du delar dem.
+
+Lokalt: `npm run dev -- --host` skriver ut en adress på det lokala nätverket, som du kan öppna på en mobil på samma wifi. Det fungerar bara om du kör projektet på din egen dator.
 
 ## Integritet
 

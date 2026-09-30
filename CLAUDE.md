@@ -116,6 +116,7 @@ Svarstexterna skrivs av ägaren. Bygg dem som redigerbara mallar i `data/svar.js
 * Kod i `src/`: `flode.ts` (förgrening, bara frågeordning), `jamfor.ts` (jämförelser), `mall.ts` (platshållare), `svar.ts` (bygger svaret), `ui.ts`/`epost.ts`/`banderoll.ts` (vyer). Belopp och texter finns i `data/` och `config.json`.
 * `scripts/regler.mjs` delas av `npm run kallor` och bygget (`vite.config.ts`).
 * `npm test` innehåller ett test som stoppar siffror i `src/`. Lägg aldrig belopp eller gränser i koden.
-* Tomma värden är avsiktliga och flaggas: `visumfri-vistelse-dagar`, `hjalptext: ""` i `fragor.json`, och `null` i `config.json`. Fyll dem inte med gissningar.
+* Tomma värden är avsiktliga och flaggas: `visumfri-vistelse-dagar` och `null` i `config.json`. Fyll dem inte med gissningar. Hjälptexterna i `fragor.json` är ifyllda av ägaren.
+* `vite.config.ts` avgör förhandsvisning eller produktion (`__FORHANDSVISNING__`): `VERCEL_ENV=preview`, `CONTEXT=deploy-preview|branch-deploy` och `--mode development` är förhandsvisningar utan byggstopp men med röd banderoll. Bara produktionsbygget stoppas av overifierade regler.
 * Fråga 2 "under 50" ger spår under arbete även i säsongsspåret, enligt förgreningen ovan.
 * Testa flödet på mobilbredd (390 px) efter ändringar i UI.

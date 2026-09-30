@@ -11,7 +11,7 @@ function verifieraRegler(): Plugin {
         const rader = problem.map((p) => `  - ${p.id}: ${p.orsaker.join(', ')}`).join('\n')
         throw new Error(
           `Produktionsbygget stoppat: ${problem.length} regler i data/regler.json är inte verifierade.\n${rader}\n` +
-            'Kör `npm run kallor` för att se källorna. För en förhandsvisning utan kontroll: `npm run build:forhandsvisning`.',
+            'Kör `npm run kallor` för att se källorna. Förhandsvisningar (Vercel preview, Netlify deploy preview och branch deploy, `npm run build:forhandsvisning`) stoppas inte.',
         )
       }
       const saknas: string[] = saknadKonfiguration(laConfig())
@@ -20,6 +20,18 @@ function verifieraRegler(): Plugin {
   }
 }
 
-export default defineConfig(({ mode }) => ({
-  plugins: mode === 'production' ? [verifieraRegler()] : [],
-}))
+/**
+ * Förhandsvisning = allt utom produktion: lokal utveckling, `--mode development`
+ * och Vercels/Netlifys icke-produktionsbyggen. Där visas den röda banderollen och
+ * bygget stoppas inte. Bara produktionsbygget kräver verifierade regler.
+ */
+const harForhandsvisningsMiljo = () =>
+  process.env.VERCEL_ENV === 'preview' || ['deploy-preview', 'branch-deploy'].includes(process.env.CONTEXT ?? '')
+
+export default defineConfig(({ mode }) => {
+  const forhandsvisning = mode !== 'production' || harForhandsvisningsMiljo()
+  return {
+    define: { __FORHANDSVISNING__: JSON.stringify(forhandsvisning) },
+    plugins: forhandsvisning ? [] : [verifieraRegler()],
+  }
+})

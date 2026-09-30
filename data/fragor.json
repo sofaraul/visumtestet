@@ -3,7 +3,7 @@
     {
       "id": "dagar",
       "text": "Hur många dagar per år räknar du med att vara i Thailand?",
-      "hjalptext": "",
+      "hjalptext": "Gränsen går vid 180 dagar per kalenderår. Det är den som avgör om thailändsk skatt berör dig.",
       "alternativ": [
         {
           "id": "farre",
@@ -22,7 +22,7 @@
     {
       "id": "alder",
       "text": "Hur gammal är du?",
-      "hjalptext": "",
+      "hjalptext": "Flera visum för längre vistelse har 50 år som nedre gräns.",
       "alternativ": [
         {
           "id": "under",
@@ -64,7 +64,7 @@
     {
       "id": "inkomst",
       "text": "Ungefär vilken inkomst har du per månad före skatt?",
-      "hjalptext": "",
+      "hjalptext": "Vi sparar inte ditt svar. Intervallen används bara för att visa vilka visumvägar som är realistiska.",
       "alternativ": [
         {
           "id": "lag",
@@ -89,7 +89,7 @@
     {
       "id": "bank",
       "text": "Kan du låsa ett större belopp på ett thailändskt bankkonto?",
-      "hjalptext": "",
+      "hjalptext": "Flera visum accepterar antingen löpande inkomst eller ett bankbelopp som legat still en viss tid.",
       "alternativ": [
         {
           "id": "ja",

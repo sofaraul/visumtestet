@@ -1,9 +1,9 @@
 import { h } from './dom'
 import { config, fragor, innehall, regler } from './data'
 
-/** Röd banderoll i utvecklingsläge och förhandsvisning, aldrig i produktion. */
+/** Röd banderoll i utveckling och förhandsvisning, aldrig i produktion. */
 export function visaBanderoll(el: HTMLElement) {
-  if (import.meta.env.MODE === 'production') return
+  if (!__FORHANDSVISNING__) return
   const g = innehall.granssnitt
   const overifierade = regler.filter((r) => !r.verifierad).map((r) => r.id)
   const kfg: string[] = []
