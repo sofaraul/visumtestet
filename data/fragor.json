@@ -1,0 +1,128 @@
+{
+  "fragor": [
+    {
+      "id": "dagar",
+      "text": "Hur många dagar per år räknar du med att vara i Thailand?",
+      "hjalptext": "",
+      "alternativ": [
+        {
+          "id": "farre",
+          "text": "Färre än 180 dagar"
+        },
+        {
+          "id": "minst",
+          "text": "180 dagar eller fler"
+        },
+        {
+          "id": "vetInte",
+          "text": "Vet inte än"
+        }
+      ]
+    },
+    {
+      "id": "alder",
+      "text": "Hur gammal är du?",
+      "hjalptext": "",
+      "alternativ": [
+        {
+          "id": "under",
+          "text": "Under 50"
+        },
+        {
+          "id": "minst",
+          "text": "50 eller äldre"
+        }
+      ]
+    },
+    {
+      "id": "pengar",
+      "text": "Var kommer dina pengar ifrån?",
+      "hjalptext": null,
+      "alternativ": [
+        {
+          "id": "pension",
+          "text": "Pension"
+        },
+        {
+          "id": "lon",
+          "text": "Lön från svensk arbetsgivare"
+        },
+        {
+          "id": "eget",
+          "text": "Eget företag eller frilans"
+        },
+        {
+          "id": "kapital",
+          "text": "Kapital och sparande"
+        },
+        {
+          "id": "kombination",
+          "text": "Kombination"
+        }
+      ]
+    },
+    {
+      "id": "inkomst",
+      "text": "Ungefär vilken inkomst har du per månad före skatt?",
+      "hjalptext": "",
+      "alternativ": [
+        {
+          "id": "lag",
+          "text": "Under 20 000 kr",
+          "minSek": 0,
+          "maxSek": 20000
+        },
+        {
+          "id": "mellan",
+          "text": "20 000–40 000 kr",
+          "minSek": 20000,
+          "maxSek": 40000
+        },
+        {
+          "id": "hog",
+          "text": "Över 40 000 kr",
+          "minSek": 40000,
+          "maxSek": null
+        }
+      ]
+    },
+    {
+      "id": "bank",
+      "text": "Kan du låsa ett större belopp på ett thailändskt bankkonto?",
+      "hjalptext": "",
+      "alternativ": [
+        {
+          "id": "ja",
+          "text": "Ja"
+        },
+        {
+          "id": "nej",
+          "text": "Nej"
+        },
+        {
+          "id": "kanske",
+          "text": "Kanske, beror på beloppet"
+        }
+      ]
+    },
+    {
+      "id": "familj",
+      "text": "Har du familj i Thailand?",
+      "hjalptext": null,
+      "alternativ": [
+        {
+          "id": "nej",
+          "text": "Nej"
+        },
+        {
+          "id": "make",
+          "text": "Ja, make eller maka"
+        },
+        {
+          "id": "barn",
+          "text": "Ja, barn"
+        }
+      ]
+    }
+  ]
+}

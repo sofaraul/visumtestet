@@ -1,0 +1,74 @@
+[
+  {
+    "id": "non-o-inkomstkrav",
+    "varde": 65000,
+    "enhet": "THB/manad",
+    "kalla": "https://thaiembassy.se/en/visa/",
+    "senastKontrollerad": null,
+    "verifierad": false
+  },
+  {
+    "id": "non-o-bankkrav",
+    "varde": 800000,
+    "enhet": "THB",
+    "kalla": "https://thaiembassy.se/en/visa/",
+    "senastKontrollerad": null,
+    "verifierad": false
+  },
+  {
+    "id": "ltr-minalder",
+    "varde": 50,
+    "enhet": "ar",
+    "kalla": "https://ltr.boi.go.th/",
+    "senastKontrollerad": null,
+    "verifierad": false
+  },
+  {
+    "id": "ltr-inkomstkrav",
+    "varde": 80000,
+    "enhet": "USD/ar",
+    "kalla": "https://ltr.boi.go.th/",
+    "senastKontrollerad": null,
+    "verifierad": false
+  },
+  {
+    "id": "skatt-hemvist-dagar",
+    "varde": 180,
+    "enhet": "dagar/kalenderar",
+    "kalla": "https://www.rd.go.th/",
+    "senastKontrollerad": null,
+    "verifierad": false
+  },
+  {
+    "id": "sink-avdrag",
+    "varde": 22.5,
+    "enhet": "procent",
+    "kalla": "https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-din-pension-du-som-bor-utanfor-sverige",
+    "senastKontrollerad": null,
+    "verifierad": false
+  },
+  {
+    "id": "garantipension-bosattning-utomlands",
+    "varde": "upphör",
+    "enhet": "text",
+    "kalla": "https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-att-flytta-fran-sverige",
+    "senastKontrollerad": null,
+    "verifierad": false
+  },
+  {
+    "id": "garantipension-max-vistelse",
+    "varde": 1,
+    "enhet": "ar",
+    "kalla": "https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-att-flytta-fran-sverige",
+    "senastKontrollerad": null,
+    "verifierad": false
+  },
+  {
+    "id": "visumfri-vistelse-dagar",
+    "varde": null,
+    "enhet": "dagar",
+    "kalla": null,
+    "senastKontrollerad": null,
+    "verifierad": false
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "shopifyLank": null,
+  "epost": {
+    "mottagare": null,
+    "tjanst": "https://formsubmit.co/ajax/{mottagare}"
+  },
+  "vaxelkurs": {
+    "thbPerSek": null,
+    "datum": null
+  }
+}

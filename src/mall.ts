@@ -1,0 +1,40 @@
+import type { Regel } from './types'
+
+export interface MallKontext {
+  regler: Map<string, Regel>
+  enheter: Record<string, string>
+  saknas: string
+  /** Färdiga värden för platshållare som {svar.dagar} och {inkomstThb}. */
+  varden: Record<string, string>
+  /** Fylls på med id för varje regel som mallen hämtat värde från. */
+  anvanda: Set<string>
+}
+
+const talFormat = new Intl.NumberFormat('sv-SE')
+
+export const formatTal = (n: number) => talFormat.format(n)
+
+function visaVarde(v: number | string): string {
+  return typeof v === 'number' ? formatTal(v) : v
+}
+
+function losUpp(nyckel: string, ctx: MallKontext): string {
+  if (nyckel in ctx.varden) return ctx.varden[nyckel]
+
+  const barVarde = nyckel.endsWith('.varde')
+  const regelId = barVarde ? nyckel.slice(0, -'.varde'.length) : nyckel
+  const regel = ctx.regler.get(regelId)
+  if (!regel) return `[okänd platshållare: ${nyckel}]`
+
+  ctx.anvanda.add(regel.id)
+  if (regel.varde === null || regel.varde === '') return ctx.saknas
+  const varde = visaVarde(regel.varde)
+  if (barVarde) return varde
+  const enhet = ctx.enheter[regel.enhet] ?? regel.enhet
+  return enhet ? `${varde} ${enhet}` : varde
+}
+
+/** Byter {platshållare} i en mall mot värden. Ren text ut, aldrig HTML. */
+export function fyllMall(mall: string, ctx: MallKontext): string {
+  return mall.replace(/\{([A-Za-z0-9_.-]+)\}/g, (_, nyckel: string) => losUpp(nyckel, ctx))
+}
