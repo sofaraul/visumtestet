@@ -18,7 +18,7 @@
     "id": "non-o-bankkrav",
     "varde": 800000,
     "enhet": "THB",
-    "villkor": "Ska ha legat på kontot minst 2 månader före ansökan och finnas kvar 3 månader efter beviljande.",
+    "villkor": "Ska ha legat på kontot minst 2 månader före ansökan om förlängning och finnas kvar 3 månader efter beviljande.",
     "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
     "senastKontrollerad": "2026-09-30",
     "verifierad": true,

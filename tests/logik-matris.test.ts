@@ -418,10 +418,10 @@ describe('punkt 5: framräknade belopp', () => {
       expect(f.alternativ.map((a) => a.text)).toEqual(['Ja', 'Nej', 'Vet inte'])
     }
   })
-  it('bankfrågan är "Kan du ha minst Y kr på ett thailändskt konto från minst två månader före ansökan?" med Ja / Nej / Vet inte', () => {
+  it('bankfrågan är "Kan du ha minst Y kr på ett thailändskt konto från minst två månader före ansökan om förlängning?" med Ja / Nej / Vet inte', () => {
     for (const kurs of KURSER) {
       const f = renderadeFragor(medKurs(kurs)).find((x) => x.id === 'bank')!
-      expect(f.text).toBe(`Kan du ha minst ${rad(forvantadKr(bankBaht(), kurs, 100))} på ett thailändskt konto från minst två månader före ansökan?`)
+      expect(f.text).toBe(`Kan du ha minst ${rad(forvantadKr(bankBaht(), kurs, 100))} på ett thailändskt konto från minst två månader före ansökan om förlängning?`)
       expect(f.alternativ.map((a) => a.text)).toEqual(['Ja', 'Nej', 'Vet inte'])
     }
   })
@@ -473,6 +473,17 @@ describe('punkt 5: framräknade belopp', () => {
     const tillatna = tillatnaTal(medKurs(3))
     expect(tillatna.has(String(forvantadKr(inkomstBaht(), 3, 100)))).toBe(true)
     expect(tillatna.has(String(forvantadKr(inkomstBaht(), 3, 100) + 100))).toBe(false)
+  })
+  it('hjälptexten till inkomstfrågan förklarar att beloppet är kravet omräknat med ECB:s senaste kurs', () => {
+    for (const f of renderadeFragor()) if (f.id === 'inkomst') {
+      expect(f.hjalptext).toBe("Vi sparar inte ditt svar. Beloppet är Thailands inkomstkrav omräknat till kronor med ECB:s senaste kurs.")
+    }
+  })
+  it('bankfrågan och bankvillkoret säger "före ansökan om förlängning"', () => {
+    const bank = renderadeFragor().find((x) => x.id === 'bank')!
+    expect(bank.text).toMatch(/från minst två månader före ansökan om förlängning\?$/)
+    expect(regel('non-o-bankkrav').villkor).toBe('Ska ha legat på kontot minst 2 månader före ansökan om förlängning och finnas kvar 3 månader efter beviljande.')
+    inga(brott(pension, (p) => (p.text.includes('före ansökan om förlängning') && !/före ansökan (?!om förlängning)/.test(p.text) ? null : 'svaret säger "före ansökan" utan "om förlängning"')))
   })
   it('utan kurs visas ingen påhittad siffra', () => {
     const f = renderadeFragor(medKurs(null)).find((x) => x.id === 'inkomst')!

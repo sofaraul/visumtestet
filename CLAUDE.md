@@ -53,7 +53,7 @@ Fyll filen med följande startvärden, samtliga som overifierade:
 2. Hur gammal är du? – Under 50 / 50 eller äldre
 3. Var kommer dina pengar ifrån? – Pension / Lön från svensk arbetsgivare / Eget företag eller frilans / Kapital och sparande / Kombination
 4. Är din inkomst före skatt minst X kr i månaden? – Ja / Nej / Vet inte (X räknas fram ur Non-O-kravet i baht och växelkursen)
-5. Kan du ha minst Y kr på ett thailändskt konto från minst två månader före ansökan? – Ja / Nej / Vet inte (Y räknas fram ur bankkravet i baht och växelkursen)
+5. Kan du ha minst Y kr på ett thailändskt konto från minst två månader före ansökan om förlängning? – Ja / Nej / Vet inte (Y räknas fram ur bankkravet i baht och växelkursen)
 6. Har du familj i Thailand? – Nej / Ja, make eller maka / Ja, barn
 
 I säsongsspåret ställs dessutom en fråga direkt efter fråga 1: Hur länge varar varje vistelse? – Högst 30 dagar åt gången / Längre än 30 dagar åt gången. Säsongsspåret frågar inte om ålder.

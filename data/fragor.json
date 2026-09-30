@@ -79,7 +79,7 @@
     {
       "id": "inkomst",
       "text": "Är din inkomst före skatt minst {non-o-inkomstkrav.kr} i månaden?",
-      "hjalptext": "Vi sparar inte ditt svar. Intervallen används bara för att visa vilka visumvägar som är realistiska.",
+      "hjalptext": "Vi sparar inte ditt svar. Beloppet är Thailands inkomstkrav omräknat till kronor med ECB:s senaste kurs.",
       "alternativ": [
         {
           "id": "ja",
@@ -97,7 +97,7 @@
     },
     {
       "id": "bank",
-      "text": "Kan du ha minst {non-o-bankkrav.kr} på ett thailändskt konto från minst två månader före ansökan?",
+      "text": "Kan du ha minst {non-o-bankkrav.kr} på ett thailändskt konto från minst två månader före ansökan om förlängning?",
       "hjalptext": "Flera visum accepterar antingen löpande inkomst eller ett bankbelopp som legat still en viss tid.",
       "alternativ": [
         {

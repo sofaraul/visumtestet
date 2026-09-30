@@ -24,11 +24,14 @@ Varje punkt har egna tester i `tests/logik-matris.test.ts` (grupperna "punkt 1" 
 - **Bankfrågan:** "Ja" ger nu "Du uppger att du kan ha beloppet på kontot i tid", inte "uppfyllt", eftersom villkoren efter beviljandet återstår.
 - **Antal vägar:** 174 (6 säsongsspår, 162 pensionärsspår, 6 "under arbete"). Tidigare 176.
 
+### Åtgärdat efter omgång 2
+
+- Hjälptexten till inkomstfrågan är ersatt: "Vi sparar inte ditt svar. Beloppet är Thailands inkomstkrav omräknat till kronor med ECB:s senaste kurs."
+- Bankfrågan och regelns villkor säger nu "före ansökan om förlängning" (frågan: "… från minst två månader före ansökan om förlängning?"). Testat i punkt 5.
+
 ### Att du bör titta på
 
-- Hjälptexten till inkomstfrågan (`data/fragor.json`) säger "Intervallen används bara för att visa vilka visumvägar som är realistiska". Det finns inga intervall längre. Texten är din, så jag har inte ändrat den.
-- Bankfrågan och regelns villkor säger "före ansökan". Det avser ansökan om förlängning, men det står inte uttryckligen. Rubriken och inledningen i svaret tydliggör det, men du kan vilja skriva "ansökan om förlängning" i frågan och villkoret.
-- Kursen i `config.json` är tom tills den dagliga körningen har gått eller du skriver in den. Utan kurs visar frågorna "[uppgift saknas] kr".
+- Kursen i `config.json` är tom tills den dagliga körningen har gått eller du skriver in den. Utan kurs visar frågorna "[uppgift saknas] kr", och produktionsbygget stoppas.
 
 ## Regler som saknas för långa säsongsvistelser
 
