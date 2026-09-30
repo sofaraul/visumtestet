@@ -78,32 +78,26 @@
     },
     {
       "id": "inkomst",
-      "text": "Ungefär vilken inkomst har du per månad före skatt?",
+      "text": "Är din inkomst före skatt minst {non-o-inkomstkrav.kr} i månaden?",
       "hjalptext": "Vi sparar inte ditt svar. Intervallen används bara för att visa vilka visumvägar som är realistiska.",
       "alternativ": [
         {
-          "id": "lag",
-          "text": "Under 20 000 kr",
-          "minSek": 0,
-          "maxSek": 20000
+          "id": "ja",
+          "text": "Ja"
         },
         {
-          "id": "mellan",
-          "text": "20 000–40 000 kr",
-          "minSek": 20000,
-          "maxSek": 40000
+          "id": "nej",
+          "text": "Nej"
         },
         {
-          "id": "hog",
-          "text": "Över 40 000 kr",
-          "minSek": 40000,
-          "maxSek": null
+          "id": "vetInte",
+          "text": "Vet inte"
         }
       ]
     },
     {
       "id": "bank",
-      "text": "Kan du låsa ett större belopp på ett thailändskt bankkonto?",
+      "text": "Kan du ha minst {non-o-bankkrav.kr} på ett thailändskt konto från minst två månader före ansökan?",
       "hjalptext": "Flera visum accepterar antingen löpande inkomst eller ett bankbelopp som legat still en viss tid.",
       "alternativ": [
         {
@@ -115,8 +109,8 @@
           "text": "Nej"
         },
         {
-          "id": "kanske",
-          "text": "Kanske, beror på beloppet"
+          "id": "vetInte",
+          "text": "Vet inte"
         }
       ]
     },

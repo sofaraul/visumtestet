@@ -1,5 +1,5 @@
 {
-  "_om": "Utkast som ägaren skriver över. Platshållare: {regel-id} = värde med enhet, {regel-id.varde} = bara värdet, {regel-id.villkor} = regelns villkor, {svar.fraga-id} = besökarens svar, {vaxelkurs}, {vaxelkursDatum}. Skriv ren text, ingen HTML. Siffror ska komma från platshållare, så att de alltid stämmer med data/regler.json. Skriv bara påståenden som går att avgöra från besökarens svar.",
+  "_om": "Utkast som ägaren skriver över. Platshållare: {regel-id} = värde med enhet, {regel-id.varde} = bara värdet, {regel-id.villkor} = regelns villkor, {regel-id.kr} = beloppet i kronor, framräknat ur regelns baht och kursen i config.json (avrundat uppåt), {vaxelkurs} = kursen, {vaxelkursDatum} = kursens datum, {svar.fraga-id} = besökarens svar. Skriv ren text, ingen HTML. Siffror ska komma från platshållare så att de stämmer med data/regler.json och config.json. Skriv bara påståenden som går att avgöra från besökarens svar.",
   "granssnitt": {
     "introRubrik": "Visumtestet för dig som vill bo i Thailand",
     "introText": "Svara på några korta frågor så får du din troliga visumväg, vad du behöver uppfylla, om thailändsk skatt berör dig och en vanlig fallgrop. Det är gratis och tar ungefär två minuter.",
@@ -51,7 +51,8 @@
     "procent": "procent",
     "thbPerSek": "baht per krona",
     "dagar": "dagar",
-    "text": ""
+    "text": "",
+    "kr": "kr"
   },
   "spar": {
     "sasongKort": {
@@ -99,8 +100,8 @@
     },
     "sasongLang": {
       "vag": {
-        "namn": "Visum för längre vistelse",
-        "mening": "Du räknar med vistelser som är längre än {visumfri-vistelse-dagar} åt gången, och då är din troliga väg ett visum, eftersom visumfri vistelse gäller högst {visumfri-vistelse-dagar} per besök."
+        "namn": "Du behöver ett visum",
+        "mening": "Vilket som passar beror på hur länge du stannar."
       },
       "krav": [
         {
@@ -143,43 +144,95 @@
     "pension": {
       "vag": {
         "namn": "Non-O-visum för pensionärer",
-        "mening": "Du uppger pension, kapital eller en kombination och planerar längre vistelser, och då är din troliga väg Non-O-visum för pensionärer. LTR-visum för pensionärer kan vara ett alternativ om din passiva inkomst är minst {ltr-inkomstkrav}."
+        "mening": "Du uppger pension, kapital eller en kombination och planerar längre vistelser, och då är din troliga väg Non-O-visum för pensionärer, där vistelsen förlängs i Thailand och varje beviljande gäller högst {non-o-forlangning-max}. LTR-visum för pensionärer kan vara ett alternativ om din passiva inkomst är minst {ltr-inkomstkrav}."
       },
+      "rubrikKrav": "För att få stanna ett år i taget krävs:",
       "krav": [
         {
           "regel": "non-o-inkomstkrav",
           "jamfor": "inkomst",
-          "text": "Inkomst på minst {non-o-inkomstkrav}.",
+          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}.",
           "status": {
-            "ok": "Din inkomst ligger över kravet. Du uppfyller inkomstkravet",
-            "nara": "Du ligger nära gränsen – kontrollera ditt exakta belopp",
-            "under": "Din inkomst ligger under kravet",
+            "ok": "Du uppger att din inkomst är tillräcklig. Du uppfyller inkomstkravet",
+            "under": "Din inkomst är under kravet",
             "okant": "Går inte att avgöra från dina svar"
           }
         },
         {
           "regel": "non-o-bankkrav",
           "jamfor": "bank",
-          "text": "Alternativt minst {non-o-bankkrav} på ett thailändskt bankkonto. {non-o-bankkrav.villkor} Därefter ska minst {non-o-bank-minsta-saldo} finnas kvar.",
+          "text": "Alternativt minst {non-o-bankkrav} på ett thailändskt bankkonto, ungefär {non-o-bankkrav.kr} med ECB:s kurs den {vaxelkursDatum}. {non-o-bankkrav.villkor} Därefter ska minst {non-o-bank-minsta-saldo} finnas kvar, ungefär {non-o-bank-minsta-saldo.kr} med samma kurs.",
           "status": {
-            "nara": "Det går inte att avgöra från ditt svar – kontrollera ditt exakta belopp",
-            "under": "Du kan inte låsa ett större belopp, så det här alternativet passar inte",
+            "ok": "Du uppger att du kan ha beloppet på kontot i tid",
+            "under": "Du uppger att du inte kan ha beloppet på kontot, så det här alternativet passar inte",
             "okant": "Går inte att avgöra från dina svar"
           }
         },
         {
           "regel": "non-o-kombination",
           "jamfor": "okant",
-          "text": "Eller en kombination av årsinkomst och bankinsättning som tillsammans är minst {non-o-kombination}.",
+          "text": "Eller en kombination av årsinkomst och bankinsättning som tillsammans är minst {non-o-kombination}, ungefär {non-o-kombination.kr} med samma kurs.",
           "status": {
             "okant": "Går inte att avgöra från dina svar"
           }
         }
       ],
       "skatt": {
-        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per kalenderår, så du blir skatterättsligt bosatt i Thailand, och pengar som förs in kan beskattas där. SINK-avdrag på svensk pension: {sink-avdrag}.",
-        "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per kalenderår blir du skatterättsligt bosatt i Thailand, och då kan pengar som förs in beskattas där. SINK-avdrag på svensk pension: {sink-avdrag}."
+        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per kalenderår, så du blir skatterättsligt bosatt i Thailand, och pengar som förs in kan beskattas där.",
+        "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per kalenderår blir du skatterättsligt bosatt i Thailand, och då kan pengar som förs in beskattas där."
       },
+      "sink": "Om du flyttar från Sverige och blir begränsat skattskyldig dras SINK på din svenska pension: {sink-avdrag}.",
+      "sinkNar": [
+        "pension",
+        "kombination"
+      ],
+      "fallgrop": "Garantipension {garantipension-bosattning-utomlands}, men kan behållas vid vistelse på högst {garantipension-max-vistelse}. Kontrollera det innan du flyttar.",
+      "erbjudande": {
+        "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",
+        "knapp": "Läs guiden"
+      }
+    },
+    "pensionIngen": {
+      "vag": {
+        "namn": "Ingen av pensionärsvägarna ser ut att passa med dina svar just nu",
+        "mening": "Kraven nedan visas som information."
+      },
+      "rubrikKrav": "För att få stanna ett år i taget krävs:",
+      "krav": [
+        {
+          "regel": "non-o-inkomstkrav",
+          "jamfor": "info",
+          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}.",
+          "status": {
+            "info": "Bra att veta"
+          }
+        },
+        {
+          "regel": "non-o-bankkrav",
+          "jamfor": "info",
+          "text": "Alternativt minst {non-o-bankkrav} på ett thailändskt bankkonto, ungefär {non-o-bankkrav.kr} med ECB:s kurs den {vaxelkursDatum}. {non-o-bankkrav.villkor} Därefter ska minst {non-o-bank-minsta-saldo} finnas kvar, ungefär {non-o-bank-minsta-saldo.kr} med samma kurs.",
+          "status": {
+            "info": "Bra att veta"
+          }
+        },
+        {
+          "regel": "non-o-kombination",
+          "jamfor": "info",
+          "text": "Eller en kombination av årsinkomst och bankinsättning som tillsammans är minst {non-o-kombination}, ungefär {non-o-kombination.kr} med samma kurs.",
+          "status": {
+            "info": "Bra att veta"
+          }
+        }
+      ],
+      "skatt": {
+        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per kalenderår, så du blir skatterättsligt bosatt i Thailand, och pengar som förs in kan beskattas där.",
+        "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per kalenderår blir du skatterättsligt bosatt i Thailand, och då kan pengar som förs in beskattas där."
+      },
+      "sink": "Om du flyttar från Sverige och blir begränsat skattskyldig dras SINK på din svenska pension: {sink-avdrag}.",
+      "sinkNar": [
+        "pension",
+        "kombination"
+      ],
       "fallgrop": "Garantipension {garantipension-bosattning-utomlands}, men kan behållas vid vistelse på högst {garantipension-max-vistelse}. Kontrollera det innan du flyttar.",
       "erbjudande": {
         "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",

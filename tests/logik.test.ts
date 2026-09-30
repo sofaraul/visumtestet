@@ -1,19 +1,21 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { beraknaVag, rensaSvar } from '../src/flode'
-import { jamforBank, jamforInkomst } from '../src/jamfor'
+import { jamforJaNej } from '../src/jamfor'
+import { beraknaKr } from '../src/belopp'
 import { fyllMall, type MallKontext } from '../src/mall'
-import { problemMedRegler } from '../scripts/regler.mjs'
+import type { Config } from '../src/types'
+import { nodvandigKonfiguration, problemMedRegler } from '../scripts/regler.mjs'
 import { gallandeVarde } from '../scripts/gallande.mjs'
 import regler from '../data/regler.json'
 import fragorJson from '../data/fragor.json'
 import svarJson from '../data/svar.json'
 
 describe('förgrening', () => {
-  it('färre än gränsen ger säsongsspåret: vistelsens längd, fråga 2 och 6, sedan svar', () => {
+  it('färre än gränsen ger säsongsspåret: vistelsens längd och fråga 6, utan åldersfråga, sedan svar', () => {
     expect(beraknaVag({ dagar: 'farre' }).fragor).toEqual(['dagar', 'vistelse'])
-    expect(beraknaVag({ dagar: 'farre', vistelse: 'hogst' }).fragor).toEqual(['dagar', 'vistelse', 'alder'])
-    expect(beraknaVag({ dagar: 'farre', vistelse: 'langre', alder: 'minst', familj: 'nej' })).toMatchObject({ slut: 'sasong', total: 4 })
+    expect(beraknaVag({ dagar: 'farre', vistelse: 'hogst' }).fragor).toEqual(['dagar', 'vistelse', 'familj'])
+    expect(beraknaVag({ dagar: 'farre', vistelse: 'langre', familj: 'nej' })).toMatchObject({ slut: 'sasong', total: 3 })
   })
   it('vet inte och gränsen eller fler går vidare till fråga 2', () => {
     for (const dagar of ['minst', 'vetInte']) expect(beraknaVag({ dagar }).fragor).toEqual(['dagar', 'alder'])
@@ -35,21 +37,34 @@ describe('förgrening', () => {
   })
 })
 
-describe('jämförelse av inkomst', () => {
-  const kurs = 2
-  const alt = (minSek: number, maxSek: number | null) => ({ id: 'x', text: 'x', minSek, maxSek })
-  it('kravet inom intervallet är nära gränsen', () => expect(jamforInkomst(alt(10, 20), 30, kurs)).toBe('nara'))
-  it('intervall helt över kravet', () => expect(jamforInkomst(alt(20, 30), 30, kurs)).toBe('ok'))
-  it('intervall helt under kravet', () => expect(jamforInkomst(alt(1, 2), 30, kurs)).toBe('under'))
-  it('öppet intervall uppåt räknas med', () => expect(jamforInkomst(alt(10, null), 30, kurs)).toBe('nara'))
-  it('saknad växelkurs eller krav kan inte jämföras', () => {
-    expect(jamforInkomst(alt(10, 20), 30, null)).toBe('okant')
-    expect(jamforInkomst(alt(10, 20), null, kurs)).toBe('okant')
+describe('jämförelse av belopp', () => {
+  it('Ja, Nej och Vet inte ger ok, under och okänt', () => {
+    expect(jamforJaNej('ja')).toBe('ok')
+    expect(jamforJaNej('nej')).toBe('under')
+    expect(jamforJaNej('vetInte')).toBe('okant')
+    expect(jamforJaNej(undefined)).toBe('okant')
   })
-  it('bank: Ja och Kanske avgör inget eftersom beloppet inte anges, Nej avgör', () => {
-    expect(jamforBank('ja')).toBe('nara')
-    expect(jamforBank('kanske')).toBe('nara')
-    expect(jamforBank('nej')).toBe('under')
+})
+
+describe('framräknade belopp', () => {
+  it('delar baht med kursen och avrundar uppåt till närmaste steg', () => {
+    expect(beraknaKr(65000, 3, 100)).toBe(21700) // 21 666,67 kr
+    expect(beraknaKr(800000, 3, 100)).toBe(266700) // 266 666,67 kr
+  })
+  it('ett exakt belopp hamnar inte ett steg högre på grund av flyttal', () => {
+    expect(beraknaKr(65000, 2, 100)).toBe(32500)
+    expect(beraknaKr(300000, 3, 100)).toBe(100000)
+  })
+  it('utan kurs eller belopp finns inget att visa, och utan avrundning avrundas till hela kronor', () => {
+    expect(beraknaKr(65000, null, 100)).toBeNull()
+    expect(beraknaKr(65000, 0, 100)).toBeNull()
+    expect(beraknaKr(65000, 3, null)).toBe(21667)
+  })
+  it('produktionsbygget kräver kurs, datum och avrundning', () => {
+    const ok: Config = { shopifyLank: null, epost: { mottagare: null, tjanst: '' }, vaxelkurs: { thbPerSek: 3, datum: '2026-09-01' }, avrundningKr: 100 }
+    expect(nodvandigKonfiguration(ok)).toEqual([])
+    expect(nodvandigKonfiguration({ ...ok, vaxelkurs: { thbPerSek: null, datum: null } })).toEqual(['vaxelkurs.thbPerSek', 'vaxelkurs.datum'])
+    expect(nodvandigKonfiguration({ ...ok, avrundningKr: null })).toEqual(['avrundningKr'])
   })
 })
 
@@ -123,7 +138,7 @@ describe('data skild från logik', () => {
     void _om
     const text = JSON.stringify(mallar)
     for (const [, nyckel] of text.matchAll(/\{([A-Za-z0-9_.-]+)\}/g)) {
-      expect(ids.has(nyckel.replace(/\.(varde|villkor)$/, '')) || svarId.has(nyckel) || extra.has(nyckel), nyckel).toBe(true)
+      expect(ids.has(nyckel.replace(/\.(varde|villkor|kr)$/, '')) || svarId.has(nyckel) || extra.has(nyckel), nyckel).toBe(true)
     }
   })
   it('koden innehåller inga belopp eller gränser', () => {

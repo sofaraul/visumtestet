@@ -14,11 +14,11 @@ const KORT: Record<string, Record<string, string>> = {
   vistelse: { hogst: '≤30/besök', langre: '>30/besök' },
   alder: { under: '<50', minst: '≥50' },
   pengar: { pension: 'pension', lon: 'lön', eget: 'eget företag', kapital: 'kapital', kombination: 'kombination' },
-  inkomst: { lag: '<20 tkr', mellan: '20–40 tkr', hog: '>40 tkr' },
-  bank: { ja: 'ja', nej: 'nej', kanske: 'kanske' },
+  inkomst: { ja: 'ja', nej: 'nej', vetInte: 'vet inte' },
+  bank: { ja: 'ja', nej: 'nej', vetInte: 'vet inte' },
   familj: { nej: 'nej', make: 'make/maka', barn: 'barn' },
 }
-const FALT: Record<string, string> = { dagar: 'dagar', vistelse: 'vistelse', alder: 'ålder', pengar: 'pengar', inkomst: 'inkomst', bank: 'bank', familj: 'familj' }
+const FALT: Record<string, string> = { dagar: 'dagar', vistelse: 'vistelse', alder: 'ålder', pengar: 'pengar', inkomst: 'inkomst ≥ krav', bank: 'bank ≥ krav', familj: 'familj' }
 const KRAVNAMN: Record<string, string> = {
   'non-o-inkomstkrav': 'inkomst',
   'non-o-bankkrav': 'bank',
@@ -34,7 +34,7 @@ const forstaMening = (t: string, max = 90) => {
   const m = t.split(/(?<=\.)\s/)[0]
   return m.length > max ? `${m.slice(0, max - 1)} …` : m
 }
-const sink = (p: Post) => p.text.match(/SINK-avdrag[^.]*?(\d+(?:,\d+)? procent)/)?.[1]
+const sink = (p: Post) => p.text.match(/\bSINK\b[^.]*?(\d+(?:,\d+)? procent)/)?.[1]
 
 const vagar = allaVagar()
 const rader = vagar.map((v, i) => {
@@ -48,7 +48,8 @@ const rader = vagar.map((v, i) => {
   const skattNyckel = v.svar.dagar === 'farre' ? 'berör inte pengar som förs in' : v.svar.dagar === 'minst' ? 'blir bosatt, pengar kan beskattas' : 'villkorat: om ≥ gränsen blir bosatt'
   const s = sink(fore)
   const skatt = s ? `${skattNyckel}; SINK ${s}${sink(efter) !== s ? ` (${sink(efter)} från ${EFTER})` : ''}` : skattNyckel
-  const vag = `${m.vag.namn}${m.notis ? ' + familjenotis' : ''}`
+  const vagText = m.mall === 'sasongLang' ? `${m.vag.namn}. ${m.vag.mening}` : m.vag.namn
+  const vag = `${vagText}${m.notis ? ' + familjenotis' : ''}`
   return `| ${i + 1} | ${cell(svar)} | ${m.spar === 'sasong' ? 'säsong' : 'pension'} | ${cell(vag)} | ${cell(krav)} | ${cell(skatt)} | ${cell(forstaMening(m.fallgrop))} |`
 })
 
@@ -58,7 +59,7 @@ const tabell = [
   '',
   `${vagar.length} vägar genom frågorna: ${antal('sasong')} säsongsspår, ${antal('pension')} pensionärsspår och ${antal('underArbete')} "under arbete". Varje väg är byggd för ${FORE} och ${EFTER} med fast växelkurs och kontrollerad av \`npm test\` (tests/logik-matris.test.ts). Tabellen visar ${FORE}. Mellan datumen skiljer sig bara SINK-värdet.`,
   '',
-  'Förklaring: krav visas som `krav: utfall`. *ja* = går att avgöra och stämmer, *nej* = går att avgöra och stämmer inte, *osäkert* = beror på uppgift som svaren inte ger (t.ex. beloppet på bankkontot), *ej avgörbart* = går inte att jämföra med svaren, *info* = bra att veta. Kortformer: tkr = tusen kronor per månad.',
+  'Förklaring: krav visas som `krav: utfall`. *ja* = går att avgöra och stämmer, *nej* = går att avgöra och stämmer inte, *ej avgörbart* = går inte att jämföra med svaren (t.ex. "Vet inte"), *info* = visas som information. "inkomst ≥ krav" och "bank ≥ krav" är svaren på frågan om beloppet som räknats fram ur kravet i baht och kursen.',
   '',
   '| # | Svar | Spår | Trolig väg | Krav | Skatt | Fallgrop |',
   '| --- | --- | --- | --- | --- | --- | --- |',

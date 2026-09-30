@@ -1,26 +1,30 @@
 // Gemensamt underlag för logiktestet och rapporten rapporter/logik-matris.md:
 // alla vägar genom frågorna, fasta testvärden och en oberoende uträkning av förväntat utfall.
 import { beraknaVag } from '../src/flode'
-import { byggSvar, byggUnderArbete, svarTillText, type Svar } from '../src/svar'
+import { byggSvar, byggUnderArbete, renderaFraga, svarTillText, type Svar } from '../src/svar'
 import { formatTal } from '../src/mall'
 import { gallandeVarde } from '../scripts/gallande.mjs'
 import reglerJson from '../data/regler.json'
 import fragorJson from '../data/fragor.json'
 import svarJson from '../data/svar.json'
 import configJson from '../config.json'
-import type { Config, Fraga, Regel, Slut, Status, SvarInnehall, Svaren } from '../src/types'
+import type { Config, Fraga, Regel, Slut, SvarInnehall, Svaren } from '../src/types'
 
 export const regler = reglerJson as Regel[]
 export const fragor = fragorJson.fragor as Fraga[]
 export const innehall = svarJson as unknown as SvarInnehall
 export const riktigConfig = configJson as Config
 
-/** Fast växelkurs för testerna: 1 kr = 3 baht. Då ligger "Under 20 000 kr" helt under Non-O-kravet. */
+/** Fast växelkurs för testerna: 1 kr = 3 baht, hämtad 2026-09-01, belopp avrundade uppåt till hela hundratal kronor. */
 export const TESTKONFIG: Config = {
   shopifyLank: 'https://example.com/guide',
   epost: { mottagare: null, tjanst: '' },
   vaxelkurs: { thbPerSek: 3, datum: '2026-09-01' },
+  avrundningKr: 100,
 }
+
+/** Samma konfiguration med en annan kurs, för att se att beloppen räknas fram och inte är inskrivna. */
+export const medKurs = (thbPerSek: number | null): Config => ({ ...TESTKONFIG, vaxelkurs: { ...TESTKONFIG.vaxelkurs, thbPerSek } })
 
 /** Sista dagen före och första dagen efter att SINK-avdraget ändras. */
 export const FORE = '2026-12-31'
@@ -53,34 +57,59 @@ export const vagNamn = (svar: Svaren) =>
 export interface Post {
   vag: Vag
   datum: string
+  konfig: Config
   modell: Svar | null
   text: string
 }
 
-export function byggPost(vag: Vag, datum: string): Post {
+export function byggPost(vag: Vag, datum: string, konfig: Config = TESTKONFIG): Post {
   if (vag.slut === 'underArbete') {
     const u = byggUnderArbete(innehall)
-    return { vag, datum, modell: null, text: [u.rubrik, u.text, innehall.epost.rubrikUnderArbete, u.friskrivning].join('\n') }
+    return { vag, datum, konfig, modell: null, text: [u.rubrik, u.text, innehall.epost.rubrikUnderArbete, u.friskrivning].join('\n') }
   }
-  const modell = byggSvar({ spar: vag.slut, svar: vag.svar, regler, fragor, config: TESTKONFIG, innehall, idag: datum })
-  return { vag, datum, modell, text: svarTillText(modell) }
+  const modell = byggSvar({ spar: vag.slut, svar: vag.svar, regler, fragor, config: konfig, innehall, idag: datum })
+  return { vag, datum, konfig, modell, text: svarTillText(modell) }
 }
+
+/** Frågorna som besökaren ser, med framräknade belopp. */
+export const renderadeFragor = (konfig: Config = TESTKONFIG, datum: string = FORE) =>
+  fragor.map((f) => renderaFraga(f, { regler, fragor, config: konfig, innehall, idag: datum }))
 
 // --- Siffror -------------------------------------------------------------------------------
 
-const TAL = /\d{1,3}(?:[  ]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?/g
-const normaliseraTal = (t: string) => String(Number(t.replace(/[  ]/g, '').replace(',', '.')))
+const TAL = /\d{1,3}(?:[ \u00a0]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?/g
+const normaliseraTal = (t: string) => String(Number(t.replace(/[ \u00a0]/g, '').replace(',', '.')))
 
 export const talITexten = (text: string) => [...text.matchAll(TAL)].map((m) => normaliseraTal(m[0]))
 
-/** Tal som får förekomma: värdena i regler.json och config.json (testets och den riktiga). Källadresser räknas inte. */
-export function tillatnaTal(): Set<string> {
+/** Belopp i baht som svaret räknar om till kronor. */
+export const bahtRegler = () => regler.filter((r) => r.enhet === 'THB' || r.enhet === 'THB/manad')
+
+/**
+ * Oberoende uträkning av "ungefär X kr": bahtbeloppet delat med kursen, avrundat uppåt till närmaste
+ * `avrundning` kronor. Skrivet för sig så att testet inte delar kod med det som testas.
+ */
+export const forvantadKr = (baht: number, kurs: number, avrundning: number) => Math.ceil(baht / kurs / avrundning) * avrundning
+
+/**
+ * Tal som får förekomma: värdena i regler.json och config.json, samt belopp i kronor som räknas fram
+ * ur reglernas baht och kursen. Källadresser räknas inte.
+ */
+export function tillatnaTal(konfig: Config = TESTKONFIG): Set<string> {
   const delar: string[] = []
   for (const r of regler) {
     delar.push(JSON.stringify(r.varde), r.villkor ?? '', r.senastKontrollerad ?? '')
   }
-  for (const c of [TESTKONFIG, riktigConfig]) delar.push(String(c.vaxelkurs.thbPerSek ?? ''), c.vaxelkurs.datum ?? '')
-  return new Set(delar.flatMap(talITexten))
+  for (const c of [konfig, riktigConfig]) delar.push(String(c.vaxelkurs.thbPerSek ?? ''), c.vaxelkurs.datum ?? '')
+  const tal = new Set(delar.flatMap(talITexten))
+  const kurs = konfig.vaxelkurs.thbPerSek
+  if (kurs && konfig.avrundningKr) {
+    for (const r of bahtRegler()) {
+      const v = gallandeVarde(r, FORE)
+      if (typeof v === 'number') tal.add(String(forvantadKr(v, kurs, konfig.avrundningKr)))
+    }
+  }
+  return tal
 }
 
 // --- Regler som text, på samma sätt som svaret visar dem -------------------------------------
@@ -105,18 +134,8 @@ export const vardeUtanEnhet = (id: string, datum: string) => {
   return typeof v === 'number' ? formatTal(v) : String(v)
 }
 
-/** Oberoende uträkning av hur inkomstintervallet förhåller sig till Non-O-kravet i baht. */
-export function forvantadInkomststatus(svar: Svaren, datum: string): Status {
-  const alt = fragor.find((f) => f.id === 'inkomst')?.alternativ.find((a) => a.id === svar.inkomst)
-  const krav = gallandeVarde(regel('non-o-inkomstkrav'), datum)
-  const kurs = TESTKONFIG.vaxelkurs.thbPerSek
-  if (!alt || alt.minSek === undefined || typeof krav !== 'number' || !kurs) return 'okant'
-  const fran = alt.minSek * kurs
-  const till = alt.maxSek == null ? Infinity : alt.maxSek * kurs
-  if (krav < fran) return 'ok'
-  if (krav > till) return 'under'
-  return 'nara'
-}
+/** Förväntat utfall av en Ja/Nej/Vet inte-fråga om ett belopp. */
+export const forvantadJaNej = (svar: string | undefined) => (svar === 'ja' ? 'ok' : svar === 'nej' ? 'under' : 'okant')
 
 /** Meningar i en text, för att kunna peka ut vilken mening som bryter mot ett krav. */
 export const meningar = (text: string) => text.split(/(?<=[.!?])\s+|\n+/).map((m) => m.trim()).filter(Boolean)

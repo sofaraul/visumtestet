@@ -34,8 +34,6 @@ export interface Regel {
 export interface Alternativ {
   id: string
   text: string
-  minSek?: number
-  maxSek?: number | null
 }
 
 export interface Fraga {
@@ -48,6 +46,8 @@ export interface Fraga {
 
 export interface Config {
   shopifyLank: string | null
+  /** Belopp i kronor som räknas fram ur baht avrundas uppåt till närmaste så här många kronor. */
+  avrundningKr: number | null
   epost: { mottagare: string | null; tjanst: string }
   vaxelkurs: { thbPerSek: number | null; datum: string | null; kalla?: string }
 }
@@ -67,8 +67,13 @@ export interface KravMall {
 
 export interface SparMall {
   vag: { namn: string; mening: string }
+  /** Egen rubrik för kraven. Standard är gemensamt.rubrikKrav. */
+  rubrikKrav?: string
   krav: KravMall[]
   skatt: Record<string, string>
+  /** Mening om SINK, som bara visas när svaret på frågan om var pengarna kommer ifrån finns i `sinkNar`. */
+  sink?: string
+  sinkNar?: string[]
   fallgrop: string
   erbjudande: { text: string; knapp: string }
 }
@@ -93,6 +98,7 @@ export interface SvarInnehall {
     sasongKort: SparMall
     sasongLang: SparMall
     pension: SparMall
+    pensionIngen: SparMall
     underArbete: { rubrik: string; text: string }
   }
 }

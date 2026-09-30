@@ -1,7 +1,7 @@
 import './style.css'
 import { config, fragor, innehall, regler } from './data'
 import { beraknaVag, rensaSvar } from './flode'
-import { byggSvar } from './svar'
+import { byggSvar, renderaFraga } from './svar'
 import { fragaSkarm, hittaFraga, introSkarm, svarSkarm, underArbeteSkarm, type Atgarder } from './ui'
 import type { Svaren } from './types'
 import { visaBanderoll } from './banderoll'
@@ -20,7 +20,7 @@ function rita() {
   if (pos < 0) skarm = introSkarm(atgarder)
   else if (pos < vag.fragor.length) {
     const id = vag.fragor[pos]
-    skarm = fragaSkarm(hittaFraga(id), svar[id], pos + 1, vag.total, atgarder)
+    skarm = fragaSkarm(renderaFraga(hittaFraga(id), { regler, fragor, config, innehall }), svar[id], pos + 1, vag.total, atgarder)
   } else if (vag.slut === 'underArbete') skarm = underArbeteSkarm(atgarder)
   else skarm = svarSkarm(byggSvar({ spar: vag.slut!, svar, regler, fragor, config, innehall }), atgarder)
 

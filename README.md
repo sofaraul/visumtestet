@@ -109,9 +109,9 @@ Texterna i `data/svar.json` är utkast. Skriv över dem med egna. Platshållare:
 | `{non-o-inkomstkrav}` | Värdet med enhet, t.ex. "65 000 baht i månaden". Regelns id styr. |
 | `{non-o-inkomstkrav.varde}` | Bara värdet, t.ex. "65 000". |
 | `{non-o-bankkrav.villkor}` | Regelns `villkor`, t.ex. bankkravets tidsvillkor. |
+| `{non-o-inkomstkrav.kr}` | Beloppet i kronor, framräknat ur regelns baht och kursen i `config.json` och avrundat uppåt, t.ex. "21 700 kr". Fungerar för regler i baht. |
 | `{svar.dagar}` | Besökarens svar på frågan med id `dagar` (`dagar`, `vistelse`, `alder`, `pengar`, `inkomst`, `bank`, `familj`). |
-| `{inkomstSek}`, `{inkomstThb}` | Vald inkomst och omräkningen till baht. **Använd dem inte i svaren:** siffrorna finns inte i `regler.json` och logiktestet underkänner dem. |
-| `{vaxelkurs}`, `{vaxelkursDatum}` | Kursen och datumet från `config.json`. |
+| `{vaxelkurs}`, `{vaxelkursDatum}` | Kursen och dess datum (ÅÅÅÅ-MM-DD) från `config.json`. |
 
 Enhetsetiketterna ("baht i månaden" osv.) ligger under `enheter` i samma fil. Saknas ett värde visas `[uppgift saknas]`, så du ser det direkt. Texten är ren text, ingen HTML.
 
@@ -119,13 +119,14 @@ Under varje svar visas äldsta `senastKontrollerad` bland de regler svaret anvä
 
 ## Hjälptexter under frågorna
 
-Lägg in texterna från fliken Visumguiden i `hjalptext` i `data/fragor.json` för frågorna `dagar`, `alder`, `inkomst` och `bank`. Tom sträng (`""`) betyder att texten saknas och flaggas i banderollen. `null` betyder att frågan inte ska ha någon hjälptext.
+Lägg in texterna från fliken Visumguiden i `hjalptext` i `data/fragor.json` för frågorna `dagar`, `alder`, `inkomst` och `bank`. Frågetexterna kan ha platshållare, t.ex. `{non-o-inkomstkrav.kr}` i inkomstfrågan. Tom sträng (`""`) betyder att texten saknas och flaggas i banderollen. `null` betyder att frågan inte ska ha någon hjälptext.
 
 ## Konfiguration (`config.json`)
 
 ```json
 {
   "shopifyLank": "https://din-butik.myshopify.com/products/guiden",
+  "avrundningKr": 100,
   "epost": { "mottagare": "du@exempel.se", "tjanst": "https://formsubmit.co/ajax/{mottagare}" },
   "vaxelkurs": { "thbPerSek": 0.0, "datum": "ÅÅÅÅ-MM-DD" }
 }
@@ -133,7 +134,8 @@ Lägg in texterna från fliken Visumguiden i `hjalptext` i `data/fragor.json` f�
 
 - `shopifyLank`: knappen i slutet av svaret. Saknas den visas ingen knapp.
 - `epost.mottagare`: dit adresserna skickas. Saknas den visas inte e-postfältet alls.
-- `vaxelkurs`: baht per krona och datumet för kursen. Saknas kursen kan inkomsten inte jämföras.
+- `vaxelkurs`: baht per krona och datumet för kursen. Frågorna om inkomst och bankkonto räknar fram belopp i kronor ur den, så **produktionsbygget stoppas om kursen saknas**. Kursen fylls i av den dagliga körningen (`npm run vaxelkurs`), eller skriv in den själv.
+- `avrundningKr`: beloppen i kronor avrundas uppåt till närmaste så här många kronor (100), så att "minst X kr" aldrig ligger under kravet i baht.
 
 ### Hur e-posten skickas
 
@@ -143,12 +145,12 @@ Bara e-postadressen, samtycket och vilket spår svaret gäller skickas. Svaren p
 
 ## Logiktest
 
-`npm test` bygger svaret för varje möjlig väg genom frågorna (176 vägar, före och efter 2027-01-01, med en fast växelkurs) och kontrollerar dem mot kraven i `tests/logik-matris.test.ts`:
+`npm test` bygger svaret för varje möjlig väg genom frågorna (174 vägar, före och efter 2027-01-01, med en fast växelkurs) och kontrollerar dem mot kraven i `tests/logik-matris.test.ts`:
 
 - varje siffra i ett svar finns i `regler.json` eller `config.json`,
 - varje svar har rubriken "Din troliga väg", ansvarsfriskrivningen och kontrolldatum,
 - inget svar påstår att något är uppfyllt om det inte går att avgöra från svaren,
-- kraven per spår (säsong, pension, LTR bara villkorat, under arbete, familj, SINK efter datum).
+- kraven per spår (säsong, pension, LTR bara villkorat, under arbete, familj, SINK bara för pension och efter datum, kraven som förlängning ett år i taget, framräknade belopp i kronor som stämmer med beräkningen).
 
 Ändrar du en mall i `data/svar.json` och något krav bryts pekar testet ut vilken väg och vilken mening. `npm run logikmatris` skriver `rapporter/logik-matris.md` med en rad per väg.
 

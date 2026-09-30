@@ -1,7 +1,6 @@
-import { gallandeVarde } from '../scripts/gallande.mjs'
 import { formatTal, fyllMall, type MallKontext } from './mall'
-import { jamforBank, jamforDagar, jamforInkomst, jamforVistelse } from './jamfor'
-import type { Config, Fraga, Jamfor, Regel, Status, SvarInnehall, SparNamn, Svaren } from './types'
+import { jamforDagar, jamforJaNej, jamforVistelse } from './jamfor'
+import type { Config, Fraga, Jamfor, Regel, SparMall, Status, SvarInnehall, SparNamn, Svaren } from './types'
 
 export interface KravRad {
   regel: string
@@ -13,6 +12,8 @@ export interface KravRad {
 
 export interface Svar {
   spar: SparNamn
+  /** Vilken mall i svar.json som användes, t.ex. sasongKort, sasongLang, pension eller pensionIngen. */
+  mall: string
   rubriker: { vag: string; krav: string; skatt: string; fallgrop: string }
   vag: { namn: string; mening: string }
   /** Text om familj i Thailand, eller null. Nämner bara att en separat väg finns. */
@@ -25,15 +26,18 @@ export interface Svar {
   friskrivning: string
 }
 
-interface Indata {
-  spar: SparNamn
-  svar: Svaren
+interface Underlag {
   regler: Regel[]
   fragor: Fraga[]
   config: Config
   innehall: SvarInnehall
   /** Datum (ÅÅÅÅ-MM-DD) för datumstyrda regler. Standard är idag. */
   idag?: string
+}
+
+interface Indata extends Underlag {
+  spar: SparNamn
+  svar: Svaren
 }
 
 const alternativText = (fragor: Fraga[], fraga: string, valt?: string) =>
@@ -44,31 +48,51 @@ function formatDatum(iso: string): string {
   return Number.isNaN(d.getTime()) ? iso : new Intl.DateTimeFormat('sv-SE', { dateStyle: 'long' }).format(d)
 }
 
-export function byggSvar({ spar, svar, regler, fragor, config, innehall, idag }: Indata): Svar {
-  const mall = innehall.spar[spar === 'sasong' ? (svar.vistelse === 'langre' ? 'sasongLang' : 'sasongKort') : spar]
-  const { gemensamt } = innehall
-  const reglerMap = new Map(regler.map((r) => [r.id, r]))
+/** Värdena som mallar och frågor kan hämta: regler, besökarens svar samt kursen och dess datum. */
+export function byggKontext({ svar = {}, regler, fragor, config, innehall, idag }: Underlag & { svar?: Svaren }): MallKontext {
+  const { saknas } = innehall.gemensamt
   const { thbPerSek, datum } = config.vaxelkurs
-
-  const inkomstAlt = fragor.find((f) => f.id === 'inkomst')?.alternativ.find((a) => a.id === svar.inkomst)
   const varden: Record<string, string> = {}
-  for (const f of fragor) varden[`svar.${f.id}`] = alternativText(fragor, f.id, svar[f.id]) ?? gemensamt.saknas
-  varden.inkomstSek = inkomstAlt?.text ?? gemensamt.saknas
-  varden.inkomstThb =
-    inkomstAlt && thbPerSek ? intervallThb(inkomstAlt.minSek, inkomstAlt.maxSek, thbPerSek) : gemensamt.saknas
-  varden.vaxelkurs = thbPerSek ? `${formatTal(thbPerSek)} ${innehall.enheter.thbPerSek}` : gemensamt.saknas
-  varden.vaxelkursDatum = datum ? formatDatum(datum) : gemensamt.saknas
+  for (const f of fragor) varden[`svar.${f.id}`] = alternativText(fragor, f.id, svar[f.id]) ?? saknas
+  varden.vaxelkurs = thbPerSek ? `${formatTal(thbPerSek)} ${innehall.enheter.thbPerSek}` : saknas
+  varden.vaxelkursDatum = datum ?? saknas
+  return {
+    regler: new Map(regler.map((r) => [r.id, r])),
+    enheter: innehall.enheter,
+    saknas,
+    varden,
+    anvanda: new Set(),
+    idag,
+    kurs: thbPerSek,
+    avrundningKr: config.avrundningKr,
+  }
+}
 
-  const ctx: MallKontext = { regler: reglerMap, enheter: innehall.enheter, saknas: gemensamt.saknas, varden, anvanda: new Set(), idag }
+/** Frågan som besökaren ser, med framräknade belopp ifyllda. */
+export function renderaFraga(fraga: Fraga, underlag: Underlag): Fraga {
+  const ctx = byggKontext(underlag)
+  return { ...fraga, text: fyllMall(fraga.text, ctx), hjalptext: fraga.hjalptext && fyllMall(fraga.hjalptext, ctx) }
+}
+
+/** Vilken mall i svar.json som gäller för besökarens svar. */
+function valjMall(spar: SparNamn, svar: Svaren): keyof SvarInnehall['spar'] {
+  if (spar === 'sasong') return svar.vistelse === 'langre' ? 'sasongLang' : 'sasongKort'
+  return svar.inkomst === 'nej' && svar.bank === 'nej' ? 'pensionIngen' : 'pension'
+}
+
+export function byggSvar({ spar, svar, ...underlag }: Indata): Svar {
+  const { config, innehall } = underlag
+  const nyckel = valjMall(spar, svar)
+  const mall = innehall.spar[nyckel] as SparMall
+  const { gemensamt } = innehall
+  const ctx = byggKontext({ svar, ...underlag })
   const fyll = (text: string) => fyllMall(text, ctx)
+  const reglerMap = ctx.regler
 
   const krav = mall.krav.map((k): KravRad => {
-    const regel = reglerMap.get(k.regel)
-    const gallande = regel ? gallandeVarde(regel, idag) : null
-    const kravVarde = typeof gallande === 'number' ? gallande : null
     const status: Status =
-      k.jamfor === 'inkomst' ? jamforInkomst(inkomstAlt, kravVarde, thbPerSek)
-      : k.jamfor === 'bank' ? jamforBank(svar.bank)
+      k.jamfor === 'inkomst' ? jamforJaNej(svar.inkomst)
+      : k.jamfor === 'bank' ? jamforJaNej(svar.bank)
       : k.jamfor === 'vistelse' ? jamforVistelse(svar.vistelse)
       : k.jamfor === 'dagar' ? jamforDagar(svar.dagar)
       : k.jamfor === 'okant' ? 'okant'
@@ -77,15 +101,19 @@ export function byggSvar({ spar, svar, regler, fragor, config, innehall, idag }:
     return { regel: k.regel, jamfor: k.jamfor, text: fyll(k.text), status, etikett: k.status[status] ?? '' }
   })
 
+  // SINK gäller svensk pension, så meningen visas bara när pengarna kommer från pension.
   const skattMall = mall.skatt[svar.dagar ?? 'vetInte'] ?? gemensamt.saknas
+  const visaSink = mall.sink && svar.pengar && mall.sinkNar?.includes(svar.pengar)
+  const skatt = [fyll(skattMall), visaSink ? fyll(mall.sink!) : ''].filter(Boolean).join(' ')
 
   const resultat: Svar = {
     spar,
-    rubriker: { vag: gemensamt.rubrikVag, krav: gemensamt.rubrikKrav, skatt: gemensamt.rubrikSkatt, fallgrop: gemensamt.rubrikFallgrop },
+    mall: nyckel,
+    rubriker: { vag: gemensamt.rubrikVag, krav: mall.rubrikKrav ?? gemensamt.rubrikKrav, skatt: gemensamt.rubrikSkatt, fallgrop: gemensamt.rubrikFallgrop },
     vag: { namn: fyll(mall.vag.namn), mening: fyll(mall.vag.mening) },
     notis: svar.familj && gemensamt.familj[svar.familj] ? fyll(gemensamt.familj[svar.familj]) : null,
     krav,
-    skatt: fyll(skattMall),
+    skatt,
     fallgrop: fyll(mall.fallgrop),
     erbjudande: { text: fyll(mall.erbjudande.text), knapp: mall.erbjudande.knapp, lank: config.shopifyLank },
     kontrollText: '',
@@ -93,15 +121,6 @@ export function byggSvar({ spar, svar, regler, fragor, config, innehall, idag }:
   }
   resultat.kontrollText = kontrollText([...ctx.anvanda].map((id) => reglerMap.get(id)), innehall)
   return resultat
-}
-
-function intervallThb(minSek: number | undefined, maxSek: number | null | undefined, kurs: number): string {
-  const fran = minSek ? formatTal(Math.round(minSek * kurs)) : null
-  const till = maxSek ? formatTal(Math.round(maxSek * kurs)) : null
-  if (fran && till) return `${fran}–${till} baht`
-  if (till) return `under ${till} baht`
-  if (fran) return `över ${fran} baht`
-  return ''
 }
 
 /** Äldsta kontrolldatum bland reglerna i svaret. Saknas ett datum visas "ej kontrollerad". */

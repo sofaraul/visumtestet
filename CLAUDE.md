@@ -52,21 +52,21 @@ Fyll filen med följande startvärden, samtliga som overifierade:
 1. Hur många dagar per år räknar du med att vara i Thailand? – Färre än 180 dagar / 180 dagar eller fler / Vet inte än
 2. Hur gammal är du? – Under 50 / 50 eller äldre
 3. Var kommer dina pengar ifrån? – Pension / Lön från svensk arbetsgivare / Eget företag eller frilans / Kapital och sparande / Kombination
-4. Ungefär vilken inkomst har du per månad före skatt? – Under 20 000 kr / 20 000–40 000 kr / Över 40 000 kr
-5. Kan du låsa ett större belopp på ett thailändskt bankkonto? – Ja / Nej / Kanske, beror på beloppet
+4. Är din inkomst före skatt minst X kr i månaden? – Ja / Nej / Vet inte (X räknas fram ur Non-O-kravet i baht och växelkursen)
+5. Kan du ha minst Y kr på ett thailändskt konto från minst två månader före ansökan? – Ja / Nej / Vet inte (Y räknas fram ur bankkravet i baht och växelkursen)
 6. Har du familj i Thailand? – Nej / Ja, make eller maka / Ja, barn
 
-I säsongsspåret ställs dessutom en fråga direkt efter fråga 1: Hur länge varar varje vistelse? – Högst 30 dagar åt gången / Längre än 30 dagar åt gången.
+I säsongsspåret ställs dessutom en fråga direkt efter fråga 1: Hur länge varar varje vistelse? – Högst 30 dagar åt gången / Längre än 30 dagar åt gången. Säsongsspåret frågar inte om ålder.
 
 Visa hjälptexterna under frågorna 1, 2, 4 och 5. Texterna finns i fliken Visumguiden och läggs in i `data/fragor.json`.
 
 ## Förgrening
 
-* Fråga 1, färre än 180 dagar: säsongsspåret. Fråga om vistelsens längd, sedan fråga 2 och 6, sedan svar.
+* Fråga 1, färre än 180 dagar: säsongsspåret. Fråga om vistelsens längd och fråga 6, sedan svar. Ingen åldersfråga.
 * Fråga 1, 180 dagar eller fler eller vet inte än: vidare till fråga 2.
-* Fråga 2, under 50: spåret är under arbete.
+* Fråga 2, under 50 (utanför säsongsspåret): spåret är under arbete.
 * Fråga 3, lön eller eget företag: spåret är under arbete.
-* Övriga: pensionärsspåret. Fråga 4, 5 och 6, sedan svar.
+* Övriga: pensionärsspåret. Fråga 4, 5 och 6, sedan svar. Svarar besökaren Nej på både fråga 4 och 5 ser ingen pensionärsväg ut att passa, och kraven visas som information.
 * Spår under arbete: visa Ditt spår är under arbete och erbjud e-post för besked när det är klart.
 
 ## Svaret
@@ -74,7 +74,7 @@ Visa hjälptexterna under frågorna 1, 2, 4 och 5. Texterna finns i fliken Visum
 Samma struktur i alla spår:
 
 1. Din troliga väg: visumvägens namn och en mening om vad den innebär.
-2. Det här behöver du uppfylla: tre punkter, jämförda med besökarens svar. Inkomstintervallet räknas om till baht med växelkursen i konfigurationen. Ligger kravet inom intervallet visas Du ligger nära gränsen – kontrollera ditt exakta belopp.
+2. Det här behöver du uppfylla: tre punkter, jämförda med besökarens svar. Belopp i kronor räknas fram ur reglernas baht och växelkursen i konfigurationen och visas med kursens datum. I pensionärsspåret är rubriken för kraven "För att få stanna ett år i taget krävs:", eftersom kraven gäller förlängning i Thailand.
 3. Skatt: en mening om huruvida 180-dagarsgränsen berör besökaren.
 4. Det folk missar: en fallgrop kopplad till spåret.
 5. Erbjudandet: en knapp till Shopify-produkten.
@@ -123,6 +123,7 @@ Svarstexterna skrivs av ägaren. Bygg dem som redigerbara mallar i `data/svar.js
 * `npm test` innehåller ett test som stoppar siffror i `src/`. Lägg aldrig belopp eller gränser i koden.
 * Tomma värden är avsiktliga och flaggas: `visumfri-vistelse-dagar` och `null` i `config.json`. Fyll dem inte med gissningar. Hjälptexterna i `fragor.json` är ifyllda av ägaren.
 * `vite.config.ts` avgör förhandsvisning eller produktion (`__FORHANDSVISNING__`): `VERCEL_ENV=preview`, `CONTEXT=deploy-preview|branch-deploy` och `--mode development` är förhandsvisningar utan byggstopp men med röd banderoll. Bara produktionsbygget stoppas av overifierade regler.
-* Fråga 2 "under 50" ger spår under arbete även i säsongsspåret, enligt förgreningen ovan.
+* Kraven i pensionärsspåret (regel non-o-inkomstkrav, non-o-bankkrav, non-o-bank-minsta-saldo, non-o-kombination och non-o-forlangning-max) gäller förlängning av vistelsen i Thailand, ett år i taget (Immigration Bureau, punkt 2.22). De får inte beskrivas som krav för visumansökan från Sverige. SINK nämns bara när pengarna kommer från pension eller kombination (`sinkNar` i `data/svar.json`). Säsongsvistelser längre än 30 dagar namnger inget visum.
+* Produktionsbygget kräver `vaxelkurs` och `avrundningKr` i `config.json`, eftersom frågorna räknar fram belopp i kronor. `{regel-id.kr}` i mallar och frågor.
 * Testa flödet på mobilbredd (390 px) efter ändringar i UI.
-* `tests/logik-matris.test.ts` prövar alla vägar mot kraven: alla siffror i ett svar måste finnas i `regler.json` eller `config.json`, inget påstående utan att villkoret går att avgöra från svaren, LTR bara villkorat, familj bara som notis om en separat väg, SINK efter datum. Använd inte `{inkomstSek}`/`{inkomstThb}` i svaren. Svarsmallarna är `sasongKort`, `sasongLang` och `pension` i `data/svar.json`, och varje kravrad har egna etiketter per utfall. `npm run logikmatris` skriver `rapporter/logik-matris.md`.
+* `tests/logik-matris.test.ts` prövar alla vägar mot kraven: alla siffror i ett svar måste finnas i `regler.json` eller `config.json`, inget påstående utan att villkoret går att avgöra från svaren, LTR bara villkorat, familj bara som notis om en separat väg, SINK efter datum. Belopp i kronor får bara komma från `{regel-id.kr}`. Svarsmallarna är `sasongKort`, `sasongLang`, `pension` och `pensionIngen` i `data/svar.json`, och varje kravrad har egna etiketter per utfall. `npm run logikmatris` skriver `rapporter/logik-matris.md`.

@@ -1,5 +1,5 @@
 import { defineConfig, type Plugin } from 'vite'
-import { laRegler, laConfig, problemMedRegler, saknadKonfiguration } from './scripts/regler.mjs'
+import { laRegler, laConfig, nodvandigKonfiguration, problemMedRegler, saknadKonfiguration } from './scripts/regler.mjs'
 
 /** Stoppar produktionsbygget om någon regel är overifierad. */
 function verifieraRegler(): Plugin {
@@ -14,7 +14,15 @@ function verifieraRegler(): Plugin {
             'Kör `npm run kallor` för att se källorna. Förhandsvisningar (Vercel preview, Netlify deploy preview och branch deploy, `npm run build:forhandsvisning`) stoppas inte.',
         )
       }
-      const saknas: string[] = saknadKonfiguration(laConfig())
+      const config = laConfig()
+      const nodvandig: string[] = nodvandigKonfiguration(config)
+      if (nodvandig.length) {
+        throw new Error(
+          `Produktionsbygget stoppat: config.json saknar ${nodvandig.join(', ')}. Frågorna om inkomst och bankkonto räknar fram belopp i kronor ur kursen. ` +
+            'Kör `npm run vaxelkurs` eller låt den dagliga körningen fylla i kursen.',
+        )
+      }
+      const saknas: string[] = saknadKonfiguration(config)
       if (saknas.length) this.warn(`config.json saknar: ${saknas.join(', ')}`)
     },
   }

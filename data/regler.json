@@ -211,6 +211,22 @@
     "sidhash": null
   },
   {
+    "id": "non-o-forlangning-max",
+    "varde": 1,
+    "enhet": "ar",
+    "villkor": "Högst 1 år per beviljande.",
+    "kalla": "https://www.immigration.go.th/wp-content/uploads/2023/11/เอกสาร-7-6.-NON-O-รายการเอกสารขออยู่ต่อใช้ชีวิตบั้นปลาย-TH-EN.pdf",
+    "senastKontrollerad": "2026-09-30",
+    "verifierad": true,
+    "citat": null,
+    "metod": "manuell",
+    "bekraftad": {
+      "av": "Raul",
+      "datum": "2026-09-30"
+    },
+    "sidhash": null
+  },
+  {
     "id": "o-a-forsakringskrav",
     "varde": 100000,
     "enhet": "USD",

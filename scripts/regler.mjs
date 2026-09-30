@@ -30,15 +30,23 @@ export function problemMedRegler(regler, idag = idagIso()) {
   return problem
 }
 
-/** Uppgifter i konfigurationen som saknas. */
+/**
+ * Uppgifter i konfigurationen som saknas. Kursen och avrundningen är nödvändiga: frågorna om
+ * inkomst och bankkonto räknar fram belopp i kronor ur dem.
+ */
 export function saknadKonfiguration(config) {
   const saknas = []
   if (!config.shopifyLank) saknas.push('shopifyLank')
   if (!config.epost?.mottagare) saknas.push('epost.mottagare (e-postfältet visas inte)')
   if (!config.vaxelkurs?.thbPerSek) saknas.push('vaxelkurs.thbPerSek')
   if (!config.vaxelkurs?.datum) saknas.push('vaxelkurs.datum')
+  if (!config.avrundningKr) saknas.push('avrundningKr')
   return saknas
 }
+
+/** De uppgifter i konfigurationen som produktionsbygget inte kan vara utan. */
+export const nodvandigKonfiguration = (config) =>
+  saknadKonfiguration(config).filter((s) => s.startsWith('vaxelkurs') || s === 'avrundningKr')
 
 /** Frågor vars hjälptext är tom sträng (null betyder att ingen text ska visas). */
 export function saknadeHjalptexter(fragor) {

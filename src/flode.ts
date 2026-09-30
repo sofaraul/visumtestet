@@ -1,7 +1,7 @@
 import type { Slut, Svaren } from './types'
 
 // Spåren är bara ordningen på frågorna. Belopp och gränser finns i data/.
-const SASONG = ['dagar', 'vistelse', 'alder', 'familj']
+const SASONG = ['dagar', 'vistelse', 'familj']
 const PENSION = ['dagar', 'alder', 'pengar', 'inkomst', 'bank', 'familj']
 
 /** Svar (alternativ-id) som skickar besökaren till "spåret är under arbete". */
