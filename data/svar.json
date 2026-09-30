@@ -2,7 +2,7 @@
   "_om": "Utkast som ägaren skriver över. Platshållare: {regel-id} = värde med enhet, {regel-id.varde} = bara värdet, {regel-id.villkor} = regelns villkor, {regel-id.kr} = beloppet i kronor, framräknat ur regelns baht och kursen i config.json (avrundat uppåt), {vaxelkurs} = kursen, {vaxelkursDatum} = kursens datum, {svar.fraga-id} = besökarens svar. Skriv ren text, ingen HTML. Siffror ska komma från platshållare så att de stämmer med data/regler.json och config.json. Skriv bara påståenden som går att avgöra från besökarens svar.",
   "granssnitt": {
     "introRubrik": "Visumtestet för dig som vill bo i Thailand",
-    "introText": "Svara på några korta frågor så får du din troliga visumväg, vad du behöver uppfylla, om thailändsk skatt berör dig och en vanlig fallgrop. Det är gratis och tar ungefär två minuter.",
+    "introText": "Svara på några korta frågor så får du din troliga visumväg, vad som krävs, om thailändsk skatt berör dig och en vanlig fallgrop. Testet är gratis och tar ungefär två minuter.",
     "start": "Starta testet",
     "tillbaka": "Tillbaka",
     "nasta": "Nästa",
@@ -58,13 +58,13 @@
     "sasongKort": {
       "vag": {
         "namn": "Visumfri vistelse",
-        "mening": "Du räknar med vistelser på högst {visumfri-vistelse-dagar} åt gången, och då är din troliga väg visumfri vistelse för svenska medborgare."
+        "mening": "Du stannar högst {visumfri-vistelse-dagar} åt gången. Då är din troliga väg att resa in utan visum, som svensk medborgare."
       },
       "krav": [
         {
           "regel": "visumfri-vistelse-dagar",
           "jamfor": "vistelse",
-          "text": "Visumfri vistelse gäller högst {visumfri-vistelse-dagar} per besök. Längre vistelser kräver visum.",
+          "text": "Visumfri vistelse gäller högst {visumfri-vistelse-dagar} per besök, för semester och kortare affärsbesök. Längre vistelser kräver visum.",
           "status": {
             "ok": "Din planerade vistelse ryms inom den visumfria tiden",
             "under": "Din planerade vistelse är längre än den visumfria tiden, så visum krävs",
@@ -90,24 +90,24 @@
         }
       ],
       "skatt": {
-        "farre": "Thailändsk skatt berör inte pengar som du för in så länge du stannar under {skatt-hemvist-dagar}."
+        "farre": "Så länge du är i Thailand färre än {skatt-hemvist-dagar.varde} dagar per kalenderår blir du inte skatterättsligt bosatt där. Då berörs pengar från Sverige som du för in inte av thailändsk skatt."
       },
-      "fallgrop": "Räkna dina dagar, både per besök och per kalenderår. Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}, men {garantipension-bosattning-utomlands}.",
+      "fallgrop": "Reglerna för visumfri vistelse har nyligen ändrats. Råd från vänner, forum och äldre guider kan därför vara inaktuella, så kontrollera alltid när det du läser skrevs.",
       "erbjudande": {
-        "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",
+        "text": "I guiden går vi igenom det du behöver ordna hemma i Sverige när du är borta länge, från pension och bank till försäkring.",
         "knapp": "Läs guiden"
       }
     },
     "sasongLang": {
       "vag": {
         "namn": "Du behöver ett visum",
-        "mening": "Vilket som passar beror på hur länge du stannar."
+        "mening": "Du stannar längre än den visumfria tiden. Vilket visum som passar beror på hur länge du stannar och varför du reser."
       },
       "krav": [
         {
           "regel": "visumfri-vistelse-dagar",
           "jamfor": "vistelse",
-          "text": "Visumfri vistelse gäller högst {visumfri-vistelse-dagar} per besök. Längre vistelser kräver visum.",
+          "text": "Visumfri vistelse gäller högst {visumfri-vistelse-dagar} per besök, för semester och kortare affärsbesök. Längre vistelser kräver visum.",
           "status": {
             "ok": "Din planerade vistelse ryms inom den visumfria tiden",
             "under": "Din planerade vistelse är längre än den visumfria tiden, så visum krävs",
@@ -133,28 +133,28 @@
         }
       ],
       "skatt": {
-        "farre": "Thailändsk skatt berör inte pengar som du för in så länge du stannar under {skatt-hemvist-dagar}."
+        "farre": "Så länge du är i Thailand färre än {skatt-hemvist-dagar.varde} dagar per kalenderår blir du inte skatterättsligt bosatt där. Då berörs pengar från Sverige som du för in inte av thailändsk skatt."
       },
-      "fallgrop": "Visumfri tid räknas per besök, och längre vistelser kräver visum. Garantipension kan behållas vid vistelse på högst {garantipension-max-vistelse}, men {garantipension-bosattning-utomlands}.",
+      "fallgrop": "Visum söker du innan resan, via Thailands e-visumportal. Som bosatt i Sverige behöver du inte lämna in passet på ambassaden, eftersom ansökan sker digitalt.",
       "erbjudande": {
-        "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",
+        "text": "I guiden går vi igenom det du behöver ordna hemma i Sverige när du är borta länge, från pension och bank till försäkring.",
         "knapp": "Läs guiden"
       }
     },
     "pension": {
       "vag": {
         "namn": "Non-O-visum för pensionärer",
-        "mening": "Du uppger pension, kapital eller en kombination och planerar längre vistelser, och då är din troliga väg Non-O-visum för pensionärer, där vistelsen förlängs i Thailand och varje beviljande gäller högst {non-o-forlangning-max}. LTR-visum för pensionärer kan vara ett alternativ om du är {ltr-minalder} och din passiva inkomst är minst {ltr-inkomstkrav}."
+        "mening": "Du är {non-o-minalder}, har pension, kapital eller båda och planerar att stanna länge. Din troliga väg är Non-O-visum för pensionärer. Vistelsen förlängs sedan på plats i Thailand, högst {non-o-forlangning-max} i taget. Har du en passiv inkomst på minst {ltr-inkomstkrav} och är {ltr-minalder} kan även LTR-visum för pensionärer vara ett alternativ."
       },
       "rubrikKrav": "För att få stanna ett år i taget krävs:",
       "krav": [
         {
           "regel": "non-o-inkomstkrav",
           "jamfor": "inkomst",
-          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}.",
+          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}. Inkomsten ska kunna styrkas, till exempel med ett pensionsbesked.",
           "status": {
-            "ok": "Du uppger att din inkomst är tillräcklig. Du uppfyller inkomstkravet",
-            "under": "Din inkomst är under kravet",
+            "ok": "Enligt ditt svar når du upp till kravet",
+            "under": "Enligt ditt svar når du inte upp till kravet",
             "okant": "Går inte att avgöra från dina svar"
           }
         },
@@ -163,8 +163,8 @@
           "jamfor": "bank",
           "text": "Alternativt minst {non-o-bankkrav} på ett thailändskt bankkonto, ungefär {non-o-bankkrav.kr} med ECB:s kurs den {vaxelkursDatum}. {non-o-bankkrav.villkor} Därefter ska minst {non-o-bank-minsta-saldo} finnas kvar, ungefär {non-o-bank-minsta-saldo.kr} med samma kurs.",
           "status": {
-            "ok": "Du uppger att du kan ha beloppet på kontot i tid",
-            "under": "Du uppger att du inte kan ha beloppet på kontot, så det här alternativet passar inte",
+            "ok": "Enligt ditt svar kan du ha beloppet på kontot i tid",
+            "under": "Enligt ditt svar passar det här alternativet inte",
             "okant": "Går inte att avgöra från dina svar"
           }
         },
@@ -178,24 +178,24 @@
         }
       ],
       "skatt": {
-        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per kalenderår, så du blir skatterättsligt bosatt i Thailand, och pengar som förs in kan beskattas där.",
-        "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per kalenderår blir du skatterättsligt bosatt i Thailand, och då kan pengar som förs in beskattas där."
+        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per kalenderår. Då blir du skatterättsligt bosatt i Thailand, och pengar från Sverige som du för in kan beskattas där.",
+        "vetInte": "Stannar du {skatt-hemvist-dagar.varde} dagar eller fler per kalenderår blir du skatterättsligt bosatt i Thailand. Då kan pengar från Sverige som du för in beskattas där."
       },
       "sink": "Om du flyttar från Sverige och blir begränsat skattskyldig dras SINK på din svenska pension: {sink-avdrag}.",
       "sinkNar": [
         "pension",
         "kombination"
       ],
-      "fallgrop": "Garantipension {garantipension-bosattning-utomlands}, men kan behållas vid vistelse på högst {garantipension-max-vistelse}. Kontrollera det innan du flyttar.",
+      "fallgrop": "Kraven gäller i baht, inte i kronor. Beloppen i kronor bygger på dagens kurs, och försvagas kronan behöver du fler kronor för att nå samma krav. Lägg dig med marginal.",
       "erbjudande": {
-        "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",
+        "text": "I guiden går vi igenom hela flytten steg för steg: skatten i både Sverige och Thailand, pensionen, banken och försäkringen.",
         "knapp": "Läs guiden"
       }
     },
     "pensionIngen": {
       "vag": {
         "namn": "Ingen av pensionärsvägarna ser ut att passa med dina svar just nu",
-        "mening": "Kraven nedan visas som information."
+        "mening": "Enligt dina svar når du varken inkomstkravet eller bankkravet just nu. Här är vad som krävs, så att du ser hur långt det är kvar."
       },
       "rubrikKrav": "För att få stanna ett år i taget krävs:",
       "krav": [
@@ -225,23 +225,23 @@
         }
       ],
       "skatt": {
-        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per kalenderår, så du blir skatterättsligt bosatt i Thailand, och pengar som förs in kan beskattas där.",
-        "vetInte": "Om du stannar {skatt-hemvist-dagar.varde} dagar eller fler per kalenderår blir du skatterättsligt bosatt i Thailand, och då kan pengar som förs in beskattas där."
+        "minst": "Du räknar med minst {skatt-hemvist-dagar.varde} dagar per kalenderår. Då blir du skatterättsligt bosatt i Thailand, och pengar från Sverige som du för in kan beskattas där.",
+        "vetInte": "Stannar du {skatt-hemvist-dagar.varde} dagar eller fler per kalenderår blir du skatterättsligt bosatt i Thailand. Då kan pengar från Sverige som du för in beskattas där."
       },
       "sink": "Om du flyttar från Sverige och blir begränsat skattskyldig dras SINK på din svenska pension: {sink-avdrag}.",
       "sinkNar": [
         "pension",
         "kombination"
       ],
-      "fallgrop": "Garantipension {garantipension-bosattning-utomlands}, men kan behållas vid vistelse på högst {garantipension-max-vistelse}. Kontrollera det innan du flyttar.",
+      "fallgrop": "Får du garantipension: den {garantipension-bosattning-utomlands}, men kan behållas vid vistelse på högst {garantipension-max-vistelse}. Blir du borta längre, anmäl det till Pensionsmyndigheten. Annars kan du bli skyldig att betala tillbaka pengar.",
       "erbjudande": {
-        "text": "I guiden går vi igenom vad som gäller för dig steg för steg.",
+        "text": "I guiden går vi igenom hur kraven fungerar och vad som händer med din pension, bank och försäkring om du flyttar.",
         "knapp": "Läs guiden"
       }
     },
     "underArbete": {
       "rubrik": "Ditt spår är under arbete",
-      "text": "Vi har inget färdigt svar för din situation än. Lämna din e-postadress så får du besked när det är klart."
+      "text": "Din situation kräver regler som vi ännu inte har granskat mot officiella källor, och vi gissar hellre inte. Lämna din e-postadress så hör vi av oss när svaret är klart."
     }
   }
 }

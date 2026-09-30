@@ -130,7 +130,9 @@ describe('3a: färre än 180 dagar', () => {
     inga(brott(sasong, (p) => {
       const m = p.modell!
       const gräns = visa('skatt-hemvist-dagar', p.datum)
-      if (!/berör inte/i.test(m.skatt) || !/pengar som (du )?för in/i.test(m.skatt) || !m.skatt.includes(gräns)) {
+      // Betydelsen: en mening som säger att pengar som förs in inte berörs av thailändsk skatt, och gränsen.
+      const inteBeror = meningar(m.skatt).some((x) => /pengar[^.]*för in/i.test(x) && /\binte\b/i.test(x) && /thailändsk skatt/i.test(x))
+      if (!inteBeror || !m.skatt.includes(gräns)) {
         return `skatt: ska säga att thailändsk skatt inte berör pengar som förs in under ${gräns}. Fick: "${m.skatt}"`
       }
       const dagar = visa('visumfri-vistelse-dagar', p.datum)
@@ -163,7 +165,7 @@ describe('3a: färre än 180 dagar', () => {
 describe('3b: 180 dagar eller fler', () => {
   it('svaret säger att man blir skatterättsligt bosatt och att pengar som förs in kan beskattas där', () => {
     inga(brott(medSvar.filter((p) => p.vag.svar.dagar === 'minst'), (p) =>
-      /blir skatterättsligt bosatt i Thailand/i.test(p.modell!.skatt) && /pengar som förs in kan beskattas där/i.test(p.modell!.skatt)
+      /blir (du )?skatterättsligt bosatt i Thailand/i.test(p.modell!.skatt) && /pengar[^.]*för in[^.]*kan beskattas där/i.test(p.modell!.skatt)
         ? null
         : `skatt: "${p.modell!.skatt}"`,
     ))
@@ -171,7 +173,8 @@ describe('3b: 180 dagar eller fler', () => {
   it('"vet inte än" påstår ingenting om hemvist utan villkor', () => {
     inga(brott(medSvar.filter((p) => p.vag.svar.dagar === 'vetInte'), (p) => {
       const s = p.modell!.skatt
-      return /^Om du stannar/.test(s) && !/^Du (blir|är) /.test(s) ? null : `skatt ska vara villkorad: "${s}"`
+      // Villkorad: "Om du stannar …" eller "Stannar du …", aldrig ett obetingat "Du blir …".
+      return /^(Om du stannar|Stannar du)\b/.test(s) && !/^Du (blir|är) /.test(s) ? null : `skatt ska vara villkorad: "${s}"`
     }))
   })
 })
@@ -200,10 +203,19 @@ describe('3c: pensionärsspåret när en väg ser ut att passa', () => {
     }))
   })
   it('försäkringskravet visas inte (det gäller bara O-A)', () => {
-    inga(brott(pension, (p) => (/O-A|försäkring/i.test(p.text) || p.text.includes(visa('o-a-forsakringskrav', p.datum)) ? 'försäkringskravet visas' : null)))
-  })
-  it('garantipensionen nämns som upphörande vid flytt', () => {
+    // Erbjudandet för guiden får nämna försäkring i allmänhet. Kravdelen och resten av svaret får inte visa O-A-kravet.
     inga(brott(pension, (p) => {
+      const m = p.modell!
+      const svaret = [m.vag.namn, m.vag.mening, m.rubriker.krav, ...m.krav.map((k) => `${k.etikett}. ${k.text}`), m.skatt, m.fallgrop].join('\n')
+      return /O-A|försäkring/i.test(svaret) || p.text.includes(visa('o-a-forsakringskrav', p.datum)) ? 'försäkringskravet visas' : null
+    }))
+  })
+  // OBS: ägarens nya fallgrop för Non-O-svaret handlar om kronor och nämner inte garantipensionen. Det ursprungliga
+  // kravet 3c ("svaret nämner att garantipensionen upphör vid flytt") gäller därför bara "ingen väg"-svaret tills
+  // ägaren har bestämt om Non-O-svaret ska nämna garantipensionen någonstans.
+  it.todo('garantipensionen nämns som upphörande vid flytt även i Non-O-svaret (kräver beslut av ägaren)')
+  it('garantipensionen nämns som upphörande vid flytt i "ingen väg"-svaret', () => {
+    inga(brott(ingenVag, (p) => {
       const tillstand = vardeUtanEnhet('garantipension-bosattning-utomlands', p.datum)
       return /garantipension/i.test(p.modell!.fallgrop) && p.modell!.fallgrop.includes(tillstand) ? null : `fallgrop: "${p.modell!.fallgrop}"`
     }))
@@ -218,7 +230,10 @@ describe('3d: LTR är bara ett villkorat alternativ', () => {
       const krav = visa('ltr-inkomstkrav', p.datum)
       const alder = visa('ltr-minalder', p.datum)
       for (const m of ltr) {
-        if (!m.includes(`om du är ${alder} och din passiva inkomst är minst ${krav}`)) return `LTR utan villkoret "om du är ${alder} och din passiva inkomst är minst ${krav}": "${m}"`
+        // Villkorat: både inkomstkravet och åldern ingår, och meningen inleds "Har du …" eller innehåller "om du …".
+        if (!m.includes(krav) || !m.includes(alder)) return `LTR utan både "${krav}" och "${alder}" som villkor: "${m}"`
+        if (!/^(Har du|Om du)\b/.test(m) && !/\bom du\b/i.test(m)) return `LTR-mening som inte är villkorad: "${m}"`
+        if (!/\bkan\b[^.]*\bvara ett alternativ\b/.test(m)) return `LTR ska bara vara ett möjligt alternativ: "${m}"`
         if (/uppfyller|kvalificerar|berättigad|klarar|stämmer/i.test(m)) return `LTR-mening med påstående: "${m}"`
       }
       return null
@@ -338,10 +353,10 @@ describe('punkt 2: kraven gäller förlängning ett år i taget', () => {
       return /visumansökan|ansökan från Sverige|ansök(a|er) om visum|från Sverige/i.test(kravtext) ? 'kraven beskrivs som krav för visumansökan från Sverige' : null
     }))
   })
-  it('svaret säger att vistelsen förlängs och att varje beviljande gäller högst 1 år', () => {
+  it('svaret säger att vistelsen förlängs, högst 1 år i taget', () => {
     inga(brott(nonO, (p) => {
       const max = visa('non-o-forlangning-max', p.datum)
-      return /förlängs/.test(p.modell!.vag.mening) && p.modell!.vag.mening.includes(`varje beviljande gäller högst ${max}`) ? null : `mening: "${p.modell!.vag.mening}"`
+      return /förlängs/.test(p.modell!.vag.mening) && p.modell!.vag.mening.includes(`högst ${max} i taget`) ? null : `mening: "${p.modell!.vag.mening}"`
     }))
   })
   it('regeln non-o-forlangning-max finns, med samma källa som kraven, verifierad av Raul 2026-09-30', () => {
@@ -500,11 +515,11 @@ describe('punkt 5: framräknade belopp', () => {
 
 describe('punkt 6: långa vistelser i säsongsspåret namnger inget visum', () => {
   const lang = sasong.filter((p) => p.vag.svar.vistelse === 'langre')
-  it('svaret är "Du behöver ett visum. Vilket som passar beror på hur länge du stannar."', () => {
+  it('svaret är "Du behöver ett visum. Du stannar längre än den visumfria tiden. Vilket visum som passar beror på hur länge du stannar och varför du reser."', () => {
     expect(lang.length).toBeGreaterThan(0)
     inga(brott(lang, (p) => {
       const { namn, mening } = p.modell!.vag
-      return `${namn}. ${mening}` === 'Du behöver ett visum. Vilket som passar beror på hur länge du stannar.' ? null : `"${namn}. ${mening}"`
+      return `${namn}. ${mening}` === 'Du behöver ett visum. Du stannar längre än den visumfria tiden. Vilket visum som passar beror på hur länge du stannar och varför du reser.' ? null : `"${namn}. ${mening}"`
     }))
   })
   it('inget visum nämns vid namn någonstans i svaret', () => {
