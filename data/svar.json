@@ -202,7 +202,7 @@
         {
           "regel": "non-o-inkomstkrav",
           "jamfor": "info",
-          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}.",
+          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}. Inkomsten ska kunna styrkas, till exempel med ett pensionsbesked.",
           "status": {
             "info": "Bra att veta"
           }
