@@ -2,6 +2,24 @@
 
 Den här rapporten visar vad besökaren får se för varje möjlig väg genom frågorna. Tabellen längst ner skapas av `npm run logikmatris`. Texten här ovanför är skriven för hand och bevaras vid varje körning.
 
+## Ändringar, omgång 5 (beslut efter omgång 4)
+
+| # | Beslut | Gjort |
+| --- | --- | --- |
+| 1 | Garantipensionen i Non-O-svaret | Ny mening sist i fallgropen i pension: "Får du garantipension: den betalas som regel inte ut efter flytt från Sverige." Todo-testet för krav 3c är ett vanligt test igen. Det gäller alla pensionärssvar, och i Non-O-svaret ska meningen vara en egen mening sist. |
+| 2 | Åldern i Non-O-meningen | "Du är {non-o-minalder.varde} år eller äldre, har pension, kapital eller båda …". Svaret börjar nu "Du är 50 år eller äldre, …". Testet kräver den formen och förbjuder "Du är 50 år,". Ändras åldersregeln ändras meningen. |
+| 3 | Säsong kort, erbjudandet | Ny text: "… det du behöver tänka på före och under resan, från försäkring och bank till din svenska pension." |
+| 4 | Säsong lång, fallgropen | Ny text: "Visum för längre vistelser söks i förväg, via Thailands e-visumportal. Den som bor i Sverige behöver inte lämna in passet på ambassaden, eftersom ansökan sker digitalt." Frasen "Visum för längre vistelser" används som kategori. Testet för namngivna visum tillåter den, men kräver att den inte är namn på trolig väg. Ett nytt test kräver "söks i förväg" och "e-visumportal" och förbjuder uppmaningar att söka. |
+| 5 | Startdatum som platshållare | Ny platshållare `{regel-id.start}`: datumet då regelns gällande period började, på svenska ("15 september 2026"). Saknas period eller startdatum visas `[uppgift saknas]`. Fallgropen i säsong kort lyder nu "Reglerna för visumfri vistelse ändrades den {visumfri-vistelse-dagar.start}." Testerna visar att datumet kommer från regelns period (ändras perioden till 2026-11-03 blir texten "3 november 2026"), att månadsnamnet är svenskt och att texten inte har något inskrivet datum. Platshållaren är också beskriven i `_om` i `svar.json` och i README. |
+| 6 | Månadspåminnelsen | Den schemalagda körningen gick 2026-10-01 kl. 12:16 UTC (drygt sex timmar efter schemat) och skapade ärende #2, "Manuell kontroll 2026-10", med etiketten `manuell-kontroll`. Jag startade den för hand 2026-10-02 kl. 01:45 UTC. Den lyckades och skapade ingen dubblett, eftersom ärendet för månaden redan fanns. |
+| 7 | `main` som standardgren | README har avsnittet "Efter merge: gör `main` till standardgren". Inga inställningar i repot är ändrade. |
+
+Sviten har 172 tester och inga `todo`. Jag provade de nya testerna med nio medvetna fel, och alla fångades.
+
+**Åtgärdat från omgång 4:** garantipensionen i Non-O-svaret, "Du är 50 år", "borta länge" i säsong kort, "Visum söker du innan resan" och "har nyligen ändrats" (nu ett datum ur regeln).
+
+**Kvar att titta på:** meningen om att inkomsten ska kunna styrkas finns bara i Non-O-svaret, inte i "ingen väg"-svaret.
+
 ## Ändringar, omgång 4 (nya svarstexter)
 
 **Texterna.** 27 fält i `data/svar.json` är ersatta, och inga andra: introtexten, säsong kort (mening, kravtext, skatt, fallgrop, erbjudande), säsong lång (samma), pension (mening, inkomstkravets text och etiketter, bankkravets etiketter, skatt, fallgrop, erbjudande), ingen pensionärsväg (mening, skatt, fallgrop, erbjudande) och "under arbete". Alla platshållare och hela strukturen är kvar. Källorna för de tre meningarna utan platshållare står i `CLAUDE.md`.
@@ -110,12 +128,12 @@ Förklaring: krav visas som `krav: utfall`. *ja* = går att avgöra och stämmer
 
 | # | Svar | Spår | Trolig väg | Krav | Skatt | Fallgrop |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | dagar <180, vistelse ≤30/besök, familj nej | säsong | Visumfri vistelse | visumfri: ja; garantipension: info; hemvist: ja | berör inte pengar som förs in | Reglerna för visumfri vistelse har nyligen ändrats. |
-| 2 | dagar <180, vistelse ≤30/besök, familj make/maka | säsong | Visumfri vistelse + familjenotis | visumfri: ja; garantipension: info; hemvist: ja | berör inte pengar som förs in | Reglerna för visumfri vistelse har nyligen ändrats. |
-| 3 | dagar <180, vistelse ≤30/besök, familj barn | säsong | Visumfri vistelse + familjenotis | visumfri: ja; garantipension: info; hemvist: ja | berör inte pengar som förs in | Reglerna för visumfri vistelse har nyligen ändrats. |
-| 4 | dagar <180, vistelse >30/besök, familj nej | säsong | Du behöver ett visum. Du stannar längre än den visumfria tiden. Vilket visum som passar beror på hur länge du stannar och varför du reser. | visumfri: nej; garantipension: info; hemvist: ja | berör inte pengar som förs in | Visum söker du innan resan, via Thailands e-visumportal. |
-| 5 | dagar <180, vistelse >30/besök, familj make/maka | säsong | Du behöver ett visum. Du stannar längre än den visumfria tiden. Vilket visum som passar beror på hur länge du stannar och varför du reser. + familjenotis | visumfri: nej; garantipension: info; hemvist: ja | berör inte pengar som förs in | Visum söker du innan resan, via Thailands e-visumportal. |
-| 6 | dagar <180, vistelse >30/besök, familj barn | säsong | Du behöver ett visum. Du stannar längre än den visumfria tiden. Vilket visum som passar beror på hur länge du stannar och varför du reser. + familjenotis | visumfri: nej; garantipension: info; hemvist: ja | berör inte pengar som förs in | Visum söker du innan resan, via Thailands e-visumportal. |
+| 1 | dagar <180, vistelse ≤30/besök, familj nej | säsong | Visumfri vistelse | visumfri: ja; garantipension: info; hemvist: ja | berör inte pengar som förs in | Reglerna för visumfri vistelse ändrades den 15 september 2026. |
+| 2 | dagar <180, vistelse ≤30/besök, familj make/maka | säsong | Visumfri vistelse + familjenotis | visumfri: ja; garantipension: info; hemvist: ja | berör inte pengar som förs in | Reglerna för visumfri vistelse ändrades den 15 september 2026. |
+| 3 | dagar <180, vistelse ≤30/besök, familj barn | säsong | Visumfri vistelse + familjenotis | visumfri: ja; garantipension: info; hemvist: ja | berör inte pengar som förs in | Reglerna för visumfri vistelse ändrades den 15 september 2026. |
+| 4 | dagar <180, vistelse >30/besök, familj nej | säsong | Du behöver ett visum. Du stannar längre än den visumfria tiden. Vilket visum som passar beror på hur länge du stannar och varför du reser. | visumfri: nej; garantipension: info; hemvist: ja | berör inte pengar som förs in | Visum för längre vistelser söks i förväg, via Thailands e-visumportal. |
+| 5 | dagar <180, vistelse >30/besök, familj make/maka | säsong | Du behöver ett visum. Du stannar längre än den visumfria tiden. Vilket visum som passar beror på hur länge du stannar och varför du reser. + familjenotis | visumfri: nej; garantipension: info; hemvist: ja | berör inte pengar som förs in | Visum för längre vistelser söks i förväg, via Thailands e-visumportal. |
+| 6 | dagar <180, vistelse >30/besök, familj barn | säsong | Du behöver ett visum. Du stannar längre än den visumfria tiden. Vilket visum som passar beror på hur länge du stannar och varför du reser. + familjenotis | visumfri: nej; garantipension: info; hemvist: ja | berör inte pengar som förs in | Visum för längre vistelser söks i förväg, via Thailands e-visumportal. |
 | 7 | dagar ≥180, ålder <50 | under arbete | Ditt spår är under arbete | – | – | – |
 | 8 | dagar ≥180, ålder ≥50, pengar pension, inkomst ≥ krav ja, bank ≥ krav ja, familj nej | pension | Non-O-visum för pensionärer | inkomst: ja; bank: ja; kombination: ej avgörbart | blir bosatt, pengar kan beskattas; SINK 22,5 procent (20 procent från 2027-01-01) | Kraven gäller i baht, inte i kronor. |
 | 9 | dagar ≥180, ålder ≥50, pengar pension, inkomst ≥ krav ja, bank ≥ krav ja, familj make/maka | pension | Non-O-visum för pensionärer + familjenotis | inkomst: ja; bank: ja; kombination: ej avgörbart | blir bosatt, pengar kan beskattas; SINK 22,5 procent (20 procent från 2027-01-01) | Kraven gäller i baht, inte i kronor. |

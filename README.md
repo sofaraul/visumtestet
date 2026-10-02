@@ -93,6 +93,14 @@ Vissa sidor går inte att hämta automatiskt (Immigration Bureau ligger bakom Cl
 
 Dagliga körningar sparas på standardgrenen. Skyddas grenen mot direkta pushar måste Actions få undantag.
 
+## Efter merge: gör `main` till standardgren
+
+Gör det **direkt efter att pull requesten är mergad**: *Settings → Branches → Default branch → `main`*.
+
+GitHub kör schemalagda arbetsflöden (den dagliga källkontrollen och växelkursen, och månadspåminnelsen) bara på standardgrenen, och de dagliga uppdateringarna av `data/regler.json`, `config.json` och `rapporter/` committas dit. I det här repot har de schemalagda körningarna gått på grenen `claude/thailand-visa-test-ay90oq`, vilket tyder på att den är standardgren (den första gren som pushades till det tomma repot). Förblir den standardgren efter merge fortsätter de dagliga commit:arna att hamna på den gamla grenen i stället för på `main`. Produktionssajten, som byggs från `main`, får då aldrig de uppdaterade datumen och kurserna.
+
+Kontrollera också att Vercel eller Netlify har `main` som produktionsgren. Den gamla grenen kan tas bort när `main` är standardgren.
+
 ## Växelkurs
 
 Samma dagliga körning hämtar kursen baht per krona och skriver den till `config.json` med datum (`npm run vaxelkurs`). Källan är ECB:s officiella referenskurser: baht per krona räknas ur EUR/THB och EUR/SEK. Misslyckas hämtningen lämnas `config.json` orörd, och körningen markeras som misslyckad så att du ser det. Kursen och dess datum visas i svaret (`{vaxelkurs}` och `{vaxelkursDatum}`).
@@ -113,6 +121,7 @@ Texterna i `data/svar.json` är utkast. Skriv över dem med egna. Platshållare:
 | `{non-o-inkomstkrav}` | Värdet med enhet, t.ex. "65 000 baht i månaden". Regelns id styr. |
 | `{non-o-inkomstkrav.varde}` | Bara värdet, t.ex. "65 000". |
 | `{non-o-bankkrav.villkor}` | Regelns `villkor`, t.ex. bankkravets tidsvillkor. |
+| `{visumfri-vistelse-dagar.start}` | Datumet då regelns gällande period började, på svenska, t.ex. "15 september 2026". Bara för regler med perioder. Saknas startdatum visas `[uppgift saknas]`. |
 | `{non-o-inkomstkrav.kr}` | Beloppet i kronor, framräknat ur regelns baht och kursen i `config.json` och avrundat uppåt, t.ex. "21 700 kr". Fungerar för regler i baht. |
 | `{svar.dagar}` | Besökarens svar på frågan med id `dagar` (`dagar`, `vistelse`, `alder`, `pengar`, `inkomst`, `bank`, `familj`). |
 | `{vaxelkurs}`, `{vaxelkursDatum}` | Kursen och dess datum (ÅÅÅÅ-MM-DD) från `config.json`. |

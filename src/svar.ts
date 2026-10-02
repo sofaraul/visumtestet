@@ -1,3 +1,4 @@
+import { formatDatum } from './datum'
 import { formatTal, fyllMall, type MallKontext } from './mall'
 import { jamforDagar, jamforJaNej, jamforVistelse } from './jamfor'
 import type { Config, Fraga, Jamfor, Regel, SparMall, Status, SvarInnehall, SparNamn, Svaren } from './types'
@@ -42,11 +43,6 @@ interface Indata extends Underlag {
 
 const alternativText = (fragor: Fraga[], fraga: string, valt?: string) =>
   fragor.find((f) => f.id === fraga)?.alternativ.find((a) => a.id === valt)?.text
-
-function formatDatum(iso: string): string {
-  const d = new Date(`${iso}T00:00:00`)
-  return Number.isNaN(d.getTime()) ? iso : new Intl.DateTimeFormat('sv-SE', { dateStyle: 'long' }).format(d)
-}
 
 /** Värdena som mallar och frågor kan hämta: regler, besökarens svar samt kursen och dess datum. */
 export function byggKontext({ svar = {}, regler, fragor, config, innehall, idag }: Underlag & { svar?: Svaren }): MallKontext {

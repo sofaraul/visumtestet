@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { beraknaVag } from '../src/flode'
+import { byggSvar } from '../src/svar'
 import {
   DATUM, EFTER, FORE, TESTKONFIG, allaVagar, bahtRegler, byggPost, forvantadJaNej, forvantadKr, fragor, innehall, medKurs,
   meningar, regel, regler, renderadeFragor, talITexten, tillatnaTal, vagNamn, vardeUtanEnhet, visa, type Post,
@@ -210,14 +211,18 @@ describe('3c: pensionärsspåret när en väg ser ut att passa', () => {
       return /O-A|försäkring/i.test(svaret) || p.text.includes(visa('o-a-forsakringskrav', p.datum)) ? 'försäkringskravet visas' : null
     }))
   })
-  // OBS: ägarens nya fallgrop för Non-O-svaret handlar om kronor och nämner inte garantipensionen. Det ursprungliga
-  // kravet 3c ("svaret nämner att garantipensionen upphör vid flytt") gäller därför bara "ingen väg"-svaret tills
-  // ägaren har bestämt om Non-O-svaret ska nämna garantipensionen någonstans.
-  it.todo('garantipensionen nämns som upphörande vid flytt även i Non-O-svaret (kräver beslut av ägaren)')
-  it('garantipensionen nämns som upphörande vid flytt i "ingen väg"-svaret', () => {
-    inga(brott(ingenVag, (p) => {
+  it('garantipensionen nämns som upphörande vid flytt i alla pensionärssvar', () => {
+    inga(brott(pension, (p) => {
       const tillstand = vardeUtanEnhet('garantipension-bosattning-utomlands', p.datum)
-      return /garantipension/i.test(p.modell!.fallgrop) && p.modell!.fallgrop.includes(tillstand) ? null : `fallgrop: "${p.modell!.fallgrop}"`
+      const f = p.modell!.fallgrop
+      return /garantipension/i.test(f) && f.includes(tillstand) ? null : `fallgrop: "${f}"`
+    }))
+  })
+  it('i Non-O-svaret är det en egen mening sist i fallgropen', () => {
+    inga(brott(nonO, (p) => {
+      const tillstand = vardeUtanEnhet('garantipension-bosattning-utomlands', p.datum)
+      const f = p.modell!.fallgrop
+      return f.endsWith(`Får du garantipension: den ${tillstand}.`) && meningar(f).length > 1 ? null : `fallgrop: "${f}"`
     }))
   })
 })
@@ -375,6 +380,44 @@ describe('punkt 2: kraven gäller förlängning ett år i taget', () => {
   })
 })
 
+describe('åldern i Non-O-meningen följer regeln: "50 år eller äldre"', () => {
+  it('meningen börjar "Du är {åldern} år eller äldre", aldrig "Du är 50 år"', () => {
+    inga(brott(nonO, (p) => {
+      const alder = vardeUtanEnhet('non-o-minalder', p.datum)
+      const m = p.modell!.vag.mening
+      if (!m.startsWith(`Du är ${alder} år eller äldre, har pension, kapital eller båda`)) return `mening: "${m}"`
+      return /Du är \d+ år,/.test(m) ? 'påstår en exakt ålder' : null
+    }))
+  })
+  it('ändras åldersregeln ändras meningen', () => {
+    const andrad = regler.map((r) => (r.id === 'non-o-minalder' ? { ...r, varde: 55 } : r))
+    const vag = nonO[0].vag
+    const m = byggSvar({ spar: 'pension', svar: vag.svar, regler: andrad, fragor, config: TESTKONFIG, innehall, idag: FORE }).vag.mening
+    expect(m.startsWith('Du är 55 år eller äldre,')).toBe(true)
+  })
+})
+
+describe('startdatum för visumfri vistelse som platshållare', () => {
+  const kort = sasong.filter((p) => p.vag.svar.vistelse === 'hogst')
+  const svenskt = (iso: string) => new Intl.DateTimeFormat('sv-SE', { dateStyle: 'long' }).format(new Date(`${iso}T00:00:00`))
+  it('fallgropen säger "ändrades den <startdatum>", på svenska', () => {
+    const start = (regel('visumfri-vistelse-dagar').varde as { fran: string }[])[0].fran
+    expect(svenskt(start)).toBe('15 september 2026') // så ska ett datum se ut för besökaren
+    inga(brott(kort, (p) => (p.modell!.fallgrop.startsWith(`Reglerna för visumfri vistelse ändrades den ${svenskt(start)}. `) ? null : `fallgrop: "${p.modell!.fallgrop}"`)))
+  })
+  it('datumet kommer från regelns period, inte från texten', () => {
+    const andrad = regler.map((r) => (r.id === 'visumfri-vistelse-dagar' ? { ...r, varde: [{ fran: '2026-11-03', varde: 30 }] } : r))
+    const svar = kort[0].vag.svar
+    const f = byggSvar({ spar: 'sasong', svar, regler: andrad, fragor, config: TESTKONFIG, innehall, idag: '2026-12-01' }).fallgrop
+    expect(f).toContain('ändrades den 3 november 2026.')
+  })
+  it('fallgropen i säsong kort använder platshållaren {visumfri-vistelse-dagar.start}, inget inskrivet datum', () => {
+    const rå = innehall.spar.sasongKort.fallgrop
+    expect(rå).toContain('{visumfri-vistelse-dagar.start}')
+    expect(rå).not.toMatch(/\d/)
+  })
+})
+
 describe('punkt 3: säsongsspåret frågar inte om ålder', () => {
   it('flödet går från vistelsens längd direkt till familj', () => {
     expect(beraknaVag({ dagar: 'farre', vistelse: 'hogst' }).fragor).toEqual(['dagar', 'vistelse', 'familj'])
@@ -524,8 +567,18 @@ describe('punkt 6: långa vistelser i säsongsspåret namnger inget visum', () =
   })
   it('inget visum nämns vid namn någonstans i svaret', () => {
     inga(brott(lang, (p) => {
-      const namn = p.text.match(/Non-O|Non-B|Non-Immigrant|\bLTR\b|O-A|turistvisum|turist|METV|SETV|TR-visum|Smart|Elite|Visum för längre/i)
+      const namn = p.text.match(/Non-O|Non-B|Non-Immigrant|\bLTR\b|O-A|turistvisum|turist|METV|SETV|TR-visum|Smart|Elite/i)
       return namn ? `nämner "${namn[0]}"` : null
+    }))
+  })
+  it('"visum för längre vistelser" får stå som kategori i fallgropen men inte som trolig väg', () => {
+    inga(brott(lang, (p) => (/Visum för längre/i.test(`${p.modell!.vag.namn} ${p.modell!.vag.mening}`) ? 'kategorin används som namn på trolig väg' : null)))
+  })
+  it('fallgropen säger att visum söks i förväg via e-visumportalen, utan att uppmana besökaren att söka', () => {
+    inga(brott(lang, (p) => {
+      const f = p.modell!.fallgrop
+      if (!/söks i förväg/.test(f) || !/e-visumportal/.test(f)) return `fallgrop: "${f}"`
+      return /\b(ansök|sök)\s+(om|visum|nu)\b/i.test(f) ? 'uppmaning att söka' : null
     }))
   })
   it('visumfri vistelse nämns inte som trolig väg för långa vistelser', () => {

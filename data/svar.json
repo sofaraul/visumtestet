@@ -1,5 +1,5 @@
 {
-  "_om": "Utkast som ägaren skriver över. Platshållare: {regel-id} = värde med enhet, {regel-id.varde} = bara värdet, {regel-id.villkor} = regelns villkor, {regel-id.kr} = beloppet i kronor, framräknat ur regelns baht och kursen i config.json (avrundat uppåt), {vaxelkurs} = kursen, {vaxelkursDatum} = kursens datum, {svar.fraga-id} = besökarens svar. Skriv ren text, ingen HTML. Siffror ska komma från platshållare så att de stämmer med data/regler.json och config.json. Skriv bara påståenden som går att avgöra från besökarens svar.",
+  "_om": "Utkast som ägaren skriver över. Platshållare: {regel-id} = värde med enhet, {regel-id.varde} = bara värdet, {regel-id.villkor} = regelns villkor, {regel-id.start} = datumet då regelns gällande period började, på svenska (t.ex. 15 september 2026), {regel-id.kr} = beloppet i kronor, framräknat ur regelns baht och kursen i config.json (avrundat uppåt), {vaxelkurs} = kursen, {vaxelkursDatum} = kursens datum, {svar.fraga-id} = besökarens svar. Skriv ren text, ingen HTML. Siffror ska komma från platshållare så att de stämmer med data/regler.json och config.json. Skriv bara påståenden som går att avgöra från besökarens svar.",
   "granssnitt": {
     "introRubrik": "Visumtestet för dig som vill bo i Thailand",
     "introText": "Svara på några korta frågor så får du din troliga visumväg, vad som krävs, om thailändsk skatt berör dig och en vanlig fallgrop. Testet är gratis och tar ungefär två minuter.",
@@ -92,9 +92,9 @@
       "skatt": {
         "farre": "Så länge du är i Thailand färre än {skatt-hemvist-dagar.varde} dagar per kalenderår blir du inte skatterättsligt bosatt där. Då berörs pengar från Sverige som du för in inte av thailändsk skatt."
       },
-      "fallgrop": "Reglerna för visumfri vistelse har nyligen ändrats. Råd från vänner, forum och äldre guider kan därför vara inaktuella, så kontrollera alltid när det du läser skrevs.",
+      "fallgrop": "Reglerna för visumfri vistelse ändrades den {visumfri-vistelse-dagar.start}. Råd från vänner, forum och äldre guider kan därför vara inaktuella, så kontrollera alltid när det du läser skrevs.",
       "erbjudande": {
-        "text": "I guiden går vi igenom det du behöver ordna hemma i Sverige när du är borta länge, från pension och bank till försäkring.",
+        "text": "I guiden går vi igenom det du behöver tänka på före och under resan, från försäkring och bank till din svenska pension.",
         "knapp": "Läs guiden"
       }
     },
@@ -135,7 +135,7 @@
       "skatt": {
         "farre": "Så länge du är i Thailand färre än {skatt-hemvist-dagar.varde} dagar per kalenderår blir du inte skatterättsligt bosatt där. Då berörs pengar från Sverige som du för in inte av thailändsk skatt."
       },
-      "fallgrop": "Visum söker du innan resan, via Thailands e-visumportal. Som bosatt i Sverige behöver du inte lämna in passet på ambassaden, eftersom ansökan sker digitalt.",
+      "fallgrop": "Visum för längre vistelser söks i förväg, via Thailands e-visumportal. Den som bor i Sverige behöver inte lämna in passet på ambassaden, eftersom ansökan sker digitalt.",
       "erbjudande": {
         "text": "I guiden går vi igenom det du behöver ordna hemma i Sverige när du är borta länge, från pension och bank till försäkring.",
         "knapp": "Läs guiden"
@@ -144,7 +144,7 @@
     "pension": {
       "vag": {
         "namn": "Non-O-visum för pensionärer",
-        "mening": "Du är {non-o-minalder}, har pension, kapital eller båda och planerar att stanna länge. Din troliga väg är Non-O-visum för pensionärer. Vistelsen förlängs sedan på plats i Thailand, högst {non-o-forlangning-max} i taget. Har du en passiv inkomst på minst {ltr-inkomstkrav} och är {ltr-minalder} kan även LTR-visum för pensionärer vara ett alternativ."
+        "mening": "Du är {non-o-minalder.varde} år eller äldre, har pension, kapital eller båda och planerar att stanna länge. Din troliga väg är Non-O-visum för pensionärer. Vistelsen förlängs sedan på plats i Thailand, högst {non-o-forlangning-max} i taget. Har du en passiv inkomst på minst {ltr-inkomstkrav} och är {ltr-minalder} kan även LTR-visum för pensionärer vara ett alternativ."
       },
       "rubrikKrav": "För att få stanna ett år i taget krävs:",
       "krav": [
@@ -186,7 +186,7 @@
         "pension",
         "kombination"
       ],
-      "fallgrop": "Kraven gäller i baht, inte i kronor. Beloppen i kronor bygger på dagens kurs, och försvagas kronan behöver du fler kronor för att nå samma krav. Lägg dig med marginal.",
+      "fallgrop": "Kraven gäller i baht, inte i kronor. Beloppen i kronor bygger på dagens kurs, och försvagas kronan behöver du fler kronor för att nå samma krav. Lägg dig med marginal. Får du garantipension: den {garantipension-bosattning-utomlands}.",
       "erbjudande": {
         "text": "I guiden går vi igenom hela flytten steg för steg: skatten i både Sverige och Thailand, pensionen, banken och försäkringen.",
         "knapp": "Läs guiden"

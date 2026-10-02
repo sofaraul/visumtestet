@@ -1,5 +1,6 @@
-import { gallandeVarde } from '../scripts/gallande.mjs'
+import { gallandePeriod, gallandeVarde } from '../scripts/gallande.mjs'
 import { beraknaKr } from './belopp'
+import { formatDatum } from './datum'
 import type { Regel } from './types'
 
 export interface MallKontext {
@@ -28,12 +29,17 @@ function visaVarde(v: number | string): string {
 function losUpp(nyckel: string, ctx: MallKontext): string {
   if (nyckel in ctx.varden) return ctx.varden[nyckel]
 
-  const [regelId, del] = nyckel.split(/\.(?=(?:varde|villkor|kr)$)/)
+  const [regelId, del] = nyckel.split(/\.(?=(?:varde|villkor|kr|start)$)/)
   const regel = ctx.regler.get(regelId)
   if (!regel) return `[okänd platshållare: ${nyckel}]`
 
   ctx.anvanda.add(regel.id)
   if (del === 'villkor') return regel.villkor ?? ctx.saknas
+  if (del === 'start') {
+    // Datumet då perioden som gäller började, på svenska. Regler utan period eller utan startdatum har inget.
+    const fran = gallandePeriod(regel, ctx.idag)?.fran
+    return fran ? formatDatum(fran) : ctx.saknas
+  }
   const gallande = gallandeVarde(regel, ctx.idag)
   if (gallande === null || gallande === '') return ctx.saknas
   if (del === 'kr') {

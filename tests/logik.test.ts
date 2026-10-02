@@ -68,6 +68,28 @@ describe('framräknade belopp', () => {
   })
 })
 
+describe('platshållaren {regel-id.start}', () => {
+  const ctx = (idag: string, r: Record<string, unknown>): MallKontext => ({
+    regler: new Map([['r', { id: 'r', enhet: 'dagar', kalla: null, senastKontrollerad: null, verifierad: true, ...r } as never]]),
+    enheter: { dagar: 'dagar', kr: 'kr' },
+    saknas: '[saknas]',
+    varden: {},
+    anvanda: new Set(),
+    idag,
+  })
+  it('ger startdatumet på svenska för perioden som gäller', () => {
+    const r = { varde: [{ fran: '2026-09-15', varde: 30 }] }
+    expect(fyllMall('{r.start}', ctx('2026-10-02', r))).toBe('15 september 2026')
+    const flera = { varde: [{ till: '2026-12-31', varde: 22.5 }, { fran: '2027-01-01', varde: 20 }] }
+    expect(fyllMall('{r.start}', ctx('2027-03-01', flera))).toBe('1 januari 2027')
+  })
+  it('ger [saknas] för vanliga regler, perioder utan startdatum och datum före starten', () => {
+    expect(fyllMall('{r.start}', ctx('2026-10-02', { varde: 30 }))).toBe('[saknas]')
+    expect(fyllMall('{r.start}', ctx('2026-10-02', { varde: [{ till: '2026-12-31', varde: 1 }] }))).toBe('[saknas]')
+    expect(fyllMall('{r.start}', ctx('2026-09-14', { varde: [{ fran: '2026-09-15', varde: 30 }] }))).toBe('[saknas]')
+  })
+})
+
 describe('mallar', () => {
   const ctx = (): MallKontext => ({
     regler: new Map([
@@ -138,7 +160,7 @@ describe('data skild från logik', () => {
     void _om
     const text = JSON.stringify(mallar)
     for (const [, nyckel] of text.matchAll(/\{([A-Za-z0-9_.-]+)\}/g)) {
-      expect(ids.has(nyckel.replace(/\.(varde|villkor|kr)$/, '')) || svarId.has(nyckel) || extra.has(nyckel), nyckel).toBe(true)
+      expect(ids.has(nyckel.replace(/\.(varde|villkor|kr|start)$/, '')) || svarId.has(nyckel) || extra.has(nyckel), nyckel).toBe(true)
     }
   })
   it('koden innehåller inga belopp eller gränser', () => {
