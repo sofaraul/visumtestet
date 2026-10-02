@@ -18,8 +18,6 @@ Sviten har 172 tester och inga `todo`. Jag provade de nya testerna med nio medve
 
 **Åtgärdat från omgång 4:** garantipensionen i Non-O-svaret, "Du är 50 år", "borta länge" i säsong kort, "Visum söker du innan resan" och "har nyligen ändrats" (nu ett datum ur regeln).
 
-**Kvar att titta på:** meningen om att inkomsten ska kunna styrkas finns bara i Non-O-svaret, inte i "ingen väg"-svaret.
-
 ## Ändringar, omgång 4 (nya svarstexter)
 
 **Texterna.** 27 fält i `data/svar.json` är ersatta, och inga andra: introtexten, säsong kort (mening, kravtext, skatt, fallgrop, erbjudande), säsong lång (samma), pension (mening, inkomstkravets text och etiketter, bankkravets etiketter, skatt, fallgrop, erbjudande), ingen pensionärsväg (mening, skatt, fallgrop, erbjudande) och "under arbete". Alla platshållare och hela strukturen är kvar. Källorna för de tre meningarna utan platshållare står i `CLAUDE.md`.
@@ -46,7 +44,6 @@ Jag provade de omskrivna testerna med 13 medvetna fel, och alla fångades.
 2. **Erbjudandetexten i säsong kort** säger "när du är borta länge", vilket stämmer dåligt med en vistelse på högst 30 dagar.
 3. **"Visum söker du innan resan"** är konstaterande och släpps igenom av testet. Den kan ändå läsas som en uppmaning att söka visum, vilket uppdraget säger att svaren inte ska vara.
 4. **"Reglerna för visumfri vistelse har nyligen ändrats"** finns inte bland de källor du angav. Ambassadsidan har "Effective 15 September 2026" och reglerna har en period som börjar då, så det stämmer, men meningen ändras med tiden.
-5. Meningen om att inkomsten ska kunna styrkas finns bara i Non-O-svaret, inte i "ingen väg"-svaret (du nämnde inte den kravtexten).
 
 ## Ändringar, omgång 3 (godkända citat och åldersreglerna)
 
