@@ -1,0 +1,107 @@
+:root {
+  --bg: #ffffff;
+  --text: #14181f;
+  --dampad: #3d4653;
+  --linje: #5a6472;
+  --accent: #0b3d91;
+  --accent-ljus: #e8effb;
+  --fel: #a10d1e;
+  --banderoll: #b00020;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 112.5%; } /* 18 px bas, följer användarens textstorlek */
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+main { max-width: 40rem; margin: 0 auto; padding: 1rem 1rem 3rem; }
+
+h1 { font-size: 1.6rem; line-height: 1.25; margin: 1rem 0; }
+h2 { font-size: 1.25rem; line-height: 1.3; margin: 0 0 0.5rem; }
+p { margin: 0 0 1rem; }
+:focus-visible { outline: 4px solid #ffb000; outline-offset: 2px; }
+[tabindex='-1']:focus { outline: none; }
+
+.banderoll { background: var(--banderoll); color: #fff; padding: 0.75rem 1rem; font-size: 1rem; }
+.banderoll p { margin: 0.25rem 0 0; word-break: break-word; }
+
+/* Knappar */
+.knapp, .tillbaka {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 3.5rem; padding: 0.75rem 1.25rem;
+  font: inherit; font-weight: 700; text-align: center; text-decoration: none;
+  border-radius: 0.6rem; cursor: pointer;
+  background: var(--accent); color: #fff; border: 3px solid var(--accent);
+}
+.knapp:disabled { opacity: 0.6; cursor: default; }
+.knapp.sekundar, .tillbaka { background: #fff; color: var(--accent); }
+.knapp.sekundar { margin-top: 1.5rem; }
+.tillbaka { width: auto; min-height: 3rem; padding: 0.4rem 1rem; }
+
+.topp { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+.fraga-nr { margin: 0; font-weight: 700; }
+
+.forlopp { height: 0.9rem; background: #d5dae2; border-radius: 0.5rem; overflow: hidden; margin-bottom: 1.25rem; }
+.forlopp-fyllning { height: 100%; background: var(--accent); }
+
+/* Fråga */
+.fraga { border: 0; margin: 0 0 1rem; padding: 0; min-width: 0; }
+.fraga legend { font-size: 1.4rem; font-weight: 700; line-height: 1.3; padding: 0; margin-bottom: 0.75rem; }
+.hjalp { color: var(--dampad); }
+
+.alternativ {
+  display: flex; align-items: center; gap: 0.9rem;
+  min-height: 3.75rem; margin-bottom: 0.75rem; padding: 0.6rem 1rem;
+  border: 2px solid var(--linje); border-radius: 0.6rem; cursor: pointer;
+}
+.alternativ input { width: 1.6rem; height: 1.6rem; flex: none; accent-color: var(--accent); margin: 0; }
+.alternativ:has(input:checked) { border: 4px solid var(--accent); background: var(--accent-ljus); padding: calc(0.6rem - 2px) calc(1rem - 2px); font-weight: 700; }
+.alternativ:has(input:focus-visible) { outline: 4px solid #ffb000; outline-offset: 2px; }
+
+.fel { color: var(--fel); font-weight: 700; margin: 0 0 0.75rem; }
+.fel:empty { display: none; }
+
+/* Svar */
+.kort { border: 2px solid var(--linje); border-radius: 0.6rem; padding: 1rem; margin-bottom: 1rem; }
+.kort > :last-child { margin-bottom: 0; }
+.vagnamn { font-size: 1.3rem; font-weight: 700; }
+
+.krav { list-style: none; margin: 0; padding: 0; }
+.krav li { padding: 0.75rem 0; border-top: 1px solid #c4cad3; }
+.krav li:first-child { border-top: 0; padding-top: 0; }
+.krav li > span { display: block; }
+.status { font-weight: 700; margin-bottom: 0.15rem; }
+.ikon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.6rem; height: 1.6rem; margin-right: 0.5rem; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: 0.95rem;
+}
+.krav-nara .ikon { background: #8a5200; }
+.krav-under .ikon { background: var(--fel); }
+.krav-okant .ikon { background: var(--dampad); }
+
+.erbjudande { background: var(--accent-ljus); border-color: var(--accent); }
+.kontroll { font-weight: 700; margin-top: 1.5rem; }
+.friskrivning { color: var(--dampad); }
+
+/* E-post */
+.epost { border-top: 2px solid var(--linje); margin-top: 2rem; padding-top: 1rem; }
+.etikett { display: block; font-weight: 700; margin-bottom: 0.4rem; }
+.epost input[type='email'] {
+  width: 100%; min-height: 3.5rem; padding: 0.5rem 0.9rem; margin-bottom: 1rem;
+  font: inherit; border: 2px solid var(--linje); border-radius: 0.6rem;
+}
+.kryss { display: flex; gap: 0.9rem; align-items: flex-start; margin-bottom: 0.75rem; cursor: pointer; }
+.kryss input { width: 1.75rem; height: 1.75rem; flex: none; margin: 0.1rem 0 0; accent-color: var(--accent); }
+.integritet { margin-bottom: 1rem; }
+.integritet summary { cursor: pointer; color: var(--accent); font-weight: 700; padding: 0.5rem 0; min-height: 2.75rem; }
+.tack { font-weight: 700; }

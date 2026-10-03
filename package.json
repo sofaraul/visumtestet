@@ -1,0 +1,26 @@
+{
+  "name": "visumtestet",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:forhandsvisning": "tsc --noEmit && vite build --mode development",
+    "preview": "vite preview",
+    "kallor": "node scripts/kallor.mjs",
+    "test": "vitest run",
+    "kontrollera": "node scripts/kontrollera.mjs",
+    "vaxelkurs": "node scripts/vaxelkurs.mjs",
+    "logikmatris": "vite-node scripts/logikmatris.ts",
+    "paminnelse": "node scripts/paminnelse.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "cheerio": "^1.2.0",
+    "pdfjs-dist": "^6.3.289",
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0",
+    "vitest": "^2.1.0"
+  }
+}
