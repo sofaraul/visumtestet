@@ -48,7 +48,9 @@ export interface Config {
   shopifyLank: string | null
   /** Belopp i kronor som räknas fram ur baht avrundas uppåt till närmaste så här många kronor. */
   avrundningKr: number | null
-  epost: { mottagare: string | null; tjanst: string }
+  /** tjanst är adressen till Netlify-funktionen. Id:n kommer från Brevo och saknas tills kontot finns. */
+  epost: { tjanst: string; listaId: number | null; bekraftelsemallId: number | null }
+  integritet: { ansvarig: string; kontaktEpost: string }
   vaxelkurs: { thbPerSek: number | null; datum: string | null; kalla?: string }
 }
 
@@ -93,6 +95,7 @@ export interface SvarInnehall {
     familj: Record<string, string>
   }
   epost: Record<string, string>
+  sidor: Record<'integritet' | 'bekraftad', Sida>
   enheter: Record<string, string>
   spar: {
     sasongKort: SparMall
@@ -101,6 +104,16 @@ export interface SvarInnehall {
     pensionIngen: SparMall
     underArbete: { rubrik: string; text: string }
   }
+}
+
+export interface Sida {
+  titel: string
+  rubrik: string
+  /** Stycken. {ansvarig} och {kontaktEpost} hämtas ur config.json. */
+  stycken: { rubrik?: string; text: string }[]
+  tillbaka: string
+  /** Länktext i sidfoten på alla sidor. */
+  fotlank?: string
 }
 
 export type Svaren = Record<string, string | undefined>

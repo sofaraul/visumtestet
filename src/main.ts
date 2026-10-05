@@ -5,6 +5,7 @@ import { byggSvar, renderaFraga } from './svar'
 import { fragaSkarm, hittaFraga, introSkarm, svarSkarm, underArbeteSkarm, type Atgarder } from './ui'
 import type { Svaren } from './types'
 import { visaBanderoll } from './banderoll'
+import { ritaFot } from './fot'
 
 // Svaren finns bara i minnet. De sparas varken i cookies, localStorage eller på server.
 let svar: Svaren = {}
@@ -65,4 +66,5 @@ window.addEventListener('popstate', (e) => {
 
 history.replaceState({ pos: -1 }, '')
 visaBanderoll(document.getElementById('banderoll')!)
+ritaFot(document.getElementById('fot')!)
 rita()

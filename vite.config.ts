@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite'
-import { laRegler, laConfig, nodvandigKonfiguration, problemMedRegler, saknadKonfiguration } from './scripts/regler.mjs'
+import { resolve } from 'node:path'
+import { epostAktiv, laRegler, laConfig, nodvandigKonfiguration, problemMedRegler, saknadKonfiguration } from './scripts/regler.mjs'
 
 /** Stoppar produktionsbygget om någon regel är overifierad. */
 function verifieraRegler(): Plugin {
@@ -39,7 +40,20 @@ const harForhandsvisningsMiljo = () =>
 export default defineConfig(({ mode }) => {
   const forhandsvisning = mode !== 'production' || harForhandsvisningsMiljo()
   return {
-    define: { __FORHANDSVISNING__: JSON.stringify(forhandsvisning) },
+    define: {
+      __FORHANDSVISNING__: JSON.stringify(forhandsvisning),
+      // Bara om nyckeln och id:n finns. Nyckeln själv bakas aldrig in, bara svaret ja eller nej.
+      __EPOST_AKTIV__: JSON.stringify(epostAktiv(laConfig())),
+    },
+    build: {
+      rollupOptions: {
+        input: {
+          main: resolve(__dirname, 'index.html'),
+          integritet: resolve(__dirname, 'integritet/index.html'),
+          bekraftad: resolve(__dirname, 'bekraftad/index.html'),
+        },
+      },
+    },
     plugins: forhandsvisning ? [] : [verifieraRegler()],
   }
 })

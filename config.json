@@ -1,8 +1,13 @@
 {
-  "shopifyLank": null,
+  "shopifyLank": "https://thailandskollen.se/products/PLATSHALLARE",
   "epost": {
-    "mottagare": null,
-    "tjanst": "https://formsubmit.co/ajax/{mottagare}"
+    "tjanst": "/api/epost",
+    "listaId": null,
+    "bekraftelsemallId": null
+  },
+  "integritet": {
+    "ansvarig": "Raul [efternamn]",
+    "kontaktEpost": "hello@thailandskollen.se"
   },
   "vaxelkurs": {
     "thbPerSek": 3.3401,

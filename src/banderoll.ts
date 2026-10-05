@@ -1,5 +1,6 @@
 import { h } from './dom'
 import { config, fragor, innehall, regler } from './data'
+import { saknasEllerPlatshallare } from '../scripts/platshallare.mjs'
 
 /** Röd banderoll i utveckling och förhandsvisning, aldrig i produktion. */
 export function visaBanderoll(el: HTMLElement) {
@@ -7,8 +8,11 @@ export function visaBanderoll(el: HTMLElement) {
   const g = innehall.granssnitt
   const overifierade = regler.filter((r) => !r.verifierad).map((r) => r.id)
   const kfg: string[] = []
-  if (!config.shopifyLank) kfg.push('shopifyLank')
-  if (!config.epost.mottagare) kfg.push('epost.mottagare')
+  if (saknasEllerPlatshallare(config.shopifyLank)) kfg.push('shopifyLank')
+  if (!config.epost.listaId) kfg.push('epost.listaId')
+  if (!config.epost.bekraftelsemallId) kfg.push('epost.bekraftelsemallId')
+  if (config.epost.listaId && config.epost.bekraftelsemallId && !__EPOST_AKTIV__) kfg.push('BREVO_API_KEY (Netlify)')
+  if (saknasEllerPlatshallare(config.integritet.ansvarig)) kfg.push('integritet.ansvarig')
   if (!config.vaxelkurs.thbPerSek) kfg.push('vaxelkurs.thbPerSek')
   if (!config.vaxelkurs.datum) kfg.push('vaxelkurs.datum')
   if (!config.avrundningKr) kfg.push('avrundningKr')

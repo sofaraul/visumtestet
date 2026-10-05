@@ -18,7 +18,7 @@ export const riktigConfig = configJson as Config
 /** Fast växelkurs för testerna: 1 kr = 3 baht, hämtad 2026-09-01, belopp avrundade uppåt till hela hundratal kronor. */
 export const TESTKONFIG: Config = {
   shopifyLank: 'https://example.com/guide',
-  epost: { mottagare: null, tjanst: '' },
+  epost: { tjanst: '', listaId: null, bekraftelsemallId: null }, integritet: { ansvarig: 'A', kontaktEpost: 'a@b.se' },
   vaxelkurs: { thbPerSek: 3, datum: '2026-09-01' },
   avrundningKr: 100,
 }

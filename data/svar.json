@@ -1,5 +1,5 @@
 {
-  "_om": "Utkast som ägaren skriver över. Platshållare: {regel-id} = värde med enhet, {regel-id.varde} = bara värdet, {regel-id.villkor} = regelns villkor, {regel-id.start} = datumet då regelns gällande period började, på svenska (t.ex. 15 september 2026), {regel-id.kr} = beloppet i kronor, framräknat ur regelns baht och kursen i config.json (avrundat uppåt), {vaxelkurs} = kursen, {vaxelkursDatum} = kursens datum, {svar.fraga-id} = besökarens svar. Skriv ren text, ingen HTML. Siffror ska komma från platshållare så att de stämmer med data/regler.json och config.json. Skriv bara påståenden som går att avgöra från besökarens svar.",
+  "_om": "Utkast som ägaren skriver över. Platshållare: {regel-id} = värde med enhet, {regel-id.varde} = bara värdet, {regel-id.villkor} = regelns villkor, {regel-id.start} = datumet då regelns gällande period började, på svenska (t.ex. 15 september 2026), {regel-id.kr} = beloppet i kronor, framräknat ur regelns baht och kursen i config.json (avrundat uppåt), {vaxelkurs} = kursen, {vaxelkursDatum} = kursens datum, {svar.fraga-id} = besökarens svar. Skriv ren text, ingen HTML. Siffror ska komma från platshållare så att de stämmer med data/regler.json och config.json. Skriv bara påståenden som går att avgöra från besökarens svar. Under sidor (integritet och bekräftad adress) gäller i stället {ansvarig} och {kontaktEpost} ur config.json.",
   "granssnitt": {
     "introRubrik": "Visumtestet för dig som vill bo i Thailand",
     "introText": "Svara på några korta frågor så får du din troliga visumväg, vad som krävs, om thailändsk skatt berör dig och en vanlig fallgrop. Testet är gratis och tar ungefär två minuter.",
@@ -29,18 +29,61 @@
     }
   },
   "epost": {
-    "rubrik": "Vill du ha ditt svar mejlat till dig, plus besked när reglerna ändras?",
+    "rubrik": "Vill du få besked när reglerna som berör dig ändras?",
     "rubrikUnderArbete": "Vill du ha besked när ditt spår är klart?",
     "etikett": "Din e-postadress",
-    "samtycke": "Ja, jag samtycker till att min e-postadress sparas för att jag ska få detta.",
+    "samtycke": "Ja, jag samtycker till att min e-postadress och mitt spår sparas så att jag får besked när reglerna som berör mig ändras.",
     "integritetLank": "Läs integritetstexten",
-    "integritet": "Vi sparar bara din e-postadress, och bara om du kryssar i rutan. Dina svar på frågorna sparas inte. Vi använder adressen för att mejla ditt svar och för att berätta när reglerna ändras. Adressen skickas via tjänsten FormSubmit. Svara på mejlet om du vill att vi tar bort din adress. Vi använder inga spårningscookies.",
     "skicka": "Skicka",
     "skickar": "Skickar …",
-    "tack": "Tack! Vi hör av oss till {epost}.",
+    "tack": "Nästan klart! Vi har mejlat {epost}. Öppna mejlet och klicka på länken i det för att bekräfta din adress.",
     "felAdress": "Skriv en giltig e-postadress, till exempel namn@exempel.se.",
     "felSamtycke": "Kryssa i rutan om du vill att vi sparar din adress.",
     "felSkick": "Det gick inte att skicka just nu. Försök igen om en stund."
+  },
+  "sidor": {
+    "integritet": {
+      "titel": "Integritet – Thailandskollen",
+      "rubrik": "Så behandlar vi din e-postadress",
+      "stycken": [
+        {
+          "rubrik": "Vem som ansvarar",
+          "text": "{ansvarig}, enskild firma, är personuppgiftsansvarig. Du når oss på {kontaktEpost}."
+        },
+        {
+          "rubrik": "Vad vi sparar och varför",
+          "text": "Vi sparar din e-postadress och vilket spår du fick svar för (pensionär, säsong eller under arbete). Det gör vi bara om du har samtyckt. Vi sparar dem för att kunna ge dig besked när regler som berör ditt spår ändras. Dina svar på frågorna i testet sparas inte."
+        },
+        {
+          "rubrik": "Var uppgifterna finns",
+          "text": "Hos e-posttjänsten Brevo, med servrar inom EU."
+        },
+        {
+          "rubrik": "Hur länge",
+          "text": "Tills du avregistrerar dig. Varje mejl har en avregistreringslänk."
+        },
+        {
+          "rubrik": "Dina rättigheter",
+          "text": "Du kan få ut, rätta eller radera dina uppgifter. Mejla {kontaktEpost}."
+        },
+        {
+          "rubrik": "Cookies",
+          "text": "Vi använder inga spårningscookies."
+        }
+      ],
+      "tillbaka": "Till visumtestet",
+      "fotlank": "Integritet"
+    },
+    "bekraftad": {
+      "titel": "Adressen är bekräftad – Thailandskollen",
+      "rubrik": "Tack, din adress är bekräftad",
+      "stycken": [
+        {
+          "text": "Du får besked när reglerna som berör ditt spår ändras. Varje mejl har en avregistreringslänk."
+        }
+      ],
+      "tillbaka": "Till visumtestet"
+    }
   },
   "enheter": {
     "THB/manad": "baht i månaden",

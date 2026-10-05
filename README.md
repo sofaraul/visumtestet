@@ -9,7 +9,9 @@ Gratis visumtest på svenska för dig som vill bo i Thailand längre än en seme
 | `data/regler.json` | Alla belopp, gränser och regler. Inga siffror finns i koden. |
 | `data/svar.json` | Svarstexterna som mallar med platshållare, plus knappar och rubriker. |
 | `data/fragor.json` | Frågorna, svarsalternativen och hjälptexterna. |
-| `config.json` | Länk till Shopify-produkten, e-postmottagare och växelkurs med datum. |
+| `config.json` | Länk till Shopify-produkten, Brevo-id:n, uppgifter till integritetstexten och växelkurs med datum. |
+| `netlify/functions/epost.ts` | Funktionen som tar emot e-postadressen och lägger in den i Brevo. |
+| `docs/dns-poster.md` | Vilka DNS-poster som läggs in hos Cloudflare. |
 
 ## Ändra en regel
 
@@ -138,23 +140,48 @@ Lägg in texterna från fliken Visumguiden i `hjalptext` i `data/fragor.json` f�
 
 ```json
 {
-  "shopifyLank": "https://din-butik.myshopify.com/products/guiden",
+  "shopifyLank": "https://thailandskollen.se/products/PLATSHALLARE",
+  "epost": { "tjanst": "/api/epost", "listaId": null, "bekraftelsemallId": null },
+  "integritet": { "ansvarig": "Raul [efternamn]", "kontaktEpost": "hello@thailandskollen.se" },
   "avrundningKr": 100,
-  "epost": { "mottagare": "du@exempel.se", "tjanst": "https://formsubmit.co/ajax/{mottagare}" },
   "vaxelkurs": { "thbPerSek": 0.0, "datum": "ÅÅÅÅ-MM-DD" }
 }
 ```
 
-- `shopifyLank`: knappen i slutet av svaret. Saknas den visas ingen knapp.
-- `epost.mottagare`: dit adresserna skickas. Saknas den visas inte e-postfältet alls.
+- `shopifyLank`: knappen i slutet av svaret. Värdet är en platshållare (`PLATSHALLARE`) tills produkten är publicerad. Byt då till produktens riktiga adress. Banderollen och bygget varnar så länge platshållaren finns kvar.
+- `epost.tjanst`: adressen till Netlify-funktionen. Ändras inte.
+- `epost.listaId` och `epost.bekraftelsemallId`: id för listan *Visumtestet* och bekräftelsemallen i Brevo (se nedan). Det är inga hemligheter.
+- `integritet.ansvarig`: namnet på integritetssidan. Byt `[efternamn]` mot efternamnet. Banderollen och bygget varnar så länge hakparenteserna finns kvar. `integritet.kontaktEpost`: adressen som personer mejlar för att få ut, rätta eller radera sina uppgifter.
 - `vaxelkurs`: baht per krona och datumet för kursen. Frågorna om inkomst och bankkonto räknar fram belopp i kronor ur den, så **produktionsbygget stoppas om kursen saknas**. Kursen fylls i av den dagliga körningen (`npm run vaxelkurs`), eller skriv in den själv.
 - `avrundningKr`: beloppen i kronor avrundas uppåt till närmaste så här många kronor (100), så att "minst X kr" aldrig ligger under kravet i baht.
 
-### Hur e-posten skickas
+Saknade uppgifter i `shopifyLank`, `epost` och `integritet` stoppar inte produktionsbygget. De skrivs som varning i bygget, listas av `npm run kallor` och visas i banderollen i förhandsvisningar.
 
-Sajten saknar backend, så formuläret skickas via tjänsten [FormSubmit](https://formsubmit.co) till mottagaren i `config.json`. Första gången någon skickar något får mottagaren ett mejl från FormSubmit som måste bekräftas. Skicka ett testmejl själv först. Vill du byta tjänst ändrar du `epost.tjanst`; den ska ta emot en JSON-post med `email`, `samtycke` och `spar`.
+### Hur e-posten skickas (Brevo)
 
-Bara e-postadressen, samtycket och vilket spår svaret gäller skickas. Svaren på frågorna lämnar aldrig webbläsaren. Integritetstexten står i `data/svar.json` under `epost.integritet`. Den nämner FormSubmit, så ändra den om du byter tjänst.
+E-postfältet skickar till Netlify-funktionen `netlify/functions/epost.ts` på `/api/epost`. Funktionen lägger in kontakten i Brevos lista *Visumtestet* med dubbel bekräftelse (double opt-in): besökaren får ett mejl och blir först kontakt när hen klickat på länken. Efter klicket skickas besökaren till `/bekraftad/`. Spåret sparas som Brevo-attributet `SPAR` med värdet `pensionar`, `sasong` eller `under-arbete`. Inga svar på frågorna sparas, bara adressen och spåret, och bara för den som kryssat i samtyckesrutan.
+
+**Fältet visas bara när allt detta finns.** Annars ritas det inte alls:
+
+1. Miljövariabeln `BREVO_API_KEY` i Netlify (*Site configuration → Environment variables*). Nyckeln ligger aldrig i koden eller repot, och bakas aldrig in i sajten. Variabeln måste gälla både *Builds* och *Functions* (standard är alla), och sajten måste byggas om efter att du lagt in den.
+2. `epost.listaId` i `config.json`: id för listan *Visumtestet*.
+3. `epost.bekraftelsemallId` i `config.json`: id för bekräftelsemallen.
+
+Så här gör du i Brevo (kontot är gratisnivån):
+
+1. Skapa en kontaktlista som heter *Visumtestet*. Id:t står i listöversikten.
+2. Skapa ett kontaktattribut av typen text som heter `SPAR` (*Contacts → Settings → Contact attributes*). Utan det avvisar Brevo anropet.
+3. Skapa en mall för dubbel bekräftelse (*Double opt-in template*). Den **måste** innehålla bekräftelselänken `{{ params.DOIurl }}`. Mallens id är `epost.bekraftelsemallId`.
+4. Skapa en API-nyckel (*SMTP & API → API keys*) och lägg den som `BREVO_API_KEY` i Netlify.
+5. Autentisera avsändardomänen `thailandskollen.se` i Brevo. DNS-posterna står i `docs/dns-poster.md`.
+
+Funktionen svarar likadant om adressen redan finns som kontakt, så att ingen kan läsa ut vilka adresser som är registrerade. Den loggar aldrig adressen.
+
+Utan `BREVO_API_KEY` på din dator visas inget fält i `npm run dev`. Vill du se fältet lokalt: `BREVO_API_KEY=x npm run dev` och skriv in två id i `config.json` (ändra inte det du checkar in). Själva anropet till `/api/epost` finns bara på Netlify.
+
+### Integritetssidan och bekräftelsesidan
+
+`/integritet/` och `/bekraftad/` är vanliga sidor med text ur `data/svar.json` under `sidor`. `{ansvarig}` och `{kontaktEpost}` hämtas ur `config.json`. Länken till integritetssidan finns i sidfoten på varje sida och vid samtyckesrutan (den öppnas i en egen flik, så att besökarens svar finns kvar).
 
 ## Logiktest
 
@@ -180,12 +207,17 @@ npm run build:forhandsvisning   # bygge utan regelkontroll, med banderoll
 
 ## Driftsätta
 
-Sajten är statisk. Koppla repot till Vercel eller Netlify med:
+Sajten är statisk, med en Netlify-funktion för e-posten. Koppla repot till Netlify. `netlify.toml` anger:
 
 - Build command: `npm run build`
 - Output directory: `dist`
+- Functions: `netlify/functions`
 
-Samma kommando gör rätt i båda fallen, eftersom bygget själv avgör om det är produktion eller förhandsvisning:
+Vercel fungerar inte för e-postfältet, eftersom funktionen är skriven för Netlify.
+
+Domänerna: `thailandskollen.se` och `www` pekar på Shopify, `test.thailandskollen.se` på Netlify. DNS-posterna står i `docs/dns-poster.md`.
+
+Bygget avgör själv om det är produktion eller förhandsvisning:
 
 | Bygge | Regelkontroll | Röd banderoll |
 | --- | --- | --- |
@@ -207,4 +239,4 @@ Lokalt: `npm run dev -- --host` skriver ut en adress på det lokala nätverket, 
 
 ## Integritet
 
-Inga spårningscookies och ingen analys. Svaren hålls bara i webbläsarens minne och sparas inte. Bara e-postadressen sparas, och bara för den som kryssar i samtyckesrutan.
+Inga spårningscookies och ingen analys. Svaren hålls bara i webbläsarens minne och sparas inte. Bara e-postadressen och spåret (pensionär, säsong eller under arbete) sparas, hos Brevo, och bara för den som kryssar i samtyckesrutan och bekräftar adressen i mejlet. Texten står på `/integritet/` och i `data/svar.json` under `sidor.integritet`.

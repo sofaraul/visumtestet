@@ -61,7 +61,7 @@ describe('framräknade belopp', () => {
     expect(beraknaKr(65000, 3, null)).toBe(21667)
   })
   it('produktionsbygget kräver kurs, datum och avrundning', () => {
-    const ok: Config = { shopifyLank: null, epost: { mottagare: null, tjanst: '' }, vaxelkurs: { thbPerSek: 3, datum: '2026-09-01' }, avrundningKr: 100 }
+    const ok: Config = { shopifyLank: null, epost: { tjanst: '', listaId: null, bekraftelsemallId: null }, integritet: { ansvarig: 'A', kontaktEpost: 'a@b.se' }, vaxelkurs: { thbPerSek: 3, datum: '2026-09-01' }, avrundningKr: 100 }
     expect(nodvandigKonfiguration(ok)).toEqual([])
     expect(nodvandigKonfiguration({ ...ok, vaxelkurs: { thbPerSek: null, datum: null } })).toEqual(['vaxelkurs.thbPerSek', 'vaxelkurs.datum'])
     expect(nodvandigKonfiguration({ ...ok, avrundningKr: null })).toEqual(['avrundningKr'])
@@ -155,7 +155,7 @@ describe('data skild från logik', () => {
   it('alla platshållare i svar.json pekar på en regel eller ett känt värde', () => {
     const ids = new Set(regler.map((r) => r.id))
     const svarId = new Set(fragorJson.fragor.map((f) => `svar.${f.id}`))
-    const extra = new Set(['vaxelkurs', 'vaxelkursDatum', 'datum', 'n', 'total', 'epost'])
+    const extra = new Set(['vaxelkurs', 'vaxelkursDatum', 'datum', 'n', 'total', 'epost', 'ansvarig', 'kontaktEpost'])
     const { _om, ...mallar } = svarJson
     void _om
     const text = JSON.stringify(mallar)

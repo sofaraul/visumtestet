@@ -132,3 +132,15 @@ Svarstexterna skrivs av ägaren. Bygg dem som redigerbara mallar i `data/svar.js
   * Anmälan och återbetalning av garantipension: Pensionsmyndigheten, samma sida som `garantipension-max-vistelse`.
 * Testa flödet på mobilbredd (390 px) efter ändringar i UI.
 * `tests/logik-matris.test.ts` prövar alla vägar mot kraven: alla siffror i ett svar måste finnas i `regler.json` eller `config.json`, inget påstående utan att villkoret går att avgöra från svaren, LTR bara villkorat, familj bara som notis om en separat väg, SINK efter datum. Belopp i kronor får bara komma från `{regel-id.kr}`. Svarsmallarna är `sasongKort`, `sasongLang`, `pension` och `pensionIngen` i `data/svar.json`, och varje kravrad har egna etiketter per utfall. `npm run logikmatris` skriver `rapporter/logik-matris.md`.
+
+---
+
+# Uppdrag 2 (6 oktober 2026): Brevo, integritetstext och domän
+
+* E-posten går via Brevo, inte FormSubmit. Mission-avsnittet "E-post" ovan är ersatt på dessa punkter: texten är *Vill du få besked när reglerna som berör dig ändras?* (löftet om att mejla svaret är borttaget, eftersom svaren inte sparas), mottagaren i konfigurationen finns inte längre, och fältet saknas när `BREVO_API_KEY` (miljövariabel i Netlify, aldrig i repot), `epost.listaId` eller `epost.bekraftelsemallId` saknas vid bygget (`__EPOST_AKTIV__`, `epostAktiv` i `scripts/regler.mjs`).
+* `netlify/functions/epost.ts` tar emot `{email, samtycke, spar}` och anropar Brevos double opt-in-endpoint (`/v3/contacts/doubleOptinConfirmation`) med attributet `SPAR` (`pensionar`, `sasong`, `under-arbete`, se `src/spar.ts`). Den släpper bara igenom de tre fälten, loggar aldrig adressen och svarar likadant om kontakten redan finns. Anropet är testat mot en låtsas-Brevo i `tests/epost-funktion.test.ts`, men aldrig mot Brevo själv: nätverket i molnmiljön når inte Brevo, och inget konto fanns. Kontrollera mot Brevos dokumentation om något ändras.
+* Sidorna `/integritet/` och `/bekraftad/` (`integritet/index.html`, `bekraftad/index.html`, `src/sida.ts`) hämtar text ur `sidor` i `data/svar.json`. `{ansvarig}` och `{kontaktEpost}` kommer ur `config.json`. Efternamnet är `[efternamn]` tills Raul fyller i det. Sidfoten (`src/fot.ts`) länkar till integritetssidan på alla sidor.
+* `shopifyLank` är en platshållare (`PLATSHALLARE`) tills Shopify-produkten är publicerad. Banderollen och bygget varnar (`scripts/platshallare.mjs`). Slå inte ihop PR #1 före publiceringen, annars leder köpknappen till en sida som inte finns.
+* Domänerna: `thailandskollen.se` och `www` till Shopify, `test.thailandskollen.se` till Netlify. DNS hanteras hos Cloudflare (domänen är registrerad hos Loopia), och listan står i `docs/dns-poster.md`. Shopify- och Netlify-posterna ska vara utan Cloudflares proxy, och MX-posterna (Cloudflares vidarebefordran) ska inte ändras. Brevos poster har inga värden där, eftersom de bara visas i Brevo-kontot.
+* Köpare från Shopify till Brevo hör inte till uppdraget. Det kopplas med Brevos Shopify-app vid lansering.
+
