@@ -11,7 +11,7 @@ Gratis visumtest på svenska för dig som vill bo i Thailand längre än en seme
 | `data/fragor.json` | Frågorna, svarsalternativen och hjälptexterna. |
 | `config.json` | Länk till Shopify-produkten, Brevo-id:n, uppgifter till integritetstexten och växelkurs med datum. |
 | `netlify/functions/epost.ts` | Funktionen som tar emot e-postadressen och lägger in den i Brevo. |
-| `docs/dns-poster.md` | Vilka DNS-poster som läggs in hos Cloudflare. |
+| `docs/dns-poster.md` | Vilka DNS-poster som läggs in hos Loopia. |
 
 ## Ändra en regel
 
