@@ -142,7 +142,7 @@ Lägg in texterna från fliken Visumguiden i `hjalptext` i `data/fragor.json` f�
 {
   "shopifyLank": "https://thailandskollen.se/products/PLATSHALLARE",
   "epost": { "tjanst": "/api/epost", "listaId": null, "bekraftelsemallId": null },
-  "integritet": { "ansvarig": "Raul [efternamn]", "kontaktEpost": "hello@thailandskollen.se" },
+  "integritet": { "ansvarig": "Raul Andrei Sofa, enskild firma", "kontaktEpost": "hello@thailandskollen.se" },
   "avrundningKr": 100,
   "vaxelkurs": { "thbPerSek": 0.0, "datum": "ÅÅÅÅ-MM-DD" }
 }
@@ -151,7 +151,7 @@ Lägg in texterna från fliken Visumguiden i `hjalptext` i `data/fragor.json` f�
 - `shopifyLank`: knappen i slutet av svaret. Värdet är en platshållare (`PLATSHALLARE`) tills produkten är publicerad. Byt då till produktens riktiga adress. **Produktionsbygget stoppas** så länge platshållaren finns kvar.
 - `epost.tjanst`: adressen till Netlify-funktionen. Ändras inte.
 - `epost.listaId` och `epost.bekraftelsemallId`: id för listan *Visumtestet* och bekräftelsemallen i Brevo (se nedan). Det är inga hemligheter.
-- `integritet.ansvarig`: namnet på integritetssidan. Byt `[efternamn]` mot efternamnet. **Produktionsbygget stoppas** så länge hakparenteserna finns kvar. `integritet.kontaktEpost`: adressen som personer mejlar för att få ut, rätta eller radera sina uppgifter.
+- `integritet.ansvarig`: den personuppgiftsansvarige på integritetssidan ("Personuppgiftsansvarig är …"). Skriv namn och firmaform. Innehåller värdet `[hakparenteser]` eller `PLATSHALLARE` **stoppas produktionsbygget**. `integritet.kontaktEpost`: adressen som personer mejlar för att få ut, rätta eller radera sina uppgifter.
 - `vaxelkurs`: baht per krona och datumet för kursen. Frågorna om inkomst och bankkonto räknar fram belopp i kronor ur den, så **produktionsbygget stoppas om kursen saknas**. Kursen fylls i av den dagliga körningen (`npm run vaxelkurs`), eller skriv in den själv.
 - `avrundningKr`: beloppen i kronor avrundas uppåt till närmaste så här många kronor (100), så att "minst X kr" aldrig ligger under kravet i baht.
 

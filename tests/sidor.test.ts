@@ -11,7 +11,7 @@ describe('integritetssidan /integritet', () => {
 
   it('har alla punkter från uppdraget: ansvarig, vad och varför, var, hur länge, rättigheter, cookies', () => {
     expect(sidor.integritet.stycken.map((s) => s.rubrik)).toEqual(['Vem som ansvarar', 'Vad vi sparar och varför', 'Var uppgifterna finns', 'Hur länge', 'Dina rättigheter', 'Cookies'])
-    expect(t).toContain('{ansvarig}, enskild firma')
+    expect(t).toContain('Personuppgiftsansvarig är {ansvarig}.')
     expect(t).toMatch(/e-postadress och vilket spår/)
     expect(t).toMatch(/bara om du har samtyckt/)
     expect(t).toMatch(/Dina svar på frågorna i testet sparas inte/)
@@ -34,8 +34,9 @@ describe('integritetssidan /integritet', () => {
     expect(config.integritet.kontaktEpost).toBe('hello@thailandskollen.se')
   })
 
-  it('ansvarig börjar med förnamnet. Efternamnet är [efternamn] tills Raul fyller i det, och bygget stoppas så länge', () => {
-    expect(config.integritet.ansvarig).toMatch(/^Raul /)
+  it('ansvarig är en enskild firma i Rauls namn, utan platshållare', () => {
+    expect(config.integritet.ansvarig).toMatch(/^Raul .+, enskild firma$/)
+    expect(config.integritet.ansvarig).not.toMatch(/\[|PLATSHALLARE/)
   })
 })
 

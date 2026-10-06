@@ -48,7 +48,7 @@
       "stycken": [
         {
           "rubrik": "Vem som ansvarar",
-          "text": "{ansvarig}, enskild firma, är personuppgiftsansvarig. Du når oss på {kontaktEpost}."
+          "text": "Personuppgiftsansvarig är {ansvarig}. Du når oss på {kontaktEpost}."
         },
         {
           "rubrik": "Vad vi sparar och varför",
