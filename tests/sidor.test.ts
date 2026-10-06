@@ -34,8 +34,8 @@ describe('integritetssidan /integritet', () => {
     expect(config.integritet.kontaktEpost).toBe('hello@thailandskollen.se')
   })
 
-  it('efternamnet är en platshållare tills Raul fyller i det', () => {
-    expect(config.integritet.ansvarig).toMatch(/^Raul \[efternamn\]$/)
+  it('ansvarig börjar med förnamnet. Efternamnet är [efternamn] tills Raul fyller i det, och bygget stoppas så länge', () => {
+    expect(config.integritet.ansvarig).toMatch(/^Raul /)
   })
 })
 

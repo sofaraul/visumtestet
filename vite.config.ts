@@ -1,8 +1,8 @@
 import { defineConfig, type Plugin } from 'vite'
 import { resolve } from 'node:path'
-import { epostAktiv, laRegler, laConfig, nodvandigKonfiguration, problemMedRegler, saknadKonfiguration } from './scripts/regler.mjs'
+import { epostAktiv, laRegler, platshallareIConfig, laConfig, nodvandigKonfiguration, problemMedRegler, saknadKonfiguration } from './scripts/regler.mjs'
 
-/** Stoppar produktionsbygget om någon regel är overifierad. */
+/** Stoppar produktionsbygget om någon regel är overifierad, om kursen saknas eller om config.json har en platshållare kvar. */
 function verifieraRegler(): Plugin {
   return {
     name: 'verifiera-regler',
@@ -21,6 +21,13 @@ function verifieraRegler(): Plugin {
         throw new Error(
           `Produktionsbygget stoppat: config.json saknar ${nodvandig.join(', ')}. Frågorna om inkomst och bankkonto räknar fram belopp i kronor ur kursen. ` +
             'Kör `npm run vaxelkurs` eller låt den dagliga körningen fylla i kursen.',
+        )
+      }
+      const platshallare: string[] = platshallareIConfig(config)
+      if (platshallare.length) {
+        throw new Error(
+          `Produktionsbygget stoppat: config.json har platshållare kvar: ${platshallare.join(', ')}. ` +
+            'Byt dem mot riktiga värden (PLATSHALLARE eller [inom hakparenteser] ska inte finnas kvar). Förhandsvisningar stoppas inte.',
         )
       }
       const saknas: string[] = saknadKonfiguration(config)

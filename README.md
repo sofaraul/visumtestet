@@ -32,7 +32,7 @@ Gratis visumtest på svenska för dig som vill bo i Thailand längre än en seme
 
 4. Sätt `"verifierad": true` och `senastKontrollerad` till dagens datum (`ÅÅÅÅ-MM-DD`). Datumet visas under svaren. Ändrar du ett värde senare ska du sätta tillbaka `verifierad` till `false` tills du har kontrollerat igen.
 
-**Produktionsbygget stoppas** (`npm run build`) om någon regel har `"verifierad": false`, saknar värde, källa eller datum. I utvecklingsläge visas i stället en röd banderoll: *Innehåller overifierade uppgifter*.
+**Produktionsbygget stoppas** (`npm run build`) om någon regel har `"verifierad": false`, saknar värde, källa eller datum, och om `config.json` har en platshållare kvar (se Konfiguration). I utvecklingsläge visas i stället en röd banderoll: *Innehåller overifierade uppgifter*.
 
 ### Regler som ändras över tid
 
@@ -148,14 +148,14 @@ Lägg in texterna från fliken Visumguiden i `hjalptext` i `data/fragor.json` f�
 }
 ```
 
-- `shopifyLank`: knappen i slutet av svaret. Värdet är en platshållare (`PLATSHALLARE`) tills produkten är publicerad. Byt då till produktens riktiga adress. Banderollen och bygget varnar så länge platshållaren finns kvar.
+- `shopifyLank`: knappen i slutet av svaret. Värdet är en platshållare (`PLATSHALLARE`) tills produkten är publicerad. Byt då till produktens riktiga adress. **Produktionsbygget stoppas** så länge platshållaren finns kvar.
 - `epost.tjanst`: adressen till Netlify-funktionen. Ändras inte.
 - `epost.listaId` och `epost.bekraftelsemallId`: id för listan *Visumtestet* och bekräftelsemallen i Brevo (se nedan). Det är inga hemligheter.
-- `integritet.ansvarig`: namnet på integritetssidan. Byt `[efternamn]` mot efternamnet. Banderollen och bygget varnar så länge hakparenteserna finns kvar. `integritet.kontaktEpost`: adressen som personer mejlar för att få ut, rätta eller radera sina uppgifter.
+- `integritet.ansvarig`: namnet på integritetssidan. Byt `[efternamn]` mot efternamnet. **Produktionsbygget stoppas** så länge hakparenteserna finns kvar. `integritet.kontaktEpost`: adressen som personer mejlar för att få ut, rätta eller radera sina uppgifter.
 - `vaxelkurs`: baht per krona och datumet för kursen. Frågorna om inkomst och bankkonto räknar fram belopp i kronor ur den, så **produktionsbygget stoppas om kursen saknas**. Kursen fylls i av den dagliga körningen (`npm run vaxelkurs`), eller skriv in den själv.
 - `avrundningKr`: beloppen i kronor avrundas uppåt till närmaste så här många kronor (100), så att "minst X kr" aldrig ligger under kravet i baht.
 
-Saknade uppgifter i `shopifyLank`, `epost` och `integritet` stoppar inte produktionsbygget. De skrivs som varning i bygget, listas av `npm run kallor` och visas i banderollen i förhandsvisningar.
+Produktionsbygget stoppas av varje platshållare i `config.json`: ett värde som innehåller `PLATSHALLARE` eller text inom `[hakparenteser]`, var som helst i filen. Tomma värden (`null`), som `epost.listaId` och `epost.bekraftelsemallId` innan Brevo-kontot är klart, stoppar inte bygget. De skrivs som varning, listas av `npm run kallor` och visas i banderollen i förhandsvisningar, och e-postfältet döljs. Förhandsvisningar stoppas aldrig.
 
 ### Hur e-posten skickas (Brevo)
 

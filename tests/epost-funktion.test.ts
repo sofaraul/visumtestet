@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { hantera, type Beroenden } from '../netlify/functions/epost'
 import { GILTIGA_SPAR, SPAR_VARDE } from '../src/spar'
-import { epostAktiv, saknadKonfiguration } from '../scripts/regler.mjs'
+import { epostAktiv, nodvandigKonfiguration, platshallareIConfig, saknadKonfiguration } from '../scripts/regler.mjs'
 import { saknasEllerPlatshallare } from '../scripts/platshallare.mjs'
+import { readFileSync } from 'node:fs'
 import config from '../config.json'
 import type { Config } from '../src/types'
 
@@ -145,10 +146,29 @@ describe('e-postfältet och konfigurationen', () => {
     expect(epostAktiv({ ...fullstandig, epost: { ...fullstandig.epost, bekraftelsemallId: null } }, { BREVO_API_KEY: 'k' })).toBe(false)
   })
 
-  it('flaggar det som saknas, men stoppar inte produktionsbygget för det', () => {
-    const saknas = saknadKonfiguration(config as Config, {}).join('\n')
+  it('flaggar det som saknas', () => {
+    const saknas = saknadKonfiguration({ ...(config as Config), shopifyLank: 'https://x/PLATSHALLARE', epost: { tjanst: '/api/epost', listaId: null, bekraftelsemallId: null }, integritet: { ansvarig: 'Raul [efternamn]', kontaktEpost: 'a@b.se' } }, {}).join('\n')
     for (const d of ['shopifyLank', 'epost.listaId', 'epost.bekraftelsemallId', 'BREVO_API_KEY', 'integritet.ansvarig']) expect(saknas).toContain(d)
     expect(saknadKonfiguration({ ...fullstandig, shopifyLank: 'https://thailandskollen.se/products/guiden', integritet: { ansvarig: 'Raul Exempel', kontaktEpost: 'a@b.se' } }, { BREVO_API_KEY: 'k' })).toEqual([])
+  })
+
+  it('platshållare var som helst i config.json stoppar produktionsbygget, tomma värden gör det inte', () => {
+    const med = { ...(config as Config), shopifyLank: 'https://thailandskollen.se/products/PLATSHALLARE', integritet: { ansvarig: 'Raul [efternamn]', kontaktEpost: 'a@b.se' } }
+    expect(platshallareIConfig(med)).toEqual(['shopifyLank', 'integritet.ansvarig'])
+    expect(platshallareIConfig({ a: { b: 'x [y]' }, c: ['PLATSHALLARE'], d: null, e: 5 })).toEqual(['a.b', 'c.0'])
+    const klar = { ...(config as Config), shopifyLank: 'https://thailandskollen.se/products/guiden', integritet: { ansvarig: 'Raul Exempel', kontaktEpost: 'a@b.se' } }
+    expect(platshallareIConfig(klar)).toEqual([])
+    // Tomt (null) är en varning, inte ett stopp.
+    expect(platshallareIConfig({ ...klar, shopifyLank: null, epost: { tjanst: '/api/epost', listaId: null, bekraftelsemallId: null } })).toEqual([])
+    // Kursen är fortfarande ett eget stopp.
+    expect(nodvandigKonfiguration(klar)).toEqual([])
+  })
+
+  it('bygget är kopplat till kontrollen', () => {
+    const kod = readFileSync('vite.config.ts', 'utf-8')
+    expect(kod).toMatch(/platshallareIConfig\(config\)/)
+    expect(kod).toMatch(/if \(platshallare\.length\) \{\n\s+throw new Error/)
+    expect(kod).toMatch(/plugins: forhandsvisning \? \[\] : \[verifieraRegler\(\)\]/)
   })
 
   it('platshållare känns igen, riktiga värden inte', () => {

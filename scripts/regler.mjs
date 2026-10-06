@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { gallandeVarde, idagIso } from './gallande.mjs'
-import { saknasEllerPlatshallare } from './platshallare.mjs'
+import { arPlatshallare, saknasEllerPlatshallare } from './platshallare.mjs'
 
 const rot = join(dirname(fileURLToPath(import.meta.url)), '..')
 const las = (sokvag) => JSON.parse(readFileSync(join(rot, sokvag), 'utf-8'))
@@ -60,6 +60,18 @@ export function saknadKonfiguration(config, env = process.env) {
 /** De uppgifter i konfigurationen som produktionsbygget inte kan vara utan. */
 export const nodvandigKonfiguration = (config, env = process.env) =>
   saknadKonfiguration(config, env).filter((s) => s.startsWith('vaxelkurs') || s === 'avrundningKr')
+
+/**
+ * Platshållare som ägaren ska byta ut (PLATSHALLARE eller [inom hakparenteser]) var som helst
+ * i config.json, som sökvägar, t.ex. `shopifyLank`. Stoppar produktionsbygget. Tomma värden (null)
+ * räknas inte hit, de är bara varningar i saknadKonfiguration.
+ */
+export function platshallareIConfig(config, sokvag = '') {
+  if (typeof config === 'string') return arPlatshallare(config) ? [sokvag] : []
+  if (config && typeof config === 'object')
+    return Object.entries(config).flatMap(([nyckel, varde]) => platshallareIConfig(varde, sokvag ? `${sokvag}.${nyckel}` : nyckel))
+  return []
+}
 
 /** Frågor vars hjälptext är tom sträng (null betyder att ingen text ska visas). */
 export function saknadeHjalptexter(fragor) {
