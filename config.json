@@ -2,8 +2,8 @@
   "shopifyLank": "https://thailandskollen.se/products/PLATSHALLARE",
   "epost": {
     "tjanst": "/api/epost",
-    "listaId": null,
-    "bekraftelsemallId": null
+    "listaId": 5,
+    "bekraftelsemallId": 1
   },
   "integritet": {
     "ansvarig": "Raul [efternamn]",
