@@ -3,7 +3,7 @@
   "epost": {
     "tjanst": "/api/epost",
     "listaId": 5,
-    "bekraftelsemallId": 1
+    "bekraftelsemallId": 2
   },
   "integritet": {
     "ansvarig": "Raul Andrei Sofa, enskild firma",
