@@ -10,8 +10,8 @@
     "kontaktEpost": "hello@thailandskollen.se"
   },
   "vaxelkurs": {
-    "thbPerSek": 3.355,
-    "datum": "2026-10-05",
+    "thbPerSek": 3.3654,
+    "datum": "2026-10-06",
     "kalla": "ECB:s referenskurser (EUR/THB och EUR/SEK)"
   },
   "avrundningKr": 100
