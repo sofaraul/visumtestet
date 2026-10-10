@@ -1,0 +1,18 @@
+{
+  "shopifyLank": "https://thailandskollen.se/products/PLATSHALLARE",
+  "epost": {
+    "tjanst": "/api/epost",
+    "listaId": 5,
+    "bekraftelsemallId": 2
+  },
+  "integritet": {
+    "ansvarig": "Raul Andrei Sofa, enskild firma",
+    "kontaktEpost": "hello@thailandskollen.se"
+  },
+  "vaxelkurs": {
+    "thbPerSek": 3.3646,
+    "datum": "2026-10-09",
+    "kalla": "ECB:s referenskurser (EUR/THB och EUR/SEK)"
+  },
+  "avrundningKr": 100
+}

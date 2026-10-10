@@ -52,19 +52,21 @@ Fyll filen med följande startvärden, samtliga som overifierade:
 1. Hur många dagar per år räknar du med att vara i Thailand? – Färre än 180 dagar / 180 dagar eller fler / Vet inte än
 2. Hur gammal är du? – Under 50 / 50 eller äldre
 3. Var kommer dina pengar ifrån? – Pension / Lön från svensk arbetsgivare / Eget företag eller frilans / Kapital och sparande / Kombination
-4. Ungefär vilken inkomst har du per månad före skatt? – Under 20 000 kr / 20 000–40 000 kr / Över 40 000 kr
-5. Kan du låsa ett större belopp på ett thailändskt bankkonto? – Ja / Nej / Kanske, beror på beloppet
+4. Är din inkomst före skatt minst X kr i månaden? – Ja / Nej / Vet inte (X räknas fram ur Non-O-kravet i baht och växelkursen)
+5. Kan du ha minst Y kr på ett thailändskt konto från minst två månader före ansökan om förlängning? – Ja / Nej / Vet inte (Y räknas fram ur bankkravet i baht och växelkursen)
 6. Har du familj i Thailand? – Nej / Ja, make eller maka / Ja, barn
+
+I säsongsspåret ställs dessutom en fråga direkt efter fråga 1: Hur länge varar varje vistelse? – Högst 30 dagar åt gången / Längre än 30 dagar åt gången. Säsongsspåret frågar inte om ålder.
 
 Visa hjälptexterna under frågorna 1, 2, 4 och 5. Texterna finns i fliken Visumguiden och läggs in i `data/fragor.json`.
 
 ## Förgrening
 
-* Fråga 1, färre än 180 dagar: säsongsspåret. Fråga 2 och 6, sedan svar.
+* Fråga 1, färre än 180 dagar: säsongsspåret. Fråga om vistelsens längd och fråga 6, sedan svar. Ingen åldersfråga.
 * Fråga 1, 180 dagar eller fler eller vet inte än: vidare till fråga 2.
-* Fråga 2, under 50: spåret är under arbete.
+* Fråga 2, under 50 (utanför säsongsspåret): spåret är under arbete.
 * Fråga 3, lön eller eget företag: spåret är under arbete.
-* Övriga: pensionärsspåret. Fråga 4, 5 och 6, sedan svar.
+* Övriga: pensionärsspåret. Fråga 4, 5 och 6, sedan svar. Svarar besökaren Nej på både fråga 4 och 5 ser ingen pensionärsväg ut att passa, och kraven visas som information.
 * Spår under arbete: visa Ditt spår är under arbete och erbjud e-post för besked när det är klart.
 
 ## Svaret
@@ -72,7 +74,7 @@ Visa hjälptexterna under frågorna 1, 2, 4 och 5. Texterna finns i fliken Visum
 Samma struktur i alla spår:
 
 1. Din troliga väg: visumvägens namn och en mening om vad den innebär.
-2. Det här behöver du uppfylla: tre punkter, jämförda med besökarens svar. Inkomstintervallet räknas om till baht med växelkursen i konfigurationen. Ligger kravet inom intervallet visas Du ligger nära gränsen – kontrollera ditt exakta belopp.
+2. Det här behöver du uppfylla: tre punkter, jämförda med besökarens svar. Belopp i kronor räknas fram ur reglernas baht och växelkursen i konfigurationen och visas med kursens datum. I pensionärsspåret är rubriken för kraven "För att få stanna ett år i taget krävs:", eftersom kraven gäller förlängning i Thailand.
 3. Skatt: en mening om huruvida 180-dagarsgränsen berör besökaren.
 4. Det folk missar: en fallgrop kopplad till spåret.
 5. Erbjudandet: en knapp till Shopify-produkten.
@@ -108,3 +110,37 @@ Svarstexterna skrivs av ägaren. Bygg dem som redigerbara mallar i `data/svar.js
 * Hitta inte på belopp, gränser eller regler. Saknas en uppgift lämnas den tom och flaggas.
 * Formulera aldrig svar som uppmaningar som du ska söka. Skriv alltid din troliga väg.
 * Lägg inte till funktioner utanför uppdraget.
+
+---
+
+# Arbetsnoter för framtida sessioner
+
+* Kod i `src/`: `flode.ts` (förgrening, bara frågeordning), `jamfor.ts` (jämförelser), `mall.ts` (platshållare), `svar.ts` (bygger svaret), `ui.ts`/`epost.ts`/`banderoll.ts` (vyer). Belopp och texter finns i `data/` och `config.json`.
+* Regler kan vara datumstyrda: `varde` är då en lista med perioder (`fran`, `till`, `varde`). `scripts/gallande.mjs` väljer värdet som gäller idag, både i webbläsaren och i skripten.
+* Källkontroll: `scripts/kalltext.mjs` (hämta och jämför text), `kontroll.mjs` (status och regler för vad som ändras), `arenden.mjs` (GitHub-ärenden), `kontrollera.mjs` (CLI). Den får aldrig sätta `verifierad` till true. Hitta aldrig på ett citat: citat och sidhash kommer från en hämtad sida och förs in av en människa efter `npm run kontrollera -- --foresla`.
+* Manuella regler (`metod: "manuell"`) påminns om den första varje månad: `scripts/paminnelse.mjs` och `.github/workflows/manuell-kontroll.yml` skapar ett ärende med etiketten `manuell-kontroll` (inte `källkontroll`). Åldern i fråga 2 kommer från regeln `non-o-minalder`; LTR-åldern är `ltr-minalder` ("över 50 år", källans formulering). `kontrolleraVarde` i en regel styr vilket värde som ska stå i citatet.
+* `scripts/vaxelkurs.mjs` hämtar växelkursen (ECB) till `config.json`. `rutiner/` innehåller agentinstruktioner (`andring.md`, `nyheter.md`). Nyhetsärenden ska aldrig få etiketten `källkontroll`.
+* `scripts/regler.mjs` delas av `npm run kallor` och bygget (`vite.config.ts`).
+* `npm test` innehåller ett test som stoppar siffror i `src/`. Lägg aldrig belopp eller gränser i koden.
+* Tomma värden är avsiktliga och flaggas: `visumfri-vistelse-dagar` och `null` i `config.json`. Fyll dem inte med gissningar. Hjälptexterna i `fragor.json` är ifyllda av ägaren.
+* `vite.config.ts` avgör förhandsvisning eller produktion (`__FORHANDSVISNING__`): `VERCEL_ENV=preview`, `CONTEXT=deploy-preview|branch-deploy` och `--mode development` är förhandsvisningar utan byggstopp men med röd banderoll. Bara produktionsbygget stoppas av overifierade regler.
+* Kraven i pensionärsspåret (regel non-o-inkomstkrav, non-o-bankkrav, non-o-bank-minsta-saldo, non-o-kombination och non-o-forlangning-max) gäller förlängning av vistelsen i Thailand, ett år i taget (Immigration Bureau, punkt 2.22). De får inte beskrivas som krav för visumansökan från Sverige. SINK nämns bara när pengarna kommer från pension eller kombination (`sinkNar` i `data/svar.json`). Säsongsvistelser längre än 30 dagar namnger inget visum.
+* Produktionsbygget kräver `vaxelkurs` och `avrundningKr` i `config.json`, eftersom frågorna räknar fram belopp i kronor. `{regel-id.kr}` i mallar och frågor.
+* Källor för meningar i `data/svar.json` som saknar platshållare (alltså som inte hämtar sitt innehåll ur `regler.json`):
+  * "för semester och kortare affärsbesök" och e-visumportalen: Thailands ambassad i Stockholm, samma sida som `visumfri-vistelse-dagar` (https://thaiembassy.se/en/visa/).
+  * "styrkas, till exempel med ett pensionsbesked": Immigration Bureau, dokument 7-6, dokumentlistan punkt 3.
+  * Anmälan och återbetalning av garantipension: Pensionsmyndigheten, samma sida som `garantipension-max-vistelse`.
+* Testa flödet på mobilbredd (390 px) efter ändringar i UI.
+* `tests/logik-matris.test.ts` prövar alla vägar mot kraven: alla siffror i ett svar måste finnas i `regler.json` eller `config.json`, inget påstående utan att villkoret går att avgöra från svaren, LTR bara villkorat, familj bara som notis om en separat väg, SINK efter datum. Belopp i kronor får bara komma från `{regel-id.kr}`. Svarsmallarna är `sasongKort`, `sasongLang`, `pension` och `pensionIngen` i `data/svar.json`, och varje kravrad har egna etiketter per utfall. `npm run logikmatris` skriver `rapporter/logik-matris.md`.
+
+---
+
+# Uppdrag 2 (6 oktober 2026): Brevo, integritetstext och domän
+
+* E-posten går via Brevo, inte FormSubmit. Mission-avsnittet "E-post" ovan är ersatt på dessa punkter: texten är *Vill du få besked när reglerna som berör dig ändras?* (löftet om att mejla svaret är borttaget, eftersom svaren inte sparas), mottagaren i konfigurationen finns inte längre, och fältet saknas när `BREVO_API_KEY` (miljövariabel i Netlify, aldrig i repot), `epost.listaId` eller `epost.bekraftelsemallId` saknas vid bygget (`__EPOST_AKTIV__`, `epostAktiv` i `scripts/regler.mjs`).
+* `netlify/functions/epost.ts` tar emot `{email, samtycke, spar}` och anropar Brevos double opt-in-endpoint (`/v3/contacts/doubleOptinConfirmation`) med attributet `SPAR` (`pensionar`, `sasong`, `under-arbete`, se `src/spar.ts`). Den släpper bara igenom de tre fälten, loggar aldrig adressen och svarar likadant om kontakten redan finns. Anropet är testat mot en låtsas-Brevo i `tests/epost-funktion.test.ts`, och av ägaren på riktigt i Netlify-förhandsvisningen den 6 oktober 2026: kontakten hamnade i lista 5 med `SPAR` = `sasong` och `DOUBLE_OPT-IN` = 1. Molnmiljön når inte Brevo, så sessioner kan inte själva köra anropet. Kontrollera mot Brevos dokumentation om något ändras.
+* Sidorna `/integritet/` och `/bekraftad/` (`integritet/index.html`, `bekraftad/index.html`, `src/sida.ts`) hämtar text ur `sidor` i `data/svar.json`. `{ansvarig}` och `{kontaktEpost}` kommer ur `config.json`. Ansvarig är `Raul Andrei Sofa, enskild firma` (ägarens uppgift 6 oktober 2026). Texten börjar med "Personuppgiftsansvarig är {ansvarig}." Sidfoten (`src/fot.ts`) länkar till integritetssidan på alla sidor.
+* `shopifyLank` är en platshållare (`PLATSHALLARE`) tills Shopify-produkten är publicerad. Produktionsbygget stoppas av varje platshållare i `config.json` (`PLATSHALLARE` eller `[text]`, `platshallareIConfig` i `scripts/regler.mjs`, ägarens beslut 6 oktober 2026). Förhandsvisningar stoppas inte, och tomma värden (`null`) är bara varningar. Slå inte ihop PR #1 före publiceringen, annars leder köpknappen till en sida som inte finns.
+* Domänerna: `thailandskollen.se` och `www` till Shopify, `test.thailandskollen.se` till Netlify. Domänen och DNS ligger hos Loopia (DNS-editor och vidarebefordran av e-post via Loopia), och listan står i `docs/dns-poster.md`. MX-posterna (Loopias vidarebefordran) ska inte ändras. Brevos poster har inga värden där, eftersom de bara visas i Brevo-kontot.
+* Köpare från Shopify till Brevo hör inte till uppdraget. Det kopplas med Brevos Shopify-app vid lansering.
+
