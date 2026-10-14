@@ -1,0 +1,29 @@
+name: Påminnelse om manuell kontroll
+
+on:
+  schedule:
+    - cron: '0 6 1 * *' # den första varje månad, 08:00 svensk sommartid
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write # skapa ärendet med etiketten manuell-kontroll
+
+jobs:
+  paminnelse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Skapa påminnelsen
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: npm run paminnelse
