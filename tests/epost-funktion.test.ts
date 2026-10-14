@@ -20,7 +20,7 @@ function brevoSvar(status: number, kropp: unknown = {}) {
   return vi.fn(async () => new Response(JSON.stringify(kropp), { status, headers: { 'Content-Type': 'application/json' } }))
 }
 
-const beroenden = (hamta: Beroenden['hamta'], over: Partial<Beroenden> = {}): Beroenden => ({ apiNyckel: 'hemlig-testnyckel', listaId: 11, mallId: 12, hamta, ...over })
+const beroenden = (hamta: Beroenden['hamta'], over: Partial<Beroenden> = {}): Beroenden => ({ apiNyckel: 'hemlig-testnyckel', listaId: 11, mallId: 12, hamta, maxTeckenKalla: 60, attribut: { klara: true }, ...over })
 const giltig = { email: ADRESS, samtycke: 'ja', spar: 'pensionar' }
 
 afterEach(() => vi.restoreAllMocks())
@@ -37,7 +37,7 @@ describe('Netlify-funktionen för e-post (Brevo, dubbel bekräftelse)', () => {
     expect((init.headers as Record<string, string>)['api-key']).toBe('hemlig-testnyckel')
     expect(JSON.parse(init.body as string)).toEqual({
       email: ADRESS,
-      attributes: { SPAR: 'pensionar' },
+      attributes: { SPAR: 'pensionar', ERBJUDANDEN: false, KALLA: 'okand' },
       includeListIds: [11],
       templateId: 12,
       redirectionUrl: 'https://test.thailandskollen.se/bekraftad/',
@@ -84,7 +84,7 @@ describe('Netlify-funktionen för e-post (Brevo, dubbel bekräftelse)', () => {
     await hantera(begaran({ ...giltig, svar: { dagar: 'minst' }, dagar: 'minst', attributes: { ANNAT: 'x' }, includeListIds: [99] }), beroenden(hamta as never))
     const skickat = JSON.parse(((hamta.mock.calls[0] as unknown as [string, RequestInit])[1].body) as string)
     expect(Object.keys(skickat).sort()).toEqual(['attributes', 'email', 'includeListIds', 'redirectionUrl', 'templateId'])
-    expect(skickat.attributes).toEqual({ SPAR: 'pensionar' })
+    expect(skickat.attributes).toEqual({ SPAR: 'pensionar', ERBJUDANDEN: false, KALLA: 'okand' })
     expect(skickat.includeListIds).toEqual([11])
   })
 
@@ -184,5 +184,51 @@ describe('e-postfältet och konfigurationen', () => {
       expect(readFileSync(fil, 'utf-8'), fil).not.toMatch(/xkeysib-[A-Za-z0-9]/)
     }
     expect(JSON.stringify(config)).not.toMatch(/api[-_ ]?key/i)
+  })
+})
+
+describe('uppdrag 3 och 4: ERBJUDANDEN och KALLA i Brevo', () => {
+  it('skickar ERBJUDANDEN true bara när rutan är ikryssad, och källan som KALLA', async () => {
+    const hamta = brevoSvar(201)
+    await hantera(begaran({ ...giltig, erbjudanden: 'ja', kalla: 'svarssida-sink-pension-thailand' }), beroenden(hamta as never))
+    const kropp = JSON.parse(((hamta.mock.calls[0] as unknown as [string, RequestInit])[1].body) as string)
+    expect(kropp.attributes).toEqual({ SPAR: 'pensionar', ERBJUDANDEN: true, KALLA: 'svarssida-sink-pension-thailand' })
+    for (const varde of ['nej', true, 'JA', undefined]) {
+      const h2 = brevoSvar(201)
+      await hantera(begaran({ ...giltig, erbjudanden: varde }), beroenden(h2 as never))
+      expect(JSON.parse(((h2.mock.calls[0] as unknown as [string, RequestInit])[1].body) as string).attributes.ERBJUDANDEN).toBe(false)
+    }
+  })
+  it('en källa som inte följer reglerna blir okand', async () => {
+    for (const kalla of ['<script>', 'Thaisnack Forum', 'a'.repeat(61), 5]) {
+      const hamta = brevoSvar(201)
+      await hantera(begaran({ ...giltig, kalla }), beroenden(hamta as never))
+      expect(JSON.parse(((hamta.mock.calls[0] as unknown as [string, RequestInit])[1].body) as string).attributes.KALLA).toBe('okand')
+    }
+  })
+  it('skapar ERBJUDANDEN (boolean) och KALLA (text) en gång, och räknar "finns redan" som klart', async () => {
+    const attribut = { klara: false }
+    const hamta = vi.fn(async (url: string) =>
+      url.includes('/attributes/') ? new Response(JSON.stringify({ code: 'invalid_parameter', message: 'Attribute name already exist' }), { status: 400 }) : new Response('{}', { status: 201 }),
+    )
+    await hantera(begaran(giltig), beroenden(hamta as never, { attribut }))
+    const anrop = hamta.mock.calls.map((c) => c[0] as string)
+    expect(anrop).toEqual([
+      'https://api.brevo.com/v3/contacts/attributes/normal/ERBJUDANDEN',
+      'https://api.brevo.com/v3/contacts/attributes/normal/KALLA',
+      'https://api.brevo.com/v3/contacts/doubleOptinConfirmation',
+    ])
+    expect(JSON.parse((hamta.mock.calls[0] as unknown as [string, RequestInit])[1].body as string)).toEqual({ type: 'boolean' })
+    expect(JSON.parse((hamta.mock.calls[1] as unknown as [string, RequestInit])[1].body as string)).toEqual({ type: 'text' })
+    expect(attribut.klara).toBe(true)
+    hamta.mockClear()
+    await hantera(begaran(giltig), beroenden(hamta as never, { attribut }))
+    expect(hamta).toHaveBeenCalledTimes(1)
+  })
+  it('anmälan går igenom även om attributen inte kunde skapas, och nästa anrop försöker igen', async () => {
+    const attribut = { klara: false }
+    const hamta = vi.fn(async (url: string) => (url.includes('/attributes/') ? new Response('{}', { status: 500 }) : new Response('{}', { status: 201 })))
+    expect((await hantera(begaran(giltig), beroenden(hamta as never, { attribut }))).status).toBe(200)
+    expect(attribut.klara).toBe(false)
   })
 })

@@ -3,6 +3,8 @@ import { fragor, innehall } from './data'
 import { byggUnderArbete, type Svar } from './svar'
 import type { Fraga, Status } from './types'
 import { epostFormular } from './epost'
+import { kopLank } from './kalla'
+import { kalla, rakna } from './matning'
 
 const g = innehall.granssnitt
 const ikon: Record<Status, string> = { ok: '✓', nara: '!', under: '✗', info: 'i', okant: '?' }
@@ -101,7 +103,7 @@ export function svarSkarm(s: Svar, a: Atgarder): HTMLElement {
       'section',
       { class: 'kort erbjudande' },
       h('p', {}, s.erbjudande.text),
-      s.erbjudande.lank && h('a', { class: 'knapp', href: s.erbjudande.lank }, s.erbjudande.knapp),
+      s.erbjudande.lank && h('a', { class: 'knapp', href: kopLank(s.erbjudande.lank, s.spar, kalla), onclick: () => rakna('kopklick', s.spar) }, s.erbjudande.knapp),
     ),
     h('p', { class: 'kontroll' }, s.kontrollText),
     h('p', { class: 'friskrivning' }, s.friskrivning),

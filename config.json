@@ -14,5 +14,11 @@
     "datum": "2026-10-12",
     "kalla": "ECB:s referenskurser (EUR/THB och EUR/SEK)"
   },
-  "avrundningKr": 100
+  "avrundningKr": 100,
+  "matning": {
+    "tjanst": "/api/matning",
+    "vard": "test.thailandskollen.se",
+    "maxTeckenKalla": 60,
+    "maxDagar": 93
+  }
 }

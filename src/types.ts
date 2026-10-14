@@ -52,6 +52,8 @@ export interface Config {
   epost: { tjanst: string; listaId: number | null; bekraftelsemallId: number | null }
   integritet: { ansvarig: string; kontaktEpost: string }
   vaxelkurs: { thbPerSek: number | null; datum: string | null; kalla?: string }
+  // Räkningen per källa (uppdrag fyra). vard = produktionens värdnamn; bara där räknas något.
+  matning: { tjanst: string; vard: string; maxTeckenKalla: number; maxDagar: number }
 }
 
 export type Status = 'ok' | 'nara' | 'under' | 'info' | 'okant'

@@ -61,7 +61,7 @@ describe('framräknade belopp', () => {
     expect(beraknaKr(65000, 3, null)).toBe(21667)
   })
   it('produktionsbygget kräver kurs, datum och avrundning', () => {
-    const ok: Config = { shopifyLank: null, epost: { tjanst: '', listaId: null, bekraftelsemallId: null }, integritet: { ansvarig: 'A', kontaktEpost: 'a@b.se' }, vaxelkurs: { thbPerSek: 3, datum: '2026-09-01' }, avrundningKr: 100 }
+    const ok: Config = { matning: { tjanst: '', vard: '', maxTeckenKalla: 60, maxDagar: 93 }, shopifyLank: null, epost: { tjanst: '', listaId: null, bekraftelsemallId: null }, integritet: { ansvarig: 'A', kontaktEpost: 'a@b.se' }, vaxelkurs: { thbPerSek: 3, datum: '2026-09-01' }, avrundningKr: 100 }
     expect(nodvandigKonfiguration(ok)).toEqual([])
     expect(nodvandigKonfiguration({ ...ok, vaxelkurs: { thbPerSek: null, datum: null } })).toEqual(['vaxelkurs.thbPerSek', 'vaxelkurs.datum'])
     expect(nodvandigKonfiguration({ ...ok, avrundningKr: null })).toEqual(['avrundningKr'])

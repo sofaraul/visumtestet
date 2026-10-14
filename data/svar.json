@@ -32,7 +32,8 @@
     "rubrik": "Vill du få besked när reglerna som berör dig ändras?",
     "rubrikUnderArbete": "Vill du ha besked när ditt spår är klart?",
     "etikett": "Din e-postadress",
-    "samtycke": "Ja, jag samtycker till att min e-postadress och mitt spår sparas så att jag får besked när reglerna som berör mig ändras.",
+    "samtycke": "Ja, jag samtycker till att min e-postadress, mitt spår och vilken sida jag kom från sparas så att jag får besked när reglerna som berör mig ändras.",
+    "erbjudanden": "Ja, skicka mig också några tips inför flytten och erbjudanden om guiden.",
     "integritetLank": "Läs integritetstexten",
     "skicka": "Skicka",
     "skickar": "Skickar …",
@@ -52,7 +53,7 @@
         },
         {
           "rubrik": "Vad vi sparar och varför",
-          "text": "Vi sparar din e-postadress och vilket spår du fick svar för (pensionär, säsong eller under arbete). Det gör vi bara om du har samtyckt. Vi sparar dem för att kunna ge dig besked när regler som berör ditt spår ändras. Dina svar på frågorna i testet sparas inte."
+          "text": "Vi sparar din e-postadress och vilket spår du fick svar för (pensionär, säsong eller under arbete). Det gör vi bara om du har samtyckt. Vi sparar dem för att kunna ge dig besked när regler som berör ditt spår ändras. Har du kryssat i att du vill ha tips och erbjudanden får du också några mejl om flytten och om guiden. Vi sparar också vilken sida eller vilket forum du kom från, så att vi ser vilka länkar som fungerar. Dina svar på frågorna i testet sparas inte."
         },
         {
           "rubrik": "Var uppgifterna finns",
@@ -68,7 +69,7 @@
         },
         {
           "rubrik": "Cookies",
-          "text": "Vi använder inga spårningscookies."
+          "text": "Vi använder inga spårningscookies. Vi räknar hur många som besöker testet, fullföljer det, anmäler sig och klickar på köpknappen, per länk. Det görs utan cookies, och inget som kan kopplas till dig sparas, bara datum, länk och steg."
         }
       ],
       "tillbaka": "Till visumtestet",

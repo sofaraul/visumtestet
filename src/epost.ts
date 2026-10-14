@@ -1,6 +1,7 @@
 import { h } from './dom'
 import { config, innehall } from './data'
 import { SPAR_VARDE } from './spar'
+import { kalla, rakna } from './matning'
 import type { Slut } from './types'
 
 const t = innehall.epost
@@ -12,6 +13,8 @@ export function epostFormular(rubrik: string, spar: Slut): HTMLElement | null {
   const fel = h('p', { class: 'fel', role: 'alert' })
   const falt = h('input', { type: 'email', id: 'epost', name: 'epost', autocomplete: 'email', inputmode: 'email', required: true })
   const ruta = h('input', { type: 'checkbox', id: 'samtycke', name: 'samtycke' })
+  // Uppdrag 3: egen ruta för tips och erbjudanden, inte förkryssad och inte obligatorisk.
+  const erbjudanden = h('input', { type: 'checkbox', id: 'erbjudanden', name: 'erbjudanden' })
   const knapp = h('button', { type: 'submit', class: 'knapp' }, t.skicka)
   // Egen flik, så att besökarens svar finns kvar när hen kommer tillbaka.
   const integritet = h('p', { class: 'integritet' }, h('a', { href: '/integritet/', target: '_blank', rel: 'noopener' }, t.integritetLank))
@@ -23,6 +26,7 @@ export function epostFormular(rubrik: string, spar: Slut): HTMLElement | null {
     h('label', { for: 'epost', class: 'etikett' }, t.etikett),
     falt,
     h('label', { class: 'kryss', for: 'samtycke' }, ruta, h('span', {}, t.samtycke)),
+    h('label', { class: 'kryss', for: 'erbjudanden' }, erbjudanden, h('span', {}, t.erbjudanden)),
     integritet,
     fel,
     knapp,
@@ -48,10 +52,11 @@ export function epostFormular(rubrik: string, spar: Slut): HTMLElement | null {
       const svar = await fetch(config.epost.tjanst, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        // Bara adressen, samtycket och spåret. Inga svar på frågorna.
-        body: JSON.stringify({ email: adress, samtycke: 'ja', spar: SPAR_VARDE[spar] }),
+        // Bara adressen, samtyckena, spåret och källan. Inga svar på frågorna.
+        body: JSON.stringify({ email: adress, samtycke: 'ja', erbjudanden: erbjudanden.checked ? 'ja' : 'nej', spar: SPAR_VARDE[spar], kalla }),
       })
       if (!svar.ok) throw new Error(String(svar.status))
+      rakna('anmalan', spar)
       form.replaceChildren(h('p', { class: 'tack', role: 'status' }, t.tack.replace('{epost}', adress)))
     } catch {
       fel.textContent = t.felSkick

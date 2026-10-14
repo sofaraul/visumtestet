@@ -59,7 +59,7 @@ describe('texten vid e-postfältet', () => {
   it('samtyckesrutan är inte förkryssad och sajten skickar bara adress, samtycke och spår', () => {
     const kod = readFileSync('src/epost.ts', 'utf-8')
     expect(kod).not.toMatch(/checked:|checked = true|setAttribute\('checked'/)
-    expect(kod).toMatch(/JSON\.stringify\(\{ email: adress, samtycke: 'ja', spar: SPAR_VARDE\[spar\] \}\)/)
+    expect(kod).toMatch(/JSON\.stringify\(\{ email: adress, samtycke: 'ja', erbjudanden: erbjudanden\.checked \? 'ja' : 'nej', spar: SPAR_VARDE\[spar\], kalla \}\)/)
   })
 })
 

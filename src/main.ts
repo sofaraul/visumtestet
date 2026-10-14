@@ -6,6 +6,7 @@ import { fragaSkarm, hittaFraga, introSkarm, svarSkarm, underArbeteSkarm, type A
 import type { Svaren } from './types'
 import { visaBanderoll } from './banderoll'
 import { ritaFot } from './fot'
+import { rakna } from './matning'
 
 // Svaren finns bara i minnet. De sparas varken i cookies, localStorage eller på server.
 let svar: Svaren = {}
@@ -22,8 +23,13 @@ function rita() {
   else if (pos < vag.fragor.length) {
     const id = vag.fragor[pos]
     skarm = fragaSkarm(renderaFraga(hittaFraga(id), { regler, fragor, config, innehall }), svar[id], pos + 1, vag.total, atgarder)
-  } else if (vag.slut === 'underArbete') skarm = underArbeteSkarm(atgarder)
-  else skarm = svarSkarm(byggSvar({ spar: vag.slut!, svar, regler, fragor, config, innehall }), atgarder)
+  } else if (vag.slut === 'underArbete') {
+    rakna('fullfoljt', 'underArbete', true)
+    skarm = underArbeteSkarm(atgarder)
+  } else {
+    rakna('fullfoljt', vag.slut!, true)
+    skarm = svarSkarm(byggSvar({ spar: vag.slut!, svar, regler, fragor, config, innehall }), atgarder)
+  }
 
   app.replaceChildren(skarm)
   window.scrollTo(0, 0)
@@ -67,4 +73,5 @@ window.addEventListener('popstate', (e) => {
 history.replaceState({ pos: -1 }, '')
 visaBanderoll(document.getElementById('banderoll')!)
 ritaFot(document.getElementById('fot')!)
+rakna('besok')
 rita()

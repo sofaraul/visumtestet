@@ -145,3 +145,18 @@ Svarstexterna skrivs av ägaren. Bygg dem som redigerbara mallar i `data/svar.js
 * Köpare från Shopify till Brevo hör inte till uppdraget. Det kopplas med Brevos Shopify-app vid lansering.
 
 * Inkomstintyg: Sveriges ambassad i Bangkok och honorärkonsulaten utfärdar inte inkomstintyg sedan den 1 oktober 2026 (https://www.swedenabroad.se/sv/om-utlandet-f%C3%B6r-svenska-medborgare/thailand/hj%C3%A4lp-till-svenskar-utomlands/intyg-och-legaliseringar/viktig-information-om-f%C3%B6r%C3%A4ndringar-i-intygsverksamheten/, bekräftat av Raul 14 oktober 2026). Ingen text får säga eller antyda att man kan få ett därifrån; `tests/sidor.test.ts` stoppar ordet "intyg" i `data/`. Regel `non-o-bankkrav` (regel 2 i Källor-fliken) säger att beloppet ska stå på ett thailändskt bankkonto.
+
+---
+
+# Uppdrag 3 och 4 (14 oktober 2026): erbjudanden, spårbar köpknapp och mätning per källa
+
+Byggt i en session från chatten försäljning, efter Rauls önskan. Uppdragen står i fliken Uppdrag: visumtestet i projektplanen.
+
+* Uppdrag 3 var inte byggt (attributet ERBJUDANDEN fanns inte i Brevo). Nu: en andra ruta under samtycket, `epost.erbjudanden` i `data/svar.json`, inte förkryssad och inte obligatorisk. Sajten skickar `erbjudanden: 'ja' | 'nej'`, funktionen sparar `ERBJUDANDEN` som boolean (allt utom `'ja'` blir false).
+* Källan (`src/kalla.ts`, delas av webbläsaren och funktionerna): `utm_source=svarssida` → `svarssida-` + utm_campaign, annan utm_source → den, ingen utm_source men referrer från annan webbplats → `ref-` + värdnamnet utan www, annars `direkt`. Bara gemener, a–z, siffror, punkt och bindestreck, högst `matning.maxTeckenKalla` tecken, annars `okand`. Finns bara i minnet, aldrig i cookies eller webbläsarlagring.
+* Köpknappen: `kopLank` sätter utm_source=visumtest, utm_medium=referral, utm_campaign=spåret (SPAR-värdet) och utm_content=källan.
+* E-postfunktionen sparar också `KALLA` (text). Den skapar `ERBJUDANDEN` och `KALLA` i Brevo första gången om de saknas (`NYA_ATTRIBUT`; "finns redan" räknas som klart). Molnmiljön når inte Brevo, så det är testat mot låtsas-Brevo.
+* Räkningen (`src/matning.ts`): `besok` när sidan laddas, `fullfoljt` när ett svar eller under arbete visas (en gång per spår och sidladdning), `anmalan` när e-postfunktionen svarat ok, `kopklick` vid klick på köpknappen. Skickas med `navigator.sendBeacon` till `/api/matning`, bara när `location.hostname` är `matning.vard` (test.thailandskollen.se) och inte när `navigator.webdriver` är sant. Fel sväljs.
+* `netlify/functions/matning.ts`: POST sparar en tom blob i Netlify Blobs (store `matning`) med nyckeln `ÅÅÅÅ-MM-DD/steg/spår/källa/uuid`, datum i svensk tid. Inget IP, ingen webbläsaruppgift. GET `?fran=&till=` (högst `matning.maxDagar` dagar) svarar med summor per källa och totalt. Läses av måndagsrapporten i projektplanen. Källan `kontroll` är provbesök och räknas inte i rapporten.
+* `public/robots.txt` tillåter allt, så att måndagsrapportens hämtning inte stoppas.
+* Integritetstexten säger att källan sparas för den som anmäler sig och att besök räknas per länk utan cookies. Samtycket nämner också vilken sida man kom från.
