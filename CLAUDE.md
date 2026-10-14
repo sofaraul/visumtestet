@@ -128,7 +128,7 @@ Svarstexterna skrivs av ägaren. Bygg dem som redigerbara mallar i `data/svar.js
 * Produktionsbygget kräver `vaxelkurs` och `avrundningKr` i `config.json`, eftersom frågorna räknar fram belopp i kronor. `{regel-id.kr}` i mallar och frågor.
 * Källor för meningar i `data/svar.json` som saknar platshållare (alltså som inte hämtar sitt innehåll ur `regler.json`):
   * "för semester och kortare affärsbesök" och e-visumportalen: Thailands ambassad i Stockholm, samma sida som `visumfri-vistelse-dagar` (https://thaiembassy.se/en/visa/).
-  * "styrkas, till exempel med ett pensionsbesked": Immigration Bureau, dokument 7-6, dokumentlistan punkt 3.
+  * "Inkomsten ska kunna styrkas": Immigration Bureau, dokument 7-6, dokumentlistan punkt 3. Meningen om bankutdrag från ett thailändskt konto och att kraven kan skilja mellan de lokala immigrationskontoren: Sveriges ambassad i Bangkok, samma sida som under Inkomstintyg nedan (ägarens text 14 oktober 2026, ersatte "till exempel med ett pensionsbesked").
   * Anmälan och återbetalning av garantipension: Pensionsmyndigheten, samma sida som `garantipension-max-vistelse`.
 * Testa flödet på mobilbredd (390 px) efter ändringar i UI.
 * `tests/logik-matris.test.ts` prövar alla vägar mot kraven: alla siffror i ett svar måste finnas i `regler.json` eller `config.json`, inget påstående utan att villkoret går att avgöra från svaren, LTR bara villkorat, familj bara som notis om en separat väg, SINK efter datum. Belopp i kronor får bara komma från `{regel-id.kr}`. Svarsmallarna är `sasongKort`, `sasongLang`, `pension` och `pensionIngen` i `data/svar.json`, och varje kravrad har egna etiketter per utfall. `npm run logikmatris` skriver `rapporter/logik-matris.md`.

@@ -194,7 +194,7 @@
         {
           "regel": "non-o-inkomstkrav",
           "jamfor": "inkomst",
-          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}. Inkomsten ska kunna styrkas, till exempel med ett pensionsbesked.",
+          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}. Inkomsten ska kunna styrkas. Enligt Sveriges ambassad i Bangkok rekommenderar immigrationsmyndigheten bankutdrag från ett thailändskt konto när du förlänger, och kraven kan skilja mellan de lokala immigrationskontoren.",
           "status": {
             "ok": "Enligt ditt svar når du upp till kravet",
             "under": "Enligt ditt svar når du inte upp till kravet",
@@ -204,7 +204,7 @@
         {
           "regel": "non-o-bankkrav",
           "jamfor": "bank",
-          "text": "Alternativt minst {non-o-bankkrav} på ett thailändskt bankkonto, ungefär {non-o-bankkrav.kr} med ECB:s kurs den {vaxelkursDatum}. {non-o-bankkrav.villkor} Därefter ska minst {non-o-bank-minsta-saldo} finnas kvar, ungefär {non-o-bank-minsta-saldo.kr} med samma kurs.",
+          "text": "Alternativt minst {non-o-bankkrav}, ungefär {non-o-bankkrav.kr} med ECB:s kurs den {vaxelkursDatum}. {non-o-bankkrav.villkor} Därefter ska minst {non-o-bank-minsta-saldo} finnas kvar, ungefär {non-o-bank-minsta-saldo.kr} med samma kurs.",
           "status": {
             "ok": "Enligt ditt svar kan du ha beloppet på kontot i tid",
             "under": "Enligt ditt svar passar det här alternativet inte",
@@ -245,7 +245,7 @@
         {
           "regel": "non-o-inkomstkrav",
           "jamfor": "info",
-          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}. Inkomsten ska kunna styrkas, till exempel med ett pensionsbesked.",
+          "text": "Inkomst på minst {non-o-inkomstkrav}, ungefär {non-o-inkomstkrav.kr} med ECB:s kurs den {vaxelkursDatum}. Inkomsten ska kunna styrkas. Enligt Sveriges ambassad i Bangkok rekommenderar immigrationsmyndigheten bankutdrag från ett thailändskt konto när du förlänger, och kraven kan skilja mellan de lokala immigrationskontoren.",
           "status": {
             "info": "Bra att veta"
           }
@@ -253,7 +253,7 @@
         {
           "regel": "non-o-bankkrav",
           "jamfor": "info",
-          "text": "Alternativt minst {non-o-bankkrav} på ett thailändskt bankkonto, ungefär {non-o-bankkrav.kr} med ECB:s kurs den {vaxelkursDatum}. {non-o-bankkrav.villkor} Därefter ska minst {non-o-bank-minsta-saldo} finnas kvar, ungefär {non-o-bank-minsta-saldo.kr} med samma kurs.",
+          "text": "Alternativt minst {non-o-bankkrav}, ungefär {non-o-bankkrav.kr} med ECB:s kurs den {vaxelkursDatum}. {non-o-bankkrav.villkor} Därefter ska minst {non-o-bank-minsta-saldo} finnas kvar, ungefär {non-o-bank-minsta-saldo.kr} med samma kurs.",
           "status": {
             "info": "Bra att veta"
           }

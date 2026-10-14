@@ -94,4 +94,14 @@ describe('inkomstintyg', () => {
   it('nämns inte i några texter som visas för besökaren', () => {
     for (const fil of ['data/svar.json', 'data/fragor.json', 'data/regler.json']) expect(readFileSync(fil, 'utf-8'), fil).not.toMatch(/intyg/i)
   })
+  it('inkomstkravet hänvisar till ambassadens besked om bankutdrag, och bankkravet säger kontot bara en gång (i regelns villkor)', () => {
+    for (const mall of [svar.spar.pension, svar.spar.pensionIngen]) {
+      const inkomst = mall.krav.find((k) => k.regel === 'non-o-inkomstkrav')!.text
+      expect(inkomst).toContain('Inkomsten ska kunna styrkas. Enligt Sveriges ambassad i Bangkok rekommenderar immigrationsmyndigheten bankutdrag från ett thailändskt konto när du förlänger, och kraven kan skilja mellan de lokala immigrationskontoren.')
+      expect(inkomst).not.toMatch(/pensionsbesked/)
+      const bank = mall.krav.find((k) => k.regel === 'non-o-bankkrav')!.text
+      expect(bank).not.toMatch(/bankkonto/)
+      expect(bank).toContain('{non-o-bankkrav.villkor}')
+    }
+  })
 })
