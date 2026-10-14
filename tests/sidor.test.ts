@@ -87,3 +87,11 @@ describe('integritetslänken', () => {
     expect(readFileSync('src/sida.ts', 'utf-8')).toContain("ritaFot(document.getElementById('fot')!)")
   })
 })
+
+describe('inkomstintyg', () => {
+  // Sveriges ambassad i Bangkok och honorärkonsulaten utfärdar inte inkomstintyg sedan den 1 oktober 2026
+  // (swedenabroad.se, bekräftat av Raul 14 oktober 2026). Inget får säga eller antyda att man kan få ett därifrån.
+  it('nämns inte i några texter som visas för besökaren', () => {
+    for (const fil of ['data/svar.json', 'data/fragor.json', 'data/regler.json']) expect(readFileSync(fil, 'utf-8'), fil).not.toMatch(/intyg/i)
+  })
+})
