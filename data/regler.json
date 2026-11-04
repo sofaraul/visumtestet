@@ -173,14 +173,11 @@
     "enhet": "ar",
     "kalla": "https://www.pensionsmyndigheten.se/ga-i-pension/planera-din-pension/planera-att-flytta-fran-sverige",
     "senastKontrollerad": "2026-10-08",
-    "verifierad": true,
+    "verifierad": false,
     "citat": "Planerar du att vara utomlands i högst ett år, kan du få behålla garantipensionen under din tillfälliga vistelse.",
     "metod": "html",
-    "bekraftad": {
-      "av": "Raul",
-      "datum": "2026-09-30"
-    },
-    "sidhash": "8615e49eeee3e4429628abba3e258be4fb89b2827690ddf26953f84ee59ee70a",
+    "bekraftad": null,
+    "sidhash": "20443ac4ad3255a6e86ff1e883e1c546df04c4828486dca8b7b238c6f1b4e7f2",
     "kontrolleraVarde": [
       "högst ett år"
     ]
